@@ -14,12 +14,14 @@ public class Play extends BasicGameState{
 	float playerY = 300;
 	float playerSpeed = 5;
 	float playerAngle = 90f;
+	int playerTunnelingBuffer = 10;
 	
 	ArrayList<ArrayList<String>> gridmap = new ArrayList<ArrayList<String>>();
 	int tileWidth = 50;
 	int tileHeight = 50;
-	int offsetX = 0;
-	int offsetY = 0;
+	float offsetX = 0;
+	float offsetY = 0;
+	int tileMapSize = 8;
 	
 	Input input;
 	Controller controller;
@@ -54,22 +56,22 @@ public class Play extends BasicGameState{
 		
 		//Screen width / gridtile width = num of tiles for 1 row
 		//row
-		for(int i = 0; i <= 5; i++)
+		for(int i = 0; i <= tileMapSize; i++)
 		{
 			gridmap.add(new ArrayList<String>());
 			//column
-			for(int j = 0; j <= 5; j++)
+			for(int j = 0; j <= tileMapSize; j++)
 			{
+				//the string will determine what type of tile it is, ex. "r" rock, "s" sand...
 				gridmap.get(i).add("r");
 			}
 		}
-		System.out.println("hi");
 		
-		for(int i = 0; i <= 5; i++)
+		for(int i = 0; i <= tileMapSize; i++)
 		{
 			
 			//column
-			for(int j = 0; j <= 5; j++)
+			for(int j = 0; j <= tileMapSize; j++)
 			{
 				System.out.print(gridmap.get(i).get(j));
 				
@@ -83,26 +85,26 @@ public class Play extends BasicGameState{
 	public void render(GameContainer gc, StateBasedGame sgb, Graphics g) throws SlickException
 	{
 		
-//		for(int i = 0; i <= 5; i++)
-//		{
-//			
-//			//column
-//			for(int j = 0; j <= 5; j++)
-//			{
-//				if(gridmap.get(i).get(j) == "r")
-//				{
-//					g.drawImage(sand, offsetX + tileWidth, offsetY + tileHeight);
-//					offsetX += tileWidth;
-//				}
-//				
-//		
-//				
-//			}
-//			
-//			offsetX = 0;
-//			offsetY += tileHeight;
-//			
-//		}
+		for(int i = 0; i <= tileMapSize; i++)
+		{
+			
+			//column
+			for(int j = 0; j <= tileMapSize; j++)
+			{
+				if(gridmap.get(i).get(j) == "r")
+				{
+					g.drawImage(sand, offsetX, offsetY);
+					offsetX += tileWidth;
+				}
+				
+		
+				
+			}
+			
+			offsetX = 0;
+			offsetY += tileHeight;
+			
+		}
 		
 		offsetX = 0;
 		offsetY = 0;
@@ -122,21 +124,34 @@ public class Play extends BasicGameState{
 	{
 		
 		
-		System.out.println(controller.getZAxisValue());
-		if(input.isKeyDown(Input.KEY_A)){ playerX--; }
-		if(input.isKeyDown(Input.KEY_D)){ playerX++; }
-		if(input.isKeyDown(Input.KEY_S)){ playerY++; }
-		if(input.isKeyDown(Input.KEY_W)){ playerY--; }
 		
-		if(controller.getXAxisValue() <= -0.4) { playerX = playerX + (controller.getXAxisValue() * playerSpeed); }
-		if(controller.getXAxisValue() >= 0.4) { playerX = playerX + (controller.getXAxisValue() * playerSpeed); }
-		if(controller.getYAxisValue() <= -0.4) { playerY = playerY + (controller.getYAxisValue() * playerSpeed);  }
-		if(controller.getYAxisValue() >= 0.4) { playerY = playerY + (controller.getYAxisValue() * playerSpeed);  }
+		if(input.isKeyDown(Input.KEY_A) && playerInsideBox(gc)){ playerX--; }
+		if(input.isKeyDown(Input.KEY_D) && playerInsideBox(gc)){ playerX++; }
+		if(input.isKeyDown(Input.KEY_S) && playerInsideBox(gc)){ playerY++; }
+		if(input.isKeyDown(Input.KEY_W) && playerInsideBox(gc)){ playerY--; }
+		
+		if(controller.getXAxisValue() <= -0.4 && playerInsideBox(gc)) { playerX = playerX + (controller.getXAxisValue() * playerSpeed); }
+		if(controller.getXAxisValue() >= 0.4 && playerInsideBox(gc)) { playerX = playerX + (controller.getXAxisValue() * playerSpeed); }
+		if(controller.getYAxisValue() <= -0.4 && playerInsideBox(gc)) { playerY = playerY + (controller.getYAxisValue() * playerSpeed);  }
+		if(controller.getYAxisValue() >= 0.4 && playerInsideBox(gc))  { playerY = playerY + (controller.getYAxisValue() * playerSpeed);  }
 		
 		
 		
 	}
 	
+	private boolean playerInsideBox(GameContainer gc) {
+		if(playerX + playerTunnelingBuffer <= gc.getHeight() &&
+		   playerX - playerTunnelingBuffer >= 0 &&
+		   playerY + playerTunnelingBuffer <= gc.getWidth() &&
+		   playerY - playerTunnelingBuffer >= 0)
+		{
+			return true;
+		}
+				
+			
+		return false;
+	}
+
 	public int getID()
 	{
 		return 1; //returns the ID of this class (play is 1)
