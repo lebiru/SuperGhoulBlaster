@@ -10,6 +10,10 @@ public class Game extends StateBasedGame
 	public static final int menu = 0;
 	public static final int play = 1;
 	
+	public static final int SCREEN_WIDTH = 600;
+	public static final int SCREEN_HEIGHT= 480;
+	static final int maxFPS = 60;
+	
 	
 	public Game(String gamename)
 	{
@@ -25,7 +29,7 @@ public class Game extends StateBasedGame
 		this.getState(menu).init(gc, this);
 		this.getState(play).init(gc, this);
 		//enterState is the first screen the computer will show
-		this.enterState(menu);
+		this.enterState(play);
 		
 	}
 	
@@ -35,7 +39,9 @@ public class Game extends StateBasedGame
 		try
 		{
 			appgc = new AppGameContainer(new Game(gamename));
-			appgc.setDisplayMode(640, 360, false); //third argument is fullscreen
+			appgc.setTargetFrameRate(maxFPS);
+			appgc.setVSync(true);
+			appgc.setDisplayMode(SCREEN_WIDTH, SCREEN_HEIGHT, false); //third argument is fullscreen
 			appgc.start();
 		}catch(SlickException e)
 		{
