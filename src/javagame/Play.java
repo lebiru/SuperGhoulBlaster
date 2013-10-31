@@ -9,19 +9,30 @@ import org.newdawn.slick.state.*;
 
 public class Play extends BasicGameState{
 	
-	Image player, sand;
+	Image player, sand, zombie;
 	float playerX = 300;
 	float playerY = 300;
 	float playerSpeed = 5;
 	float playerAngle = 90f;
 	int playerTunnelingBuffer = 10;
 	
+	float zombieX = 40;
+	float zombieY = 40;
+	float zombieSpeed = 5;
+	float zombieAngle = 90f;
+	float dx = 0;
+	float dy = 0;
+	float zombieLength = 0;
+	
+	
+	
+	
 	ArrayList<ArrayList<String>> gridmap = new ArrayList<ArrayList<String>>();
 	int tileWidth = 50;
 	int tileHeight = 50;
 	float offsetX = 0;
 	float offsetY = 0;
-	int tileMapSize = 8;
+	int tileMapSize = 11;
 	
 	Input input;
 	Controller controller;
@@ -36,6 +47,7 @@ public class Play extends BasicGameState{
 	{
 		player = new Image("res/test.png");
 		sand = new Image("res/sand.png");
+		zombie = new Image("res/zombie.png");
 		
 		input = gc.getInput();
 		controller = Controllers.getController(6);
@@ -114,9 +126,14 @@ public class Play extends BasicGameState{
 		g.drawString("Right X: " + controller.getRXAxisValue() + 
 				   "\n Right Y: " + controller.getRYAxisValue() + 
 				   "\n Angle: " + (Math.atan2(controller.getRYAxisValue(), controller.getRXAxisValue())) * (180/Math.PI) + 90f , 20, 60);
+		
 		playerAngle = (float) ((Math.atan2(controller.getRYAxisValue(), controller.getRXAxisValue())) * (180/Math.PI)) + 90f;
+		zombieAngle = (float) (Math.atan2(dy, dx) * (180/Math.PI)) + 90f;
 		player.setRotation(playerAngle);
+		zombie.setRotation(zombieAngle);
+		
 		g.drawImage(player, playerX, playerY);
+		g.drawImage(zombie, zombieX, zombieY);
 		g.drawString("Play State", 10, 30);
 	}
 	
@@ -125,32 +142,39 @@ public class Play extends BasicGameState{
 		
 		
 		
-		if(input.isKeyDown(Input.KEY_A) && playerInsideBox(gc)){ playerX--; }
-		if(input.isKeyDown(Input.KEY_D) && playerInsideBox(gc)){ playerX++; }
-		if(input.isKeyDown(Input.KEY_S) && playerInsideBox(gc)){ playerY++; }
-		if(input.isKeyDown(Input.KEY_W) && playerInsideBox(gc)){ playerY--; }
+//		if(input.isKeyDown(Input.KEY_A) && playerInsideBox(gc)){ playerX--; }
+//		if(input.isKeyDown(Input.KEY_D) && playerInsideBox(gc)){ playerX++; }
+//		if(input.isKeyDown(Input.KEY_S) && playerInsideBox(gc)){ playerY++; }
+//		if(input.isKeyDown(Input.KEY_W) && playerInsideBox(gc)){ playerY--; }
 		
-		if(controller.getXAxisValue() <= -0.4 && playerInsideBox(gc)) { playerX = playerX + (controller.getXAxisValue() * playerSpeed); }
-		if(controller.getXAxisValue() >= 0.4 && playerInsideBox(gc)) { playerX = playerX + (controller.getXAxisValue() * playerSpeed); }
-		if(controller.getYAxisValue() <= -0.4 && playerInsideBox(gc)) { playerY = playerY + (controller.getYAxisValue() * playerSpeed);  }
-		if(controller.getYAxisValue() >= 0.4 && playerInsideBox(gc))  { playerY = playerY + (controller.getYAxisValue() * playerSpeed);  }
+		if(controller.getXAxisValue() <= -0.4 && (playerX + playerTunnelingBuffer >= 0)) { playerX = playerX + (controller.getXAxisValue() * playerSpeed); }
+		if(controller.getXAxisValue() >= 0.4 && ((playerX + playerTunnelingBuffer + player.getWidth()) <= gc.getWidth())) { playerX = playerX + (controller.getXAxisValue() * playerSpeed); }
+		if(controller.getYAxisValue() <= -0.4 && (playerY + playerTunnelingBuffer >= 0)) { playerY = playerY + (controller.getYAxisValue() * playerSpeed);  }
+		if(controller.getYAxisValue() >= 0.4 && ((playerY + playerTunnelingBuffer + player.getHeight()) <= gc.getHeight()))  { playerY = playerY + (controller.getYAxisValue() * playerSpeed);  }
 		
+		dx = playerX - zombieX;
+		dy = playerY - zombieY;
+		zombieLength = (float) Math.sqrt(dx*dx + dy*dy);
+		dx /= zombieLength;
+		dy /= zombieLength;
+		zombieX += dx;
+		zombieY += dy;
 		
 		
 	}
 	
-	private boolean playerInsideBox(GameContainer gc) {
-		if(playerX + playerTunnelingBuffer <= gc.getHeight() &&
-		   playerX - playerTunnelingBuffer >= 0 &&
-		   playerY + playerTunnelingBuffer <= gc.getWidth() &&
-		   playerY - playerTunnelingBuffer >= 0)
-		{
-			return true;
-		}
-				
-			
-		return false;
-	}
+//	private boolean playerInsideBox(GameContainer gc) {
+//		if(playerX + playerTunnelingBuffer <= gc.getHeight() &&
+//		   playerX - playerTunnelingBuffer >= 0 &&
+//		   playerY + playerTunnelingBuffer <= gc.getWidth() &&
+//		   playerY - playerTunnelingBuffer >= 0)
+//		{
+//			return true;
+//		}
+//				
+//			
+//		return false;
+//	}
 
 	public int getID()
 	{

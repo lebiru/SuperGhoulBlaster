@@ -11,7 +11,7 @@ public class Game extends StateBasedGame
 	public static final int play = 1;
 	
 	public static final int SCREEN_WIDTH = 600;
-	public static final int SCREEN_HEIGHT= 480;
+	public static final int SCREEN_HEIGHT= 600;
 	static final int maxFPS = 60;
 	
 	
