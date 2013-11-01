@@ -124,14 +124,16 @@ public class Play extends BasicGameState{
 		
 		g.drawString("X: " + controller.getXAxisValue() + ", Y: " + controller.getYAxisValue(), 20, 20);
 		g.drawString("Right X: " + controller.getRXAxisValue() + 
-				   "\n Right Y: " + controller.getRYAxisValue() + 
-				   "\n Angle: " + (Math.atan2(controller.getRYAxisValue(), controller.getRXAxisValue())) * (180/Math.PI) + 90f , 20, 60);
+				   "\n Right Y: " + controller.getRYAxisValue(), 20, 60);
 		
 		playerAngle = (float) ((Math.atan2(controller.getRYAxisValue(), controller.getRXAxisValue())) * (180/Math.PI)) + 90f;
 		zombieAngle = (float) (Math.atan2(dy, dx) * (180/Math.PI)) + 90f;
 		player.setRotation(playerAngle);
 		zombie.setRotation(zombieAngle);
 		
+		
+		//g.drawLine(playerX + (player.getWidth()/2), playerY + (player.getHeight()/2), (float) Math.sin(playerAngle) + 50, (float) Math.cos(playerAngle) + 50);
+		g.drawString("Player Angle: " + playerAngle, 20, 140);
 		g.drawImage(player, playerX, playerY);
 		g.drawImage(zombie, zombieX, zombieY);
 		g.drawString("Play State", 10, 30);

@@ -9,6 +9,9 @@ public class Game extends StateBasedGame
 	public static final String gamename = "November Game";
 	public static final int menu = 0;
 	public static final int play = 1;
+	public static final int about = 2;
+	public static final int controls = 3;
+	public static final int gameOver = 4;
 	
 	public static final int SCREEN_WIDTH = 600;
 	public static final int SCREEN_HEIGHT= 600;
@@ -20,6 +23,9 @@ public class Game extends StateBasedGame
 		super(gamename);
 		this.addState(new Menu(menu));
 		this.addState(new Play(play));
+		this.addState(new Play(about));
+		this.addState(new Play(controls));
+		this.addState(new Play(gameOver));
 		
 	}
 	
@@ -29,7 +35,7 @@ public class Game extends StateBasedGame
 		this.getState(menu).init(gc, this);
 		this.getState(play).init(gc, this);
 		//enterState is the first screen the computer will show
-		this.enterState(play);
+		this.enterState(menu);
 		
 	}
 	
