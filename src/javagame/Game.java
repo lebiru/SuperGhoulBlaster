@@ -35,7 +35,7 @@ public class Game extends StateBasedGame
 		this.getState(menu).init(gc, this);
 		this.getState(play).init(gc, this);
 		//enterState is the first screen the computer will show
-		this.enterState(menu);
+		this.enterState(play);
 		
 	}
 	

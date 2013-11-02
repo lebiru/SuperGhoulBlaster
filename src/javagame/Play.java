@@ -10,11 +10,14 @@ import org.newdawn.slick.state.*;
 public class Play extends BasicGameState{
 	
 	Image player, sand, zombie;
+	Bullet bullet;
+	
 	float playerX = 300;
 	float playerY = 300;
 	float playerSpeed = 5;
 	float playerAngle = 90f;
 	int playerTunnelingBuffer = 10;
+	
 	
 	float zombieX = 40;
 	float zombieY = 40;
@@ -36,6 +39,7 @@ public class Play extends BasicGameState{
 	
 	Input input;
 	Controller controller;
+	GameContainer gc;
 	
 	
 	public Play(int state)
@@ -48,6 +52,9 @@ public class Play extends BasicGameState{
 		player = new Image("res/test.png");
 		sand = new Image("res/sand.png");
 		zombie = new Image("res/zombie.png");
+		bullet = new Bullet("res/images/bullet.png", player);
+		this.gc = gc;
+		
 		
 		input = gc.getInput();
 		controller = Controllers.getController(6);
@@ -134,9 +141,16 @@ public class Play extends BasicGameState{
 		
 		//g.drawLine(playerX + (player.getWidth()/2), playerY + (player.getHeight()/2), (float) Math.sin(playerAngle) + 50, (float) Math.cos(playerAngle) + 50);
 		g.drawString("Player Angle: " + playerAngle, 20, 140);
+		
 		g.drawImage(player, playerX, playerY);
 		g.drawImage(zombie, zombieX, zombieY);
+		if(outOfBounds(bullet) == false)
+		{
+			g.drawImage(bullet.getImage(), bullet.getBulletX(), bullet.getBulletY());
+		}
+		
 		g.drawString("Play State", 10, 30);
+		
 	}
 	
 	public void update(GameContainer gc, StateBasedGame sbg, int delta) throws SlickException
@@ -154,6 +168,29 @@ public class Play extends BasicGameState{
 		if(controller.getYAxisValue() <= -0.4 && (playerY + playerTunnelingBuffer >= 0)) { playerY = playerY + (controller.getYAxisValue() * playerSpeed);  }
 		if(controller.getYAxisValue() >= 0.4 && ((playerY + playerTunnelingBuffer + player.getHeight()) <= gc.getHeight()))  { playerY = playerY + (controller.getYAxisValue() * playerSpeed);  }
 		
+		if(controller.getZAxisValue() >= -1 && controller.getZAxisValue() <= -0.4 && bullet.getBulletIsAlive() == false ) 
+		{ 
+			bullet.setBulletIsAlive(true);
+			bullet.setBulletAngle(playerAngle - 90f);
+			bullet.setBulletX(playerX + 25);
+			bullet.setBulletY(playerY + 25);
+			bullet.setBulletDx(5);
+			bullet.setBulletDy(5);
+		}
+		
+		if(bullet.getBulletIsAlive() == true)
+		{
+			//move the bullet along its 2D trajectory
+			bullet.moveBullet();
+			
+			
+			if(outOfBounds(bullet) == true)
+			{
+				bullet.setBulletIsAlive(false);
+				
+			}
+		}
+	
 		dx = playerX - zombieX;
 		dy = playerY - zombieY;
 		zombieLength = (float) Math.sqrt(dx*dx + dy*dy);
@@ -165,18 +202,21 @@ public class Play extends BasicGameState{
 		
 	}
 	
-//	private boolean playerInsideBox(GameContainer gc) {
-//		if(playerX + playerTunnelingBuffer <= gc.getHeight() &&
-//		   playerX - playerTunnelingBuffer >= 0 &&
-//		   playerY + playerTunnelingBuffer <= gc.getWidth() &&
-//		   playerY - playerTunnelingBuffer >= 0)
-//		{
-//			return true;
-//		}
-//				
-//			
-//		return false;
-//	}
+	/**
+	 * Determines if the gameObject is outside of the screen.
+	 * @param b
+	 * @return
+	 */
+	private boolean outOfBounds(Bullet b)
+	{
+		if(b.getBulletX() <= 0 || b.getBulletX() >= gc.getWidth() ||
+		   b.getBulletY() <= 0 || b.getBulletY() >= gc.getHeight())
+		{
+			return true;
+		}
+		
+		return false;
+	}
 
 	public int getID()
 	{
