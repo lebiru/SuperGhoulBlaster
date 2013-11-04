@@ -23,9 +23,9 @@ public class Game extends StateBasedGame
 		super(gamename);
 		this.addState(new Menu(menu));
 		this.addState(new Play(play));
-		this.addState(new Play(about));
-		this.addState(new Play(controls));
-		this.addState(new Play(gameOver));
+//		this.addState(new About(about));
+//		this.addState(new Controls(controls));
+//		this.addState(new GameOver(gameOver));
 		
 	}
 	
@@ -34,8 +34,12 @@ public class Game extends StateBasedGame
 	{
 		this.getState(menu).init(gc, this);
 		this.getState(play).init(gc, this);
+		//this.getState(about).init(gc, this);
+		//this.getState(controls).init(gc, this);
+		//this.getState(gameOver).init(gc, this);
+		
 		//enterState is the first screen the computer will show
-		this.enterState(play);
+		this.enterState(menu);
 		
 	}
 	

@@ -1,6 +1,7 @@
 package javagame;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import org.lwjgl.input.Controller;
 import org.lwjgl.input.Controllers;
@@ -9,8 +10,10 @@ import org.newdawn.slick.state.*;
 
 public class Play extends BasicGameState{
 
-	Image player, sand, zombie;
-	private Image alphaMap, textureMap;
+	Image player, sand, rock, zombie;
+	Sound mainBGM, gameBGM, gameoverBGM, shoot;
+	private Image alphaMap;
+	Animation zombieAnimation;
 	Bullet bullet;
 
 	float playerX = 300;
@@ -50,12 +53,32 @@ public class Play extends BasicGameState{
 
 	public void init(GameContainer gc, StateBasedGame sgb) throws SlickException
 	{
-		player = new Image("res/images/test.png");
-		sand = new Image("res/images/sand.png");
+		//IMAGES
+		player = new Image("res/images/SGB_player_01.png");
+		sand = new Image("res/images/SGB_sand_01.png");
+		rock = new Image("res/images/SGB_rock_01.png");
 		zombie = new Image("res/images/zombie.png");
 		bullet = new Bullet("res/images/bullet.png", player);
-		alphaMap = new Image("res/images/alphacloak.png");
-		textureMap = new Image("res/images/grass.png");
+		alphaMap = new Image("res/images/alphacloak_vertical.png");
+
+		//SPRITESHEET
+		SpriteSheet sheet = new SpriteSheet("res/images/SGB_zombiesprite_01.png", 51, 62);
+
+		//MUSIC
+		mainBGM = new Sound("res/sound/BGM/Peace.ogg");
+		shoot = new Sound("res/sound/fx/Laser_Shoot22.wav");
+
+		
+		//mainBGM.loop();
+		
+
+
+		//loading zombie animation
+		zombieAnimation = new Animation();
+		for (int i=0;i<3;i++) 
+		{
+			zombieAnimation.addFrame(sheet.getSprite(i,0), 500);
+		}
 
 		gc.getGraphics().setBackground(Color.black);
 
@@ -75,34 +98,8 @@ public class Play extends BasicGameState{
 		controller.setRYAxisDeadZone(0.4f);
 		controller.setRYAxisDeadZone(-0.4f);
 
-
-		//creating the gridmap, or terrain. It's a 2D ArrayList.
-
-
-		//Screen width / gridtile width = num of tiles for 1 row
-		//row
-		for(int i = 0; i <= tileMapSize; i++)
-		{
-			gridmap.add(new ArrayList<String>());
-			//column
-			for(int j = 0; j <= tileMapSize; j++)
-			{
-				//the string will determine what type of tile it is, ex. "r" rock, "s" sand...
-				gridmap.get(i).add("r");
-			}
-		}
-
-		for(int i = 0; i <= tileMapSize; i++)
-		{
-
-			//column
-			for(int j = 0; j <= tileMapSize; j++)
-			{
-				System.out.print(gridmap.get(i).get(j));
-
-			}
-			System.out.print("\n");
-		}
+		
+		makeBackground(gc.getGraphics());
 
 
 	}
@@ -110,11 +107,7 @@ public class Play extends BasicGameState{
 	public void render(GameContainer gc, StateBasedGame sgb, Graphics g) throws SlickException
 	{
 
-
-
-		
-
-/////////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////
 
 		//Alpha Mapping
 		g.clearAlphaMap();
@@ -135,7 +128,7 @@ public class Play extends BasicGameState{
 		 * Now we are setting the paintbrush color to black.
 		 */
 		g.setColor(Color.black);
-		
+
 
 		/**
 		 * We say draw a black rectangle at this location.
@@ -146,7 +139,7 @@ public class Play extends BasicGameState{
 		 */
 		g.setColor(Color.white);
 		// write only alpha
-		
+
 
 
 		/**
@@ -154,30 +147,32 @@ public class Play extends BasicGameState{
 		 * engine to render the texture in alpha.
 		 */
 		g.setDrawMode(Graphics.MODE_ALPHA_MAP);
-		
+	
 		/**
 		 * And now we say for that alpha map texture, put it at location 300,50.
 		 */
 		//Over here is where you set the alphamap to the player
-		alphaMap.draw(playerX - 550, playerY - 550);
-		
+		alphaMap.draw(playerX + player.getWidth()/2 - alphaMap.getWidth()/2, playerY + player.getHeight()/2 - alphaMap.getHeight()/2);
+
+
 
 		/**
 		 * Now we set the "paintbrush" to alpha blend. Alpha blend is combining two 
 		 * images that has the ability to create new blended colors.
 		 */
 		g.setDrawMode(Graphics.MODE_ALPHA_BLEND);
-		
-		
-		renderBackground(g);
-		g.drawImage(zombie, zombieX, zombieY);
 
-		
-		//textureMap.draw(300,50);
+
+		renderBackground(g);
+		//g.drawImage(zombie, zombieX, zombieY);
+		zombieAnimation.draw(zombieX, zombieY);
+		zombieAnimation.getCurrentFrame().setRotation(zombieAngle);
+
+
 		g.setDrawMode(Graphics.MODE_NORMAL);
-		
+
 		//End Alpha Mapping
-//////////////////////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////////////////////
 		g.drawImage(player, playerX, playerY);
 		g.drawString("X: " + controller.getXAxisValue() + ", Y: " + controller.getYAxisValue(), 20, 20);
 		g.drawString("Right X: " + controller.getRXAxisValue() + 
@@ -188,12 +183,8 @@ public class Play extends BasicGameState{
 		player.setRotation(playerAngle);
 		zombie.setRotation(zombieAngle);
 
-
-		//g.drawLine(playerX + (player.getWidth()/2), playerY + (player.getHeight()/2), (float) Math.sin(playerAngle) + 50, (float) Math.cos(playerAngle) + 50);
 		g.drawString("Player Angle: " + playerAngle, 20, 140);
 
-
-		
 		if(outOfBounds(bullet) == false)
 		{
 			g.drawImage(bullet.getImage(), bullet.getBulletX(), bullet.getBulletY());
@@ -201,28 +192,33 @@ public class Play extends BasicGameState{
 
 		g.drawString("Play State", 10, 30);
 
-
-
-
-
-
 	}
 
-	private void renderBackground(Graphics g) {
-		//render the sand
+	private void renderBackground(Graphics g) 
+	{
+
+		//render the background
 		for(int i = 0; i <= tileMapSize; i++)
 		{
 
 			//column
 			for(int j = 0; j <= tileMapSize; j++)
 			{
+
 				if(gridmap.get(i).get(j) == "r")
+				{
+					g.drawImage(rock, offsetX, offsetY);
+					offsetX += tileWidth;
+				}
+				else if(gridmap.get(i).get(j) == "s")
 				{
 					g.drawImage(sand, offsetX, offsetY);
 					offsetX += tileWidth;
 				}
-
-
+				else
+				{
+					System.out.println("Unknown tile");
+				}
 
 			}
 
@@ -233,6 +229,37 @@ public class Play extends BasicGameState{
 
 		offsetX = 0;
 		offsetY = 0;
+		
+	}
+
+	private void makeBackground(Graphics g) {
+
+	
+		
+		Random ran = new Random();
+		int chance = ran.nextInt(20);
+		//render the background
+		for(int i = 0; i <= tileMapSize; i++)
+		{
+			gridmap.add(new ArrayList<String>());
+			//column
+			for(int j = 0; j <= tileMapSize; j++)
+			{
+				//the string will determine what type of tile it is, ex. "r" rock, "s" sand...
+				if(chance <= 3)
+				{
+					gridmap.get(i).add("r");
+				}
+				
+				else
+				{
+					gridmap.get(i).add("s");
+				}
+				
+				chance = ran.nextInt(20);
+				
+			}
+		}
 
 	}
 
@@ -259,6 +286,8 @@ public class Play extends BasicGameState{
 			bullet.setBulletY(playerY + 25);
 			bullet.setBulletDx(10);
 			bullet.setBulletDy(10);
+			shoot.play();
+
 		}
 
 		if(bullet.getBulletIsAlive() == true)
@@ -281,8 +310,11 @@ public class Play extends BasicGameState{
 		dy /= zombieLength;
 		zombieX += dx;
 		zombieY += dy;
-		
-		
+
+
+
+
+
 
 
 	}
