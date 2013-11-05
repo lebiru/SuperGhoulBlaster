@@ -53,6 +53,9 @@ public class Play extends BasicGameState{
 
 	public void init(GameContainer gc, StateBasedGame sgb) throws SlickException
 	{
+		
+		
+		
 		//IMAGES
 		player = new Image("res/images/SGB_player_01.png");
 		sand = new Image("res/images/SGB_sand_01.png");
@@ -61,6 +64,7 @@ public class Play extends BasicGameState{
 		bullet = new Bullet("res/images/bullet.png", player);
 		alphaMap = new Image("res/images/alphacloak_vertical.png");
 
+		
 		//SPRITESHEET
 		SpriteSheet sheet = new SpriteSheet("res/images/SGB_zombiesprite_01.png", 51, 62);
 

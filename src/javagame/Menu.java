@@ -24,7 +24,6 @@ public class Menu extends BasicGameState implements ComponentListener{
 	public void init(GameContainer gc, StateBasedGame sbg) throws SlickException
 	{
 
-
 		//replace these with "Play" and "About"
 		playMenu = new Image("res/images/playMenu.png");
 		aboutMenu = new Image("res/images/creditsMenu.png");
@@ -73,13 +72,15 @@ public class Menu extends BasicGameState implements ComponentListener{
 
 		if (source == areas[0]) 
 		{
-			System.out.println("Option 0 pressed!");
-			sbg.enterState(1);
+			//Enter How to Play
+			System.out.println("Entering How to Play");
+			sbg.enterState(3);
 		}
 
 		else if (source == areas[1]) 
 		{
-			System.out.println("Option 1 pressed!");
+			//Enter the Credits 
+			System.out.println("Entering Credits");
 			sbg.enterState(2);
 		}
 	}

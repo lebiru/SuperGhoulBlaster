@@ -1,20 +1,23 @@
 package javagame;
 
+import org.lwjgl.LWJGLException;
+import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.DisplayMode;
 import org.newdawn.slick.*;
 import org.newdawn.slick.state.*;
 
 public class Game extends StateBasedGame
 {
 
-	public static final String gamename = "November Game";
+	public static final String gamename = "Super Ghoul Blaster";
 	public static final int menu = 0;
 	public static final int play = 1;
 	public static final int about = 2;
 	public static final int controls = 3;
 	public static final int gameOver = 4;
 	
-	public static final int SCREEN_WIDTH = 600;
-	public static final int SCREEN_HEIGHT= 600;
+	public static int SCREEN_WIDTH = 600;
+	public static int SCREEN_HEIGHT= 600;
 	static final int maxFPS = 60;
 	
 	
@@ -23,9 +26,9 @@ public class Game extends StateBasedGame
 		super(gamename);
 		this.addState(new Menu(menu));
 		this.addState(new Play(play));
-//		this.addState(new About(about));
-//		this.addState(new Controls(controls));
-//		this.addState(new GameOver(gameOver));
+		this.addState(new About(about));
+		this.addState(new Controls(controls));
+		//this.addState(new GameOver(gameOver));
 		
 	}
 	
@@ -34,8 +37,8 @@ public class Game extends StateBasedGame
 	{
 		this.getState(menu).init(gc, this);
 		this.getState(play).init(gc, this);
-		//this.getState(about).init(gc, this);
-		//this.getState(controls).init(gc, this);
+		this.getState(about).init(gc, this);
+		this.getState(controls).init(gc, this);
 		//this.getState(gameOver).init(gc, this);
 		
 		//enterState is the first screen the computer will show
@@ -51,7 +54,28 @@ public class Game extends StateBasedGame
 			appgc = new AppGameContainer(new Game(gamename));
 			appgc.setTargetFrameRate(maxFPS);
 			appgc.setVSync(true);
-			appgc.setDisplayMode(SCREEN_WIDTH, SCREEN_HEIGHT, false); //third argument is fullscreen
+			
+			DisplayMode[] modes;
+			//Enabling Full-Screen Mode
+			try {
+				modes = Display.getAvailableDisplayModes();
+			    for (int i=0;i<modes.length;i++) {
+		             DisplayMode current = modes[i];
+		             System.out.println(current.getWidth() + "x" + current.getHeight() + "x" +
+		                                 current.getBitsPerPixel() + " " + current.getFrequency() + "Hz");
+		             SCREEN_WIDTH = current.getWidth();
+		             SCREEN_HEIGHT = current.getHeight();
+		         }
+		         System.out.println(appgc.getAspectRatio());
+			} catch (LWJGLException e) {
+				
+				e.printStackTrace();
+			}
+
+	     
+	         
+	         
+			appgc.setDisplayMode(SCREEN_WIDTH, SCREEN_HEIGHT, true); //third argument is fullscreen
 			appgc.start();
 		}catch(SlickException e)
 		{

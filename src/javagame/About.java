@@ -11,8 +11,8 @@ public class About extends BasicGameState implements ComponentListener{
 
 
 	private MouseOverArea[] areas = new MouseOverArea[2];
-	Image playMenu;
-	Image aboutMenu;
+	Image backButton;
+	
 	Image logo;
 	StateBasedGame sbg;
 
@@ -26,18 +26,13 @@ public class About extends BasicGameState implements ComponentListener{
 
 
 		//replace these with "Play" and "About"
-		playMenu = new Image("res/images/playMenu.png");
-		aboutMenu = new Image("res/images/creditsMenu.png");
-		logo = new Image("res/images/SGB_logo_01.png");
+		backButton = new Image("res/images/backButton.png");
 		this.sbg = sbg;
 
-		areas[0] = new MouseOverArea(gc, playMenu, 200, 400 + (0*100), 200, 90, this);
+		areas[0] = new MouseOverArea(gc, backButton, 200, 400 + (0*100), 200, 90, this);
 		areas[0].setNormalColor(new Color(1,1,1,0.8f));
 		areas[0].setMouseOverColor(new Color(1,1,1,0.9f));
 
-		areas[1] = new MouseOverArea(gc, aboutMenu, 200, 400 + (1*100), 200, 90, this);
-		areas[1].setNormalColor(new Color(1,1,1,0.8f));
-		areas[1].setMouseOverColor(new Color(1,1,1,0.9f));
 
 
 	}
@@ -45,12 +40,13 @@ public class About extends BasicGameState implements ComponentListener{
 	//for drawing things on screen
 	public void render(GameContainer gc, StateBasedGame sgb, Graphics g) throws SlickException
 	{
-		g.setBackground(Color.blue);
-		logo.draw(50, 0, 0.50f);
+		g.setBackground(Color.black);
+		
 
 
 
-		for (int i=0;i<2;i++) {
+		for (int i=0; i < 1 ; i++) 
+		{
 			areas[i].render(gc, g);
 		}
 	}
@@ -73,15 +69,10 @@ public class About extends BasicGameState implements ComponentListener{
 
 		if (source == areas[0]) 
 		{
-			System.out.println("Option 0 pressed!");
-			sbg.enterState(1);
+			System.out.println("Entering Menu");
+			sbg.enterState(0);
 		}
 
-		else if (source == areas[1]) 
-		{
-			System.out.println("Option 1 pressed!");
-			sbg.enterState(2);
-		}
 	}
 
 
