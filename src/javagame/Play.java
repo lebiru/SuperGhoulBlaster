@@ -6,7 +6,6 @@ import java.util.Random;
 import org.lwjgl.input.Controller;
 import org.lwjgl.input.Controllers;
 import org.newdawn.slick.*;
-import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.state.*;
 
 public class Play extends BasicGameState{
