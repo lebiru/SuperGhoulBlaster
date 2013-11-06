@@ -6,33 +6,19 @@ import java.util.Random;
 import org.lwjgl.input.Controller;
 import org.lwjgl.input.Controllers;
 import org.newdawn.slick.*;
+import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.state.*;
 
 public class Play extends BasicGameState{
 
-	Image player, sand, rock, zombie;
+	Image sand, rock;
 	Sound mainBGM, gameBGM, gameoverBGM, shoot;
 	private Image alphaMap;
 	Animation zombieAnimation;
 	Bullet bullet;
-
-	float playerX = 300;
-	float playerY = 300;
-	float playerSpeed = 3;
-	float playerAngle = 90f;
-	int playerTunnelingBuffer = 10;
-
-
-	float zombieX = 40;
-	float zombieY = 40;
-	float zombieSpeed = 5;
-	float zombieAngle = 90f;
-	float dx = 0;
-	float dy = 0;
-	float zombieLength = 0;
-
-
-
+	
+	Player hero;
+	Zombie ghoul;
 
 	ArrayList<ArrayList<String>> gridmap = new ArrayList<ArrayList<String>>();
 	int tileWidth = 50;
@@ -57,11 +43,11 @@ public class Play extends BasicGameState{
 		
 		
 		//IMAGES
-		player = new Image("res/images/SGB_player_01.png");
+		hero = new Player(new Image("res/images/SGB_player_01.png"));
 		sand = new Image("res/images/SGB_sand_01.png");
 		rock = new Image("res/images/SGB_rock_01.png");
-		zombie = new Image("res/images/zombie.png");
-		bullet = new Bullet("res/images/bullet.png", player);
+		ghoul = new Zombie(new Image("res/images/zombie.png"));
+		bullet = new Bullet("res/images/bullet.png", hero.getImage());
 		alphaMap = new Image("res/images/alphacloak_vertical.png");
 
 		
@@ -156,7 +142,7 @@ public class Play extends BasicGameState{
 		 * And now we say for that alpha map texture, put it at location 300,50.
 		 */
 		//Over here is where you set the alphamap to the player
-		alphaMap.draw(playerX + player.getWidth()/2 - alphaMap.getWidth()/2, playerY + player.getHeight()/2 - alphaMap.getHeight()/2);
+		alphaMap.draw(hero.getX() + hero.getWidth()/2 - alphaMap.getWidth()/2, hero.getY() + hero.getHeight()/2 - alphaMap.getHeight()/2);
 
 
 
@@ -169,35 +155,113 @@ public class Play extends BasicGameState{
 
 		renderBackground(g);
 		//g.drawImage(zombie, zombieX, zombieY);
-		zombieAnimation.draw(zombieX, zombieY);
-		zombieAnimation.getCurrentFrame().setRotation(zombieAngle);
+		zombieAnimation.draw(ghoul.getX(), ghoul.getY());
+		zombieAnimation.getCurrentFrame().setRotation(ghoul.getAngle());
 
 
 		g.setDrawMode(Graphics.MODE_NORMAL);
 
 		//End Alpha Mapping
 		//////////////////////////////////////////////////////////////////////////////
-		g.drawImage(player, playerX, playerY);
-		g.drawString("X: " + controller.getXAxisValue() + ", Y: " + controller.getYAxisValue(), 20, 20);
-		g.drawString("Right X: " + controller.getRXAxisValue() + 
-				"\n Right Y: " + controller.getRYAxisValue(), 20, 60);
+		g.drawImage(hero.getImage(), hero.getX(), hero.getY());
 
-		playerAngle = (float) ((Math.atan2(controller.getRYAxisValue(), controller.getRXAxisValue())) * (180/Math.PI)) + 90f;
-		zombieAngle = (float) (Math.atan2(dy, dx) * (180/Math.PI)) + 90f;
-		player.setRotation(playerAngle);
-		zombie.setRotation(zombieAngle);
 
-		g.drawString("Player Angle: " + playerAngle, 20, 140);
+		hero.setAngle((float) ((Math.atan2(controller.getRYAxisValue(), controller.getRXAxisValue())) * (180/Math.PI)) + 90f);
+		ghoul.setAngle((float) (Math.atan2(ghoul.getDY(), ghoul.getDX()) * (180/Math.PI)) + 90f);
+		hero.getImage().setRotation(hero.getAngle());
+		ghoul.getImage().setRotation(ghoul.getAngle());
+
 
 		if(outOfBounds(bullet) == false)
 		{
 			g.drawImage(bullet.getImage(), bullet.getBulletX(), bullet.getBulletY());
 		}
+		
+		g.drawString("Player Rect X: " + hero.getRect().getX() + " Y: " + hero.getRect().getY(), 20, 100);
+		g.drawString("Ghoul Rect X: " + ghoul.getRect().getX() + " Y: " + ghoul.getRect().getY(), 20, 150);
 
-		g.drawString("Play State", 10, 30);
 
 	}
 
+	
+
+	public void update(GameContainer gc, StateBasedGame sbg, int delta) throws SlickException
+	{
+
+
+
+		//		if(input.isKeyDown(Input.KEY_A) && playerInsideBox(gc)){ playerX--; }
+		//		if(input.isKeyDown(Input.KEY_D) && playerInsideBox(gc)){ playerX++; }
+		//		if(input.isKeyDown(Input.KEY_S) && playerInsideBox(gc)){ playerY++; }
+		//		if(input.isKeyDown(Input.KEY_W) && playerInsideBox(gc)){ playerY--; }
+		if(hero.getHealth() > 0)
+		{
+			
+			//MOVE
+			if(controller.getXAxisValue() <= -0.4 && (hero.getX() + hero.getTunnelingBuffer() >= 0)) { hero.setX(hero.getX() + (controller.getXAxisValue() * hero.getSpeed())); }
+			if(controller.getXAxisValue() >= 0.4 && ((hero.getX() + hero.getTunnelingBuffer() + hero.getWidth()) <= gc.getWidth())) { hero.setX(hero.getX() + (controller.getXAxisValue() * hero.getSpeed())); }
+			if(controller.getYAxisValue() <= -0.4 && (hero.getX() + hero.getTunnelingBuffer() >= 0)) { hero.setY(hero.getY() + (controller.getYAxisValue() * hero.getSpeed()));  }
+			if(controller.getYAxisValue() >= 0.4 && ((hero.getX() + hero.getTunnelingBuffer() + hero.getHeight()) <= gc.getHeight()))  { hero.setY(hero.getY() + (controller.getYAxisValue() * hero.getSpeed()));}
+
+			if(controller.getZAxisValue() >= -1 && controller.getZAxisValue() <= -0.4 && bullet.getBulletIsAlive() == false ) 
+			{ 
+				bullet.setBulletIsAlive(true);
+				bullet.setBulletAngle(hero.getAngle() - 90f);
+				bullet.setBulletX(hero.getX() + 25);
+				bullet.setBulletY(hero.getY() + 25);
+				bullet.setBulletDx(10);
+				bullet.setBulletDy(10);
+				shoot.play();
+
+			}
+
+			if(bullet.getBulletIsAlive() == true)
+			{
+				//move the bullet along its 2D trajectory
+				bullet.moveBullet();
+
+
+				if(outOfBounds(bullet) == true)
+				{
+					bullet.setBulletIsAlive(false);
+
+				}
+			}
+
+			
+			
+			
+			ghoul.move(hero);
+			
+			//UPDATE
+			hero.updateRect();
+			ghoul.updateRect();
+			
+			//COLLISION
+			if(hero.getRect().intersects(ghoul.getRect()))
+			{
+				hero.setHealth(-1);
+			}
+			
+			
+			
+		}
+		
+		if(hero.getHealth() <= 0)
+		{
+			sbg.enterState(4);
+		}
+	
+		
+
+
+
+
+
+
+
+	}
+	
 	private void renderBackground(Graphics g) 
 	{
 
@@ -264,62 +328,6 @@ public class Play extends BasicGameState{
 				
 			}
 		}
-
-	}
-
-	public void update(GameContainer gc, StateBasedGame sbg, int delta) throws SlickException
-	{
-
-
-
-		//		if(input.isKeyDown(Input.KEY_A) && playerInsideBox(gc)){ playerX--; }
-		//		if(input.isKeyDown(Input.KEY_D) && playerInsideBox(gc)){ playerX++; }
-		//		if(input.isKeyDown(Input.KEY_S) && playerInsideBox(gc)){ playerY++; }
-		//		if(input.isKeyDown(Input.KEY_W) && playerInsideBox(gc)){ playerY--; }
-
-		if(controller.getXAxisValue() <= -0.4 && (playerX + playerTunnelingBuffer >= 0)) { playerX = playerX + (controller.getXAxisValue() * playerSpeed); }
-		if(controller.getXAxisValue() >= 0.4 && ((playerX + playerTunnelingBuffer + player.getWidth()) <= gc.getWidth())) { playerX = playerX + (controller.getXAxisValue() * playerSpeed); }
-		if(controller.getYAxisValue() <= -0.4 && (playerY + playerTunnelingBuffer >= 0)) { playerY = playerY + (controller.getYAxisValue() * playerSpeed);  }
-		if(controller.getYAxisValue() >= 0.4 && ((playerY + playerTunnelingBuffer + player.getHeight()) <= gc.getHeight()))  { playerY = playerY + (controller.getYAxisValue() * playerSpeed);  }
-
-		if(controller.getZAxisValue() >= -1 && controller.getZAxisValue() <= -0.4 && bullet.getBulletIsAlive() == false ) 
-		{ 
-			bullet.setBulletIsAlive(true);
-			bullet.setBulletAngle(playerAngle - 90f);
-			bullet.setBulletX(playerX + 25);
-			bullet.setBulletY(playerY + 25);
-			bullet.setBulletDx(10);
-			bullet.setBulletDy(10);
-			shoot.play();
-
-		}
-
-		if(bullet.getBulletIsAlive() == true)
-		{
-			//move the bullet along its 2D trajectory
-			bullet.moveBullet();
-
-
-			if(outOfBounds(bullet) == true)
-			{
-				bullet.setBulletIsAlive(false);
-
-			}
-		}
-
-		dx = playerX - zombieX;
-		dy = playerY - zombieY;
-		zombieLength = (float) Math.sqrt(dx*dx + dy*dy);
-		dx /= zombieLength;
-		dy /= zombieLength;
-		zombieX += dx;
-		zombieY += dy;
-
-
-
-
-
-
 
 	}
 

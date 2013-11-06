@@ -28,7 +28,7 @@ public class Game extends StateBasedGame
 		this.addState(new Play(play));
 		this.addState(new About(about));
 		this.addState(new Controls(controls));
-		//this.addState(new GameOver(gameOver));
+		this.addState(new GameOver(gameOver));
 		
 	}
 	
@@ -39,7 +39,7 @@ public class Game extends StateBasedGame
 		this.getState(play).init(gc, this);
 		this.getState(about).init(gc, this);
 		this.getState(controls).init(gc, this);
-		//this.getState(gameOver).init(gc, this);
+		this.getState(gameOver).init(gc, this);
 		
 		//enterState is the first screen the computer will show
 		this.enterState(menu);
@@ -75,7 +75,7 @@ public class Game extends StateBasedGame
 	     
 	         
 	         
-			appgc.setDisplayMode(SCREEN_WIDTH, SCREEN_HEIGHT, true); //third argument is fullscreen
+			appgc.setDisplayMode(SCREEN_WIDTH, SCREEN_HEIGHT, false); //third argument is fullscreen
 			appgc.start();
 		}catch(SlickException e)
 		{

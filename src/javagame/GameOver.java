@@ -64,7 +64,7 @@ public class GameOver extends BasicGameState implements ComponentListener{
 
 	public int getID()
 	{
-		return 0; //returns the ID of this class (menu is 0)
+		return 4; //returns the ID of this class 
 	}
 
 	@Override
