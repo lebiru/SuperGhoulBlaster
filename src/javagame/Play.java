@@ -163,8 +163,20 @@ public class Play extends BasicGameState{
 		//////////////////////////////////////////////////////////////////////////////
 		g.drawImage(hero.getImage(), hero.getX(), hero.getY());
 
-
-		hero.setAngle((float) ((Math.atan2(controller.getRYAxisValue(), controller.getRXAxisValue())) * (180/Math.PI)) + 90f);
+		input = gc.getInput();
+		int mouseX = input.getMouseX();
+		int mouseY = input.getMouseY();
+		float mouseDX;
+		float mouseDY;
+		float mouseLength;
+		mouseDX = mouseX - hero.getX();
+		mouseDY = mouseY - hero.getY();
+		mouseLength = (float) Math.sqrt(Math.pow(mouseDX, 2) + Math.pow(mouseDY, 2));
+		//mouseDX /= mouseLength;
+		//mouseDY /= mouseLength;
+		
+		//hero.setAngle((float) ((Math.atan2(controller.getRYAxisValue(), controller.getRXAxisValue())) * (180/Math.PI)) + 90f);
+		hero.setAngle((float) ((Math.atan2(mouseDY, mouseDX)) * (180/Math.PI)) + 90f);
 		ghoul.setAngle((float) (Math.atan2(ghoul.getDY(), ghoul.getDX()) * (180/Math.PI)) + 90f);
 		hero.getImage().setRotation(hero.getAngle());
 		ghoul.getImage().setRotation(ghoul.getAngle());
@@ -188,14 +200,11 @@ public class Play extends BasicGameState{
 
 
 
-		//		if(input.isKeyDown(Input.KEY_A) && playerInsideBox(gc)){ playerX--; }
-		//		if(input.isKeyDown(Input.KEY_D) && playerInsideBox(gc)){ playerX++; }
-		//		if(input.isKeyDown(Input.KEY_S) && playerInsideBox(gc)){ playerY++; }
-		//		if(input.isKeyDown(Input.KEY_W) && playerInsideBox(gc)){ playerY--; }
+
 		if(hero.getHealth() > 0)
 		{
 
-			//MOVE
+			//MOVE USING CONTROLLER
 			if(controller.getXAxisValue() <= -0.4 && (hero.getX() + hero.getTunnelingBuffer() >= 0)) 
 			{ 
 				hero.setX(hero.getX() + (controller.getXAxisValue() * hero.getSpeed())); 
@@ -213,9 +222,41 @@ public class Play extends BasicGameState{
 			{ 
 				hero.setY(hero.getY() + (controller.getYAxisValue() * hero.getSpeed()));
 			}
+			
+			//MOVE USING KEYBOARD
+			if(input.isKeyDown(Input.KEY_A) && (hero.getX() + hero.getTunnelingBuffer() >= 0))
+			{ 
+				hero.setX(hero.getX() - hero.getSpeed()); 
+			}
+			if(input.isKeyDown(Input.KEY_D) && (hero.getX() + hero.getTunnelingBuffer() + hero.getWidth() <= gc.getWidth()))
+			{ 
+				hero.setX(hero.getX() + hero.getSpeed()); 
+			}
+			if(input.isKeyDown(Input.KEY_W) && (hero.getY() + hero.getTunnelingBuffer() >= 0))
+			{ 
+				hero.setY(hero.getY() - hero.getSpeed()); 
+			}
+			if(input.isKeyDown(Input.KEY_S) && (hero.getY() + hero.getTunnelingBuffer() + hero.getHeight() <= gc.getHeight()))
+			{ 
+				hero.setY(hero.getY() + hero.getSpeed()); 
+			}
 
-			//Shoot
+
+			//SHOOT USING CONTROLLER
 			if(controller.getZAxisValue() >= -1 && controller.getZAxisValue() <= -0.4 && bullet.getBulletIsAlive() == false ) 
+			{ 
+				bullet.setBulletIsAlive(true);
+				bullet.setBulletAngle(hero.getAngle() - 90f);
+				bullet.setBulletX(hero.getX() + 23);
+				bullet.setBulletY(hero.getY() + 23);
+				bullet.setBulletDx(30);
+				bullet.setBulletDy(30);
+				shoot.play();
+
+			}
+			
+			//SHOOT USING MOUSE
+			if(input.isMousePressed(0) && bullet.getBulletIsAlive() == false ) 
 			{ 
 				bullet.setBulletIsAlive(true);
 				bullet.setBulletAngle(hero.getAngle() - 90f);

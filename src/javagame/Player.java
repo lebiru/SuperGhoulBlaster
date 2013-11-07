@@ -5,8 +5,8 @@ import org.newdawn.slick.geom.Rectangle;
 
 public class Player 
 {	
-	float playerX = 40;
-	float playerY = 40;
+	float playerX = 300;
+	float playerY = 300;
 	
 	float playerWidth = 50;
 	float playerHeight = 50;
@@ -101,6 +101,7 @@ public class Player
 	{
 		return tunnelingBuffer;
 	}
+
 	
 	
 	

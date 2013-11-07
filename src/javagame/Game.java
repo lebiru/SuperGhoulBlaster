@@ -58,6 +58,7 @@ public class Game extends StateBasedGame
 			appgc.setTargetFrameRate(maxFPS);
 			appgc.setVSync(true);
 			
+			
 			DisplayMode[] modes;
 			//Enabling Full-Screen Mode
 			try {
