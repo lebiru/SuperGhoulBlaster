@@ -15,7 +15,7 @@ public class Play extends BasicGameState{
 	private Image alphaMap;
 	Animation zombieAnimation;
 	Bullet bullet;
-	
+
 	Player hero;
 	Zombie ghoul;
 
@@ -25,6 +25,8 @@ public class Play extends BasicGameState{
 	float offsetX = 0;
 	float offsetY = 0;
 	int tileMapSize = 11;
+	int tileMapWidth;
+	int tileMapHeight;
 
 	Input input;
 	Controller controller;
@@ -38,9 +40,9 @@ public class Play extends BasicGameState{
 
 	public void init(GameContainer gc, StateBasedGame sgb) throws SlickException
 	{
-		
-		
-		
+
+
+
 		//IMAGES
 		hero = new Player(new Image("res/images/SGB_player_01.png"));
 		sand = new Image("res/images/SGB_sand_01.png");
@@ -49,17 +51,11 @@ public class Play extends BasicGameState{
 		bullet = new Bullet("res/images/bullet.png", hero.getImage());
 		alphaMap = new Image("res/images/alphacloak_vertical.png");
 
-		
+
 		//SPRITESHEET
 		SpriteSheet sheet = new SpriteSheet("res/images/SGB_zombiesprite_01.png", 51, 62);
 
-		//MUSIC
-		mainBGM = new Sound("res/sound/BGM/Peace.ogg");
-		shoot = new Sound("res/sound/fx/Laser_Shoot22.wav");
-
-		
-		//mainBGM.loop();
-		
+		shoot = new Sound("res/sound/fx/Gunshot.wav");
 
 
 		//loading zombie animation
@@ -87,7 +83,10 @@ public class Play extends BasicGameState{
 		controller.setRYAxisDeadZone(0.4f);
 		controller.setRYAxisDeadZone(-0.4f);
 
-		
+		//Preparing TileMap
+		tileMapWidth = gc.getWidth()/tileWidth;
+		tileMapHeight = gc.getHeight()/tileHeight;
+
 		makeBackground(gc.getGraphics());
 
 
@@ -136,7 +135,7 @@ public class Play extends BasicGameState{
 		 * engine to render the texture in alpha.
 		 */
 		g.setDrawMode(Graphics.MODE_ALPHA_MAP);
-	
+
 		/**
 		 * And now we say for that alpha map texture, put it at location 300,50.
 		 */
@@ -175,14 +174,14 @@ public class Play extends BasicGameState{
 		{
 			g.drawImage(bullet.getImage(), bullet.getBulletX(), bullet.getBulletY());
 		}
-		
+
 		g.drawString("Player Rect X: " + hero.getRect().getX() + " Y: " + hero.getRect().getY(), 20, 100);
 		g.drawString("Ghoul Rect X: " + ghoul.getRect().getX() + " Y: " + ghoul.getRect().getY(), 20, 150);
 
 
 	}
 
-	
+
 
 	public void update(GameContainer gc, StateBasedGame sbg, int delta) throws SlickException
 	{
@@ -195,21 +194,35 @@ public class Play extends BasicGameState{
 		//		if(input.isKeyDown(Input.KEY_W) && playerInsideBox(gc)){ playerY--; }
 		if(hero.getHealth() > 0)
 		{
-			
-			//MOVE
-			if(controller.getXAxisValue() <= -0.4 && (hero.getX() + hero.getTunnelingBuffer() >= 0)) { hero.setX(hero.getX() + (controller.getXAxisValue() * hero.getSpeed())); }
-			if(controller.getXAxisValue() >= 0.4 && ((hero.getX() + hero.getTunnelingBuffer() + hero.getWidth()) <= gc.getWidth())) { hero.setX(hero.getX() + (controller.getXAxisValue() * hero.getSpeed())); }
-			if(controller.getYAxisValue() <= -0.4 && (hero.getX() + hero.getTunnelingBuffer() >= 0)) { hero.setY(hero.getY() + (controller.getYAxisValue() * hero.getSpeed()));  }
-			if(controller.getYAxisValue() >= 0.4 && ((hero.getX() + hero.getTunnelingBuffer() + hero.getHeight()) <= gc.getHeight()))  { hero.setY(hero.getY() + (controller.getYAxisValue() * hero.getSpeed()));}
 
+			//MOVE
+			if(controller.getXAxisValue() <= -0.4 && (hero.getX() + hero.getTunnelingBuffer() >= 0)) 
+			{ 
+				hero.setX(hero.getX() + (controller.getXAxisValue() * hero.getSpeed())); 
+			}
+			if(controller.getXAxisValue() >= 0.4 && ((hero.getX() + hero.getTunnelingBuffer() + hero.getWidth()) <= gc.getWidth())) 
+			{ 
+				hero.setX(hero.getX() + (controller.getXAxisValue() * hero.getSpeed())); 
+			}
+
+			if(controller.getYAxisValue() <= -0.4 && (hero.getY() + hero.getTunnelingBuffer() >= 0))
+			{ 
+				hero.setY(hero.getY() + (controller.getYAxisValue() * hero.getSpeed()));  
+			}
+			if(controller.getYAxisValue() >= 0.4 && ((hero.getY() + hero.getTunnelingBuffer() + hero.getHeight()) <= gc.getHeight()))  
+			{ 
+				hero.setY(hero.getY() + (controller.getYAxisValue() * hero.getSpeed()));
+			}
+
+			//Shoot
 			if(controller.getZAxisValue() >= -1 && controller.getZAxisValue() <= -0.4 && bullet.getBulletIsAlive() == false ) 
 			{ 
 				bullet.setBulletIsAlive(true);
 				bullet.setBulletAngle(hero.getAngle() - 90f);
-				bullet.setBulletX(hero.getX() + 25);
-				bullet.setBulletY(hero.getY() + 25);
-				bullet.setBulletDx(10);
-				bullet.setBulletDy(10);
+				bullet.setBulletX(hero.getX() + 23);
+				bullet.setBulletY(hero.getY() + 23);
+				bullet.setBulletDx(30);
+				bullet.setBulletDy(30);
 				shoot.play();
 
 			}
@@ -227,31 +240,31 @@ public class Play extends BasicGameState{
 				}
 			}
 
-			
-			
-			
+
+
+
 			ghoul.move(hero);
-			
+
 			//UPDATE
 			hero.updateRect();
 			ghoul.updateRect();
-			
+
 			//COLLISION
-			if(hero.getRect().intersects(ghoul.getRect()))
-			{
-				hero.setHealth(-1);
-			}
-			
-			
-			
+//			if(hero.getRect().intersects(ghoul.getRect()))
+//			{
+//				hero.setHealth(-1);
+//			}
+
+
+
 		}
-		
+
 		if(hero.getHealth() <= 0)
 		{
 			sbg.enterState(4);
 		}
-	
-		
+
+
 
 
 
@@ -260,16 +273,16 @@ public class Play extends BasicGameState{
 
 
 	}
-	
+
 	private void renderBackground(Graphics g) 
 	{
 
 		//render the background
-		for(int i = 0; i <= tileMapSize; i++)
+		for(int i = 0; i <= tileMapHeight; i++)
 		{
 
 			//column
-			for(int j = 0; j <= tileMapSize; j++)
+			for(int j = 0; j <= tileMapWidth; j++)
 			{
 
 				if(gridmap.get(i).get(j) == "r")
@@ -296,35 +309,35 @@ public class Play extends BasicGameState{
 
 		offsetX = 0;
 		offsetY = 0;
-		
+
 	}
 
 	private void makeBackground(Graphics g) {
 
-	
-		
+
+
 		Random ran = new Random();
 		int chance = ran.nextInt(20);
 		//render the background
-		for(int i = 0; i <= tileMapSize; i++)
+		for(int i = 0; i <= tileMapHeight; i++)
 		{
 			gridmap.add(new ArrayList<String>());
 			//column
-			for(int j = 0; j <= tileMapSize; j++)
+			for(int j = 0; j <= tileMapWidth; j++)
 			{
 				//the string will determine what type of tile it is, ex. "r" rock, "s" sand...
 				if(chance <= 3)
 				{
 					gridmap.get(i).add("r");
 				}
-				
+
 				else
 				{
 					gridmap.get(i).add("s");
 				}
-				
+
 				chance = ran.nextInt(20);
-				
+
 			}
 		}
 

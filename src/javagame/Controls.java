@@ -1,5 +1,7 @@
 package javagame;
 
+import javax.sound.midi.Soundbank;
+
 import org.newdawn.slick.*;
 import org.newdawn.slick.gui.AbstractComponent;
 import org.newdawn.slick.gui.ComponentListener;
@@ -70,6 +72,7 @@ public class Controls extends BasicGameState implements ComponentListener{
 		if (source == areas[0]) 
 		{
 			System.out.println("Entering Game");
+			
 			sbg.enterState(1);
 		}
 

@@ -21,7 +21,7 @@ public class Game extends StateBasedGame
 	static final int maxFPS = 60;
 	
 	
-	public Game(String gamename)
+	public Game(String gamename) throws SlickException
 	{
 		super(gamename);
 		this.addState(new Menu(menu));
@@ -29,6 +29,7 @@ public class Game extends StateBasedGame
 		this.addState(new About(about));
 		this.addState(new Controls(controls));
 		this.addState(new GameOver(gameOver));
+		
 		
 	}
 	
@@ -43,6 +44,7 @@ public class Game extends StateBasedGame
 		this.getState(gameOver).init(gc, this);
 		
 		//enterState is the first screen the computer will show
+		
 		this.enterState(menu);
 		
 	}

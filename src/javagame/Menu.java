@@ -28,6 +28,12 @@ public class Menu extends BasicGameState implements ComponentListener{
 		playMenu = new Image("res/images/playMenu.png");
 		aboutMenu = new Image("res/images/creditsMenu.png");
 		logo = new Image("res/images/SGB_logo_01.png");
+		
+		//Music
+		Sound titleBGM = new Sound("res/sound/BGM/Title.ogg");
+		Sound gameBGM = new Sound("res/sound/BGM/In Game.ogg");
+		Sound overBGM = new Sound("res/sound/BGM/Game Over.ogg");
+		
 		this.sbg = sbg;
 
 		areas[0] = new MouseOverArea(gc, playMenu, 200, 400 + (0*100), 200, 90, this);
