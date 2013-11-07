@@ -13,11 +13,13 @@ public class Play extends BasicGameState{
 	Image sand, rock;
 	Sound mainBGM, gameBGM, gameoverBGM, shoot;
 	private Image alphaMap;
-	Animation zombieAnimation;
+	
 	Bullet bullet;
 
 	Player hero;
 	Zombie ghoul;
+	
+	ArrayList<Zombie> ghoulArmy = new ArrayList<Zombie>();
 
 	ArrayList<ArrayList<String>> gridmap = new ArrayList<ArrayList<String>>();
 	int tileWidth = 50;
@@ -47,23 +49,26 @@ public class Play extends BasicGameState{
 		hero = new Player(new Image("res/images/SGB_player_01.png"));
 		sand = new Image("res/images/SGB_sand_01.png");
 		rock = new Image("res/images/SGB_rock_01.png");
-		ghoul = new Zombie(new Image("res/images/zombie.png"));
+
 		bullet = new Bullet("res/images/bullet.png", hero.getImage());
 		alphaMap = new Image("res/images/alphacloak_vertical.png");
 
+		//Making ghoul army
+		Random ran = new Random();
+		
+		for(int i = 0 ; i < 10; i++ )
+		{
+			ghoul = new Zombie(new Image("res/images/zombie.png"), ran.nextInt(gc.getWidth()), ran.nextInt(gc.getHeight()));
+			ghoul.initializeZombieAnimation(new SpriteSheet("res/images/SGB_zombiesprite_01.png", 51, 62));
+			ghoulArmy.add(ghoul);
+		}
+		System.out.println("GA size: " + ghoulArmy.size());
 
-		//SPRITESHEET
-		SpriteSheet sheet = new SpriteSheet("res/images/SGB_zombiesprite_01.png", 51, 62);
-
+		
 		shoot = new Sound("res/sound/fx/Gunshot.wav");
 
 
-		//loading zombie animation
-		zombieAnimation = new Animation();
-		for (int i=0;i<3;i++) 
-		{
-			zombieAnimation.addFrame(sheet.getSprite(i,0), 500);
-		}
+		
 
 		gc.getGraphics().setBackground(Color.black);
 
@@ -140,7 +145,7 @@ public class Play extends BasicGameState{
 		 * And now we say for that alpha map texture, put it at location 300,50.
 		 */
 		//Over here is where you set the alphamap to the player
-		alphaMap.draw(hero.getX() + hero.getWidth()/2 - alphaMap.getWidth()/2, hero.getY() + hero.getHeight()/2 - alphaMap.getHeight()/2);
+		//alphaMap.draw(hero.getX() + hero.getWidth()/2 - alphaMap.getWidth()/2, hero.getY() + hero.getHeight()/2 - alphaMap.getHeight()/2);
 
 
 
@@ -153,8 +158,8 @@ public class Play extends BasicGameState{
 
 		renderBackground(g);
 		//g.drawImage(zombie, zombieX, zombieY);
-		zombieAnimation.draw(ghoul.getX(), ghoul.getY());
-		zombieAnimation.getCurrentFrame().setRotation(ghoul.getAngle());
+		ghoul.getAnimation().draw(ghoul.getX(), ghoul.getY());
+		ghoul.getAnimation().getCurrentFrame().setRotation(ghoul.getAngle());
 
 
 		g.setDrawMode(Graphics.MODE_NORMAL);
@@ -172,8 +177,7 @@ public class Play extends BasicGameState{
 		mouseDX = mouseX - hero.getX();
 		mouseDY = mouseY - hero.getY();
 		mouseLength = (float) Math.sqrt(Math.pow(mouseDX, 2) + Math.pow(mouseDY, 2));
-		//mouseDX /= mouseLength;
-		//mouseDY /= mouseLength;
+
 		
 		//hero.setAngle((float) ((Math.atan2(controller.getRYAxisValue(), controller.getRXAxisValue())) * (180/Math.PI)) + 90f);
 		hero.setAngle((float) ((Math.atan2(mouseDY, mouseDX)) * (180/Math.PI)) + 90f);
@@ -204,24 +208,24 @@ public class Play extends BasicGameState{
 		if(hero.getHealth() > 0)
 		{
 
-			//MOVE USING CONTROLLER
-			if(controller.getXAxisValue() <= -0.4 && (hero.getX() + hero.getTunnelingBuffer() >= 0)) 
-			{ 
-				hero.setX(hero.getX() + (controller.getXAxisValue() * hero.getSpeed())); 
-			}
-			if(controller.getXAxisValue() >= 0.4 && ((hero.getX() + hero.getTunnelingBuffer() + hero.getWidth()) <= gc.getWidth())) 
-			{ 
-				hero.setX(hero.getX() + (controller.getXAxisValue() * hero.getSpeed())); 
-			}
-
-			if(controller.getYAxisValue() <= -0.4 && (hero.getY() + hero.getTunnelingBuffer() >= 0))
-			{ 
-				hero.setY(hero.getY() + (controller.getYAxisValue() * hero.getSpeed()));  
-			}
-			if(controller.getYAxisValue() >= 0.4 && ((hero.getY() + hero.getTunnelingBuffer() + hero.getHeight()) <= gc.getHeight()))  
-			{ 
-				hero.setY(hero.getY() + (controller.getYAxisValue() * hero.getSpeed()));
-			}
+//			//MOVE USING CONTROLLER
+//			if(controller.getXAxisValue() <= -0.4 && (hero.getX() + hero.getTunnelingBuffer() >= 0)) 
+//			{ 
+//				hero.setX(hero.getX() + (controller.getXAxisValue() * hero.getSpeed())); 
+//			}
+//			if(controller.getXAxisValue() >= 0.4 && ((hero.getX() + hero.getTunnelingBuffer() + hero.getWidth()) <= gc.getWidth())) 
+//			{ 
+//				hero.setX(hero.getX() + (controller.getXAxisValue() * hero.getSpeed())); 
+//			}
+//
+//			if(controller.getYAxisValue() <= -0.4 && (hero.getY() + hero.getTunnelingBuffer() >= 0))
+//			{ 
+//				hero.setY(hero.getY() + (controller.getYAxisValue() * hero.getSpeed()));  
+//			}
+//			if(controller.getYAxisValue() >= 0.4 && ((hero.getY() + hero.getTunnelingBuffer() + hero.getHeight()) <= gc.getHeight()))  
+//			{ 
+//				hero.setY(hero.getY() + (controller.getYAxisValue() * hero.getSpeed()));
+//			}
 			
 			//MOVE USING KEYBOARD
 			if(input.isKeyDown(Input.KEY_A) && (hero.getX() + hero.getTunnelingBuffer() >= 0))
@@ -242,18 +246,18 @@ public class Play extends BasicGameState{
 			}
 
 
-			//SHOOT USING CONTROLLER
-			if(controller.getZAxisValue() >= -1 && controller.getZAxisValue() <= -0.4 && bullet.getBulletIsAlive() == false ) 
-			{ 
-				bullet.setBulletIsAlive(true);
-				bullet.setBulletAngle(hero.getAngle() - 90f);
-				bullet.setBulletX(hero.getX() + 23);
-				bullet.setBulletY(hero.getY() + 23);
-				bullet.setBulletDx(30);
-				bullet.setBulletDy(30);
-				shoot.play();
-
-			}
+//			//SHOOT USING CONTROLLER
+//			if(controller.getZAxisValue() >= -1 && controller.getZAxisValue() <= -0.4 && bullet.getBulletIsAlive() == false ) 
+//			{ 
+//				bullet.setBulletIsAlive(true);
+//				bullet.setBulletAngle(hero.getAngle() - 90f);
+//				bullet.setBulletX(hero.getX() + 23);
+//				bullet.setBulletY(hero.getY() + 23);
+//				bullet.setBulletDx(30);
+//				bullet.setBulletDy(30);
+//				shoot.play();
+//
+//			}
 			
 			//SHOOT USING MOUSE
 			if(input.isMousePressed(0) && bullet.getBulletIsAlive() == false ) 

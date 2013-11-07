@@ -1,6 +1,9 @@
 package javagame;
 
+import org.newdawn.slick.Animation;
 import org.newdawn.slick.Image;
+import org.newdawn.slick.SlickException;
+import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.geom.Rectangle;
 
 public class Zombie 
@@ -18,15 +21,20 @@ public class Zombie
 	private float zombieAngle = 90f;
 	private int zombieHealth = 1;
 	
+	Animation zombieAnimation;
+	
 	float zombieLength = 0;
 	
 	Rectangle zombieRect;
 	Image zombieImage;
 	
-	Zombie(Image i)
+	Zombie(Image i, float startX, float startY) throws SlickException
 	{
+		this.zombieX = startX;
+		this.zombieY = startY;
 		this.zombieRect = new Rectangle(this.zombieX, this.zombieY, this.zombieWidth, this.zombieHeight);
 		this.zombieImage = i;
+		
 	}
 	
 	void setX(float x)
@@ -114,6 +122,22 @@ public class Zombie
 		zombieX += zombiedx;
 		zombieY += zombiedy;
 		
+	}
+
+	public void initializeZombieAnimation(SpriteSheet sp) 
+	{
+		//loading zombie animation
+		zombieAnimation = new Animation();
+		for (int i=0;i<3;i++) 
+		{
+			zombieAnimation.addFrame(sp.getSprite(i,0), 500);
+		}
+		
+	}
+	
+	Animation getAnimation()
+	{
+		return zombieAnimation;
 	}
 	
 }
