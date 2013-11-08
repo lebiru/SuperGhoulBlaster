@@ -2,6 +2,7 @@ package javagame;
 
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.geom.Rectangle;
 
 public class Bullet extends Image
 {
@@ -14,10 +15,13 @@ public class Bullet extends Image
 	private boolean bulletIsAlive;
 	private Image image;
 	
+	Rectangle bulletRect;
+	
 	public Bullet(String string, Image parent) throws SlickException 
 	{
 		this.image = new Image(string);
 		bulletIsAlive = false;
+		bulletRect = new Rectangle(bulletX, bulletY, 10, 10);
 	
 	}
 	
@@ -82,6 +86,16 @@ public class Bullet extends Image
 	{
 		bulletDy = i;
 		
+	}
+	
+	public Rectangle getRect()
+	{
+		return bulletRect;
+	}
+
+	public void updateRect() 
+	{
+		this.bulletRect.setLocation(bulletX, bulletY);
 	}
 
 }

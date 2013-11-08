@@ -11,7 +11,7 @@ import org.newdawn.slick.state.*;
 public class Play extends BasicGameState{
 
 	Image sand, rock;
-	Sound mainBGM, gameBGM, gameoverBGM, shoot;
+	Sound mainBGM, gameBGM, gameoverBGM, shoot, zombieDie;
 	private Image alphaMap;
 	
 	Bullet bullet;
@@ -20,6 +20,7 @@ public class Play extends BasicGameState{
 	Zombie ghoul;
 	
 	ArrayList<Zombie> ghoulArmy = new ArrayList<Zombie>();
+	
 
 	ArrayList<ArrayList<String>> gridmap = new ArrayList<ArrayList<String>>();
 	int tileWidth = 50;
@@ -43,7 +44,7 @@ public class Play extends BasicGameState{
 	public void init(GameContainer gc, StateBasedGame sgb) throws SlickException
 	{
 
-
+		
 
 		//IMAGES
 		hero = new Player(new Image("res/images/SGB_player_01.png"));
@@ -52,21 +53,24 @@ public class Play extends BasicGameState{
 
 		bullet = new Bullet("res/images/bullet.png", hero.getImage());
 		alphaMap = new Image("res/images/alphacloak_vertical.png");
-
+		
 		//Making ghoul army
 		Random ran = new Random();
 		
 		for(int i = 0 ; i < 10; i++ )
 		{
-			ghoul = new Zombie(new Image("res/images/zombie.png"), ran.nextInt(gc.getWidth()), ran.nextInt(gc.getHeight()));
-			ghoul.initializeZombieAnimation(new SpriteSheet("res/images/SGB_zombiesprite_01.png", 51, 62));
+			
+			ghoul = new Zombie(new Image("res/images/zombie.png").getSubImage(0, 0, 50, 62), ran.nextInt(gc.getWidth()), ran.nextInt(gc.getHeight()));
+			ghoul.initializeZombieAnimation(new SpriteSheet("res/images/SGB_zombiesprite_01.png", 50, 62));
 			ghoulArmy.add(ghoul);
 		}
-		System.out.println("GA size: " + ghoulArmy.size());
+	
 
-		
+		//SOUND & MUSIC
 		shoot = new Sound("res/sound/fx/Gunshot.wav");
-
+		zombieDie = new Sound("res/sound/fx/Zombie Kill.wav");
+		Sound gameBGM = new Sound("res/sound/BGM/In Game.ogg");
+		gameBGM.loop();
 
 		
 
@@ -157,9 +161,15 @@ public class Play extends BasicGameState{
 
 
 		renderBackground(g);
-		//g.drawImage(zombie, zombieX, zombieY);
-		ghoul.getAnimation().draw(ghoul.getX(), ghoul.getY());
-		ghoul.getAnimation().getCurrentFrame().setRotation(ghoul.getAngle());
+		for(Zombie z : ghoulArmy)
+		{
+			g.drawImage(z.getImage(), z.getX(), z.getY());
+			z.getAnimation().draw(z.getX(), z.getY());
+			z.getAnimation().getCurrentFrame().setRotation(z.getAngle());
+			z.setAngle((float) (Math.atan2(z.getDY(), z.getDX()) * (180/Math.PI)) + 90f);
+			z.getImage().setRotation(z.getAngle());
+		}
+
 
 
 		g.setDrawMode(Graphics.MODE_NORMAL);
@@ -181,9 +191,9 @@ public class Play extends BasicGameState{
 		
 		//hero.setAngle((float) ((Math.atan2(controller.getRYAxisValue(), controller.getRXAxisValue())) * (180/Math.PI)) + 90f);
 		hero.setAngle((float) ((Math.atan2(mouseDY, mouseDX)) * (180/Math.PI)) + 90f);
-		ghoul.setAngle((float) (Math.atan2(ghoul.getDY(), ghoul.getDX()) * (180/Math.PI)) + 90f);
+		//ghoul.setAngle((float) (Math.atan2(ghoul.getDY(), ghoul.getDX()) * (180/Math.PI)) + 90f);
 		hero.getImage().setRotation(hero.getAngle());
-		ghoul.getImage().setRotation(ghoul.getAngle());
+		//ghoul.getImage().setRotation(ghoul.getAngle());
 
 
 		if(outOfBounds(bullet) == false)
@@ -192,7 +202,7 @@ public class Play extends BasicGameState{
 		}
 
 		g.drawString("Player Rect X: " + hero.getRect().getX() + " Y: " + hero.getRect().getY(), 20, 100);
-		g.drawString("Ghoul Rect X: " + ghoul.getRect().getX() + " Y: " + ghoul.getRect().getY(), 20, 150);
+		//g.drawString("Ghoul Rect X: " + ghoul.getRect().getX() + " Y: " + ghoul.getRect().getY(), 20, 150);
 
 
 	}
@@ -269,7 +279,6 @@ public class Play extends BasicGameState{
 				bullet.setBulletDx(30);
 				bullet.setBulletDy(30);
 				shoot.play();
-
 			}
 
 			if(bullet.getBulletIsAlive() == true)
@@ -287,18 +296,36 @@ public class Play extends BasicGameState{
 
 
 
-
-			ghoul.move(hero);
+			for(Zombie z : ghoulArmy)
+			{
+				z.move(hero);
+				z.updateRect();
+			}
+		
 
 			//UPDATE
 			hero.updateRect();
-			ghoul.updateRect();
+			bullet.updateRect();
+			
 
 			//COLLISION
-//			if(hero.getRect().intersects(ghoul.getRect()))
-//			{
-//				hero.setHealth(-1);
-//			}
+			if(hero.getRect().intersects(ghoul.getRect()))
+			{
+				hero.setHealth(-1);
+			}
+			
+			for(int i = 0; i < ghoulArmy.size(); i++)
+			{
+				if(bullet.getRect().intersects(ghoulArmy.get(i).getRect()))
+				{
+					System.out.println("Bullet Hit!" + ghoulArmy.size());
+					
+					bullet.setBulletIsAlive(false);
+					ghoulArmy.remove(i);
+					zombieDie.play();
+				}
+			}
+			
 
 
 
