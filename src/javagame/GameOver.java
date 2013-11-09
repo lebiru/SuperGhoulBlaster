@@ -73,13 +73,13 @@ public class GameOver extends BasicGameState implements ComponentListener{
 
 		if (source == areas[0]) 
 		{
-			System.out.println("Option 0 pressed!");
+			System.out.println("Play Again pressed");
 			sbg.enterState(1);
 		}
 
 		else if (source == areas[1]) 
 		{
-			System.out.println("Option 1 pressed!");
+			System.out.println("Main Menu Pressed");
 			sbg.enterState(4);
 		}
 	}
