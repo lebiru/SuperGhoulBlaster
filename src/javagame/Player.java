@@ -8,8 +8,11 @@ public class Player
 	float playerX = 300;
 	float playerY = 300;
 	
-	float playerWidth = 50;
-	float playerHeight = 50;
+	float playerCenterX;
+	float playerCenterY;
+	
+	public float playerWidth = 50;
+	public float playerHeight = 50;
 	
 	float playerSpeed = 5;
 	float playerAngle = 90f;
@@ -25,6 +28,8 @@ public class Player
 	{
 		this.playerRect = new Rectangle(this.playerX, this.playerY, this.playerWidth, this.playerHeight);
 		this.playerImage = i;
+		this.playerCenterX = playerWidth/2;
+		this.playerCenterY = playerHeight/2;
 	}
 	
 	void setX(float x)

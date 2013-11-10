@@ -60,7 +60,7 @@ public class Play extends BasicGameState{
 
 
 		//bullet = new Bullet("res/images/bullet.png", hero.getImage());
-		alphaMap = new Image("res/images/alphacloak.png");
+		alphaMap = new Image("res/images/alphaClock2.png");
 
 		//Making ghoul army
 		Random ran = new Random();
@@ -162,12 +162,13 @@ public class Play extends BasicGameState{
 		}
 
 
-		//alphaMap.draw(hero.getX() - alphaMap.getWidth()/2, hero.getY() + 25 - alphaMap.getHeight()/2);
+		alphaMap.draw(hero.getX() + 25 - alphaMap.getWidth()/2, hero.getY() + 25 - alphaMap.getHeight()/2);
+	
 
 		g.drawImage(hero.getImage(), hero.getX(), hero.getY());
 
-
-
+		alphaMap.setRotation(hero.getAngle());
+		
 
 		//hero.setAngle((float) ((Math.atan2(controller.getRYAxisValue(), controller.getRXAxisValue())) * (180/Math.PI)) + 90f);
 
