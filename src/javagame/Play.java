@@ -1,6 +1,8 @@
 package javagame;
 
 
+import java.awt.Graphics2D;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 import java.util.Random;
@@ -8,6 +10,7 @@ import org.lwjgl.input.Controller;
 import org.lwjgl.input.Controllers;
 import org.newdawn.slick.*;
 import org.newdawn.slick.state.*;
+
 
 public class Play extends BasicGameState{
 
@@ -23,6 +26,8 @@ public class Play extends BasicGameState{
 	Zombie ghoul;
 
 	ArrayList<Zombie> ghoulArmy = new ArrayList<Zombie>();
+	ArrayList<Point2D> ghoulSpawnPoints = new ArrayList<Point2D>();
+	
 
 	ArrayList<ArrayList<String>> gridmap = new ArrayList<ArrayList<String>>();
 	int tileWidth = 50;
@@ -59,12 +64,16 @@ public class Play extends BasicGameState{
 
 		//Making ghoul army
 		Random ran = new Random();
-
+		
+		//Create Ghoul Spawn Points
+		ghoulSpawnPoints = createSpawnPoints(ghoulSpawnPoints, gc);
+		
+		
 		for(int i = 0 ; i < 10; i++ )
 		{
 
 			ghoul = new Zombie(new Image("res/images/zombie.png").getSubImage(0, 0, 50, 62), ran.nextInt(gc.getWidth()), ran.nextInt(gc.getHeight()));
-
+			ghoul.setPosition(ghoulSpawnPoints.get(ran.nextInt(ghoulSpawnPoints.size())));
 			ghoul.initializeZombieAnimation(new SpriteSheet("res/images/SGB_zombiesprite_01.png", 50, 62));
 			ghoulArmy.add(ghoul);
 		}
@@ -79,12 +88,14 @@ public class Play extends BasicGameState{
 		hero.setY(gc.getHeight()/2);
 
 
+
 		//SOUND & MUSIC
 		shoot = new Sound("res/sound/fx/Gunshot.wav");
 		zombieDie = new Sound("res/sound/fx/Zombie Kill.wav");
 		Sound gameBGM = new Sound("res/sound/BGM/In Game.ogg");
+		
 		gameBGM.loop();
-
+		
 
 
 		gc.getGraphics().setBackground(Color.black);
@@ -115,8 +126,54 @@ public class Play extends BasicGameState{
 
 	}
 
+	private ArrayList<Point2D> createSpawnPoints(ArrayList<Point2D> gsp, GameContainer gc) 
+	{
+		Random ran = new Random();
+		int numOfSpawnPoints = 100;
+		int spawnZoneBuffer = 100;
+		
+		float x;
+		float y;
+		int xFlipper;
+		int yFlipper;
+		
+		for(int i = 0; i <= numOfSpawnPoints; i++)
+		{
+			xFlipper = ran.nextInt(2);
+			yFlipper = ran.nextInt(2);
+			
+			
+			if(xFlipper == 0)
+			{
+				x = ran.nextInt(spawnZoneBuffer) * -1;
+			}
+			else
+			{
+				x = gc.getWidth() + ran.nextInt(spawnZoneBuffer);
+			}
+			
+			if(yFlipper == 0)
+			{
+				y = ran.nextInt(spawnZoneBuffer) * -1;
+			}
+			else
+			{
+				y = gc.getWidth() + ran.nextInt(spawnZoneBuffer);
+			}
+		
+			ghoulSpawnPoints.add(new Point2D.Float(x, y));
+
+		}
+
+		
+		return gsp;
+	}
+
 	public void render(GameContainer gc, StateBasedGame sgb, Graphics g) throws SlickException
 	{
+		
+		
+		
 		g.setBackground(Color.black);
 
 		g.setColor(Color.white);
@@ -137,6 +194,15 @@ public class Play extends BasicGameState{
 			z.getAnimation().getCurrentFrame().setRotation(z.getAngle());
 			z.setAngle((float) (Math.atan2(z.getDY(), z.getDX()) * (180/Math.PI)) + 90f);
 			z.getImage().setRotation(z.getAngle());
+		}
+		
+		for(Bullet b : bulletManager)
+		{
+			if(outOfBounds(b) == false)
+			{
+				g.drawImage(b.getImage(), b.getBulletX(), b.getBulletY());
+			}
+
 		}
 
 
@@ -166,14 +232,7 @@ public class Play extends BasicGameState{
 
 
 
-		for(Bullet b : bulletManager)
-		{
-			if(outOfBounds(b) == false)
-			{
-				g.drawImage(b.getImage(), b.getBulletX(), b.getBulletY());
-			}
-
-		}
+	
 
 
 		g.drawString("Player Rect X: " + hero.getRect().getX() + " Y: " + hero.getRect().getY() +
@@ -320,7 +379,7 @@ public class Play extends BasicGameState{
 
 						b.setBulletIsAlive(false);
 						ghoulArmy.remove(i);
-						zombieDie.play();
+						zombieDie.play(0.9f,0.2f);
 					}
 				}
 

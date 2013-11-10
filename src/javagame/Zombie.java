@@ -1,5 +1,7 @@
 package javagame;
 
+import java.awt.geom.Point2D;
+
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
@@ -138,6 +140,12 @@ public class Zombie
 	Animation getAnimation()
 	{
 		return zombieAnimation;
+	}
+
+	public void setPosition(Point2D point2d) 
+	{
+		this.zombieX = (float)point2d.getX();
+		this.zombieY = (float)point2d.getY();		
 	}
 	
 }
