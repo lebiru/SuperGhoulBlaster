@@ -27,7 +27,7 @@ public class Play extends BasicGameState{
 
 	ArrayList<Zombie> ghoulArmy = new ArrayList<Zombie>();
 	ArrayList<Point2D> ghoulSpawnPoints = new ArrayList<Point2D>();
-	
+
 
 	ArrayList<ArrayList<String>> gridmap = new ArrayList<ArrayList<String>>();
 	int tileWidth = 50;
@@ -60,20 +60,25 @@ public class Play extends BasicGameState{
 
 
 		//bullet = new Bullet("res/images/bullet.png", hero.getImage());
-		alphaMap = new Image("res/images/flashlight.png");
+		alphaMap = new Image("res/images/alphacloak.png");
 
 		//Making ghoul army
 		Random ran = new Random();
-		
+
 		//Create Ghoul Spawn Points
 		ghoulSpawnPoints = createSpawnPoints(ghoulSpawnPoints, gc);
-		
-		
+
+
 		for(int i = 0 ; i < 10; i++ )
 		{
 
-			ghoul = new Zombie(new Image("res/images/zombie.png").getSubImage(0, 0, 50, 62), ran.nextInt(gc.getWidth()), ran.nextInt(gc.getHeight()));
-			ghoul.setPosition(ghoulSpawnPoints.get(ran.nextInt(ghoulSpawnPoints.size())));
+			ghoul = new Zombie
+					(
+							new Image("res/images/SGB_zombiesprite_01.png").getSubImage(0, 0, 50, 62), 
+							ran.nextInt(gc.getWidth()), 
+							ran.nextInt(gc.getHeight())
+							);
+			ghoul.setPosition(ghoulSpawnPoints.remove((ran.nextInt(ghoulSpawnPoints.size()))));
 			ghoul.initializeZombieAnimation(new SpriteSheet("res/images/SGB_zombiesprite_01.png", 50, 62));
 			ghoulArmy.add(ghoul);
 		}
@@ -93,10 +98,8 @@ public class Play extends BasicGameState{
 		shoot = new Sound("res/sound/fx/Gunshot.wav");
 		zombieDie = new Sound("res/sound/fx/Zombie Kill.wav");
 		Sound gameBGM = new Sound("res/sound/BGM/In Game.ogg");
-		
-		gameBGM.loop();
-		
 
+		gameBGM.loop();
 
 		gc.getGraphics().setBackground(Color.black);
 
@@ -129,64 +132,70 @@ public class Play extends BasicGameState{
 	private ArrayList<Point2D> createSpawnPoints(ArrayList<Point2D> gsp, GameContainer gc) 
 	{
 		Random ran = new Random();
-		int numOfSpawnPoints = 100;
-		int spawnZoneBuffer = 100;
-		
-		float x;
-		float y;
+		int numOfSpawnPoints = 20;
+		int spawnZoneBuffer = 50;
+
+		float x = 0;
+		float y = 0;
 		int xFlipper;
 		int yFlipper;
-		
+		int quadFlipper;
+
+
 		for(int i = 0; i <= numOfSpawnPoints; i++)
 		{
 			xFlipper = ran.nextInt(2);
 			yFlipper = ran.nextInt(2);
-			
-			
-			if(xFlipper == 0)
+			quadFlipper = ran.nextInt(4);
+
+			//TOP
+			if(quadFlipper == 0)
 			{
-				x = ran.nextInt(spawnZoneBuffer) * -1;
+				x = ran.nextInt(gc.getWidth());
+				y = -100;
 			}
-			else
+
+			//RIGHT
+			if(quadFlipper == 1)
 			{
-				x = gc.getWidth() + ran.nextInt(spawnZoneBuffer);
+				x = gc.getWidth() + 100;
+				y = ran.nextInt(gc.getHeight());
 			}
-			
-			if(yFlipper == 0)
+
+			//BOTTOM
+			if(quadFlipper == 2)
 			{
-				y = ran.nextInt(spawnZoneBuffer) * -1;
+				x = ran.nextInt(gc.getWidth());
+				y = gc.getHeight()+ 100;
 			}
-			else
+
+			//LEFT
+			if(quadFlipper == 3)
 			{
-				y = gc.getWidth() + ran.nextInt(spawnZoneBuffer);
+				x = -100;
+				y = ran.nextInt(gc.getHeight());
 			}
-		
-			ghoulSpawnPoints.add(new Point2D.Float(x, y));
+
+
+			System.out.println("x: " + x + "  y: " + y);
+			gsp.add(new Point2D.Float(x, y));
 
 		}
 
-		
+
+
+
 		return gsp;
 	}
 
 	public void render(GameContainer gc, StateBasedGame sgb, Graphics g) throws SlickException
 	{
-		
-		
-		
+
+
+
 		g.setBackground(Color.black);
-
-		g.setColor(Color.white);
-		g.setDrawMode(Graphics.MODE_ALPHA_MAP);
-
-		alphaMap.draw(hero.getX() + hero.getWidth()/2 - alphaMap.getWidth()/2, hero.getY() + hero.getHeight()/2 - alphaMap.getHeight()/2);
-
-
-		g.setDrawMode(Graphics.MODE_ALPHA_BLEND);
-
-
-
 		renderBackground(g);
+		
 		for(Zombie z : ghoulArmy)
 		{
 			g.drawImage(z.getImage(), z.getX(), z.getY());
@@ -206,9 +215,9 @@ public class Play extends BasicGameState{
 		}
 
 
+		alphaMap.draw(hero.getX()  - alphaMap.getWidth()/2, hero.getY() - alphaMap.getHeight()/2);
 
-		g.setDrawMode(Graphics.MODE_NORMAL);
-
+	
 
 
 		//End Alpha Mapping
@@ -229,14 +238,6 @@ public class Play extends BasicGameState{
 		//hero.setAngle((float) ((Math.atan2(controller.getRYAxisValue(), controller.getRXAxisValue())) * (180/Math.PI)) + 90f);
 		hero.setAngle((float) ((Math.atan2(mouseDY, mouseDX)) * (180/Math.PI)) + 90f);
 		hero.getImage().setRotation(hero.getAngle());
-
-
-
-	
-
-
-		g.drawString("Player Rect X: " + hero.getRect().getX() + " Y: " + hero.getRect().getY() +
-				"//n GhoulArmy Size: " + ghoulArmy.size(), 20, 100);
 
 
 
