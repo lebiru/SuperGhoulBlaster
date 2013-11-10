@@ -23,6 +23,8 @@ public class Zombie
 	private float zombieAngle = 90f;
 	private int zombieHealth = 1;
 	
+	private boolean isAlive = false;
+	
 	Animation zombieAnimation;
 	
 	float zombieLength = 0;
@@ -37,6 +39,11 @@ public class Zombie
 		this.zombieRect = new Rectangle(this.zombieX, this.zombieY, this.zombieWidth, this.zombieHeight);
 		this.zombieImage = i;
 		
+	}
+	
+	void setSpeed(float newSpeed)
+	{
+		this.zombieSpeed = newSpeed;
 	}
 	
 	void setX(float x)
@@ -121,8 +128,8 @@ public class Zombie
 		zombieLength = (float) Math.sqrt(zombiedx*zombiedx + zombiedy*zombiedy);
 		zombiedx /= zombieLength;
 		zombiedy /= zombieLength;
-		zombieX += zombiedx;
-		zombieY += zombiedy;
+		zombieX += (zombiedx * zombieSpeed);
+		zombieY += (zombiedy * zombieSpeed);
 		
 	}
 
@@ -147,6 +154,18 @@ public class Zombie
 		this.zombieX = (float)point2d.getX();
 		this.zombieY = (float)point2d.getY();		
 	}
+
+	public void setGhoulIsAlive(boolean b) 
+	{
+		this.isAlive = b;
+		
+	}
+	
+	public boolean getAlive()
+	{
+		return this.isAlive;
+	}
+
 	
 }
 

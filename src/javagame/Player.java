@@ -16,7 +16,7 @@ public class Player
 	
 	float tunnelingBuffer = 5;
 	
-	int playerHealth = 1;
+	int playerHealth = 100;
 	
 	Rectangle playerRect;
 	Image playerImage;

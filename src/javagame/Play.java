@@ -15,10 +15,10 @@ import org.newdawn.slick.state.*;
 public class Play extends BasicGameState{
 
 	Image sand, rock;
-	Sound mainBGM, gameBGM, gameoverBGM, shoot, zombieDie;
+	Sound mainBGM, gameBGM, gameoverBGM, shoot, zombieDie, reload;
 	private Image alphaMap;
 
-	//Bullet bullet;
+
 	ArrayList<Bullet> bulletManager = new ArrayList<Bullet>();
 	int numOfBullets = 3;
 
@@ -68,7 +68,7 @@ public class Play extends BasicGameState{
 		//Create Ghoul Spawn Points
 		ghoulSpawnPoints = createSpawnPoints(ghoulSpawnPoints, gc);
 
-
+		//Create the Zombies
 		for(int i = 0 ; i < 10; i++ )
 		{
 
@@ -79,13 +79,15 @@ public class Play extends BasicGameState{
 							ran.nextInt(gc.getHeight())
 							);
 			ghoul.setPosition(ghoulSpawnPoints.remove((ran.nextInt(ghoulSpawnPoints.size()))));
+			ghoul.setSpeed(ran.nextInt(2) + 1); //FUN?
 			ghoul.initializeZombieAnimation(new SpriteSheet("res/images/SGB_zombiesprite_01.png", 50, 62));
+			ghoul.setGhoulIsAlive(true);
 			ghoulArmy.add(ghoul);
 		}
 
 		for(int i = 0; i < numOfBullets; i++)
 		{
-			bulletManager.add(new Bullet("res/images/bullet.png", hero.getImage()));
+			bulletManager.add(new Bullet("res/images/bulletOne.png", hero.getImage()));
 		}
 
 		//Player Initialization
@@ -98,6 +100,7 @@ public class Play extends BasicGameState{
 		shoot = new Sound("res/sound/fx/Gunshot.wav");
 		zombieDie = new Sound("res/sound/fx/Zombie Kill.wav");
 		Sound gameBGM = new Sound("res/sound/BGM/In Game.ogg");
+		reload = new Sound("res/sound/fx/Item.wav");
 
 		gameBGM.loop();
 
@@ -129,85 +132,29 @@ public class Play extends BasicGameState{
 
 	}
 
-	private ArrayList<Point2D> createSpawnPoints(ArrayList<Point2D> gsp, GameContainer gc) 
-	{
-		Random ran = new Random();
-		int numOfSpawnPoints = 20;
-		int spawnZoneBuffer = 50;
-
-		float x = 0;
-		float y = 0;
-		int xFlipper;
-		int yFlipper;
-		int quadFlipper;
-
-
-		for(int i = 0; i <= numOfSpawnPoints; i++)
-		{
-			xFlipper = ran.nextInt(2);
-			yFlipper = ran.nextInt(2);
-			quadFlipper = ran.nextInt(4);
-
-			//TOP
-			if(quadFlipper == 0)
-			{
-				x = ran.nextInt(gc.getWidth());
-				y = -100;
-			}
-
-			//RIGHT
-			if(quadFlipper == 1)
-			{
-				x = gc.getWidth() + 100;
-				y = ran.nextInt(gc.getHeight());
-			}
-
-			//BOTTOM
-			if(quadFlipper == 2)
-			{
-				x = ran.nextInt(gc.getWidth());
-				y = gc.getHeight()+ 100;
-			}
-
-			//LEFT
-			if(quadFlipper == 3)
-			{
-				x = -100;
-				y = ran.nextInt(gc.getHeight());
-			}
-
-
-			System.out.println("x: " + x + "  y: " + y);
-			gsp.add(new Point2D.Float(x, y));
-
-		}
-
-
-
-
-		return gsp;
-	}
 
 	public void render(GameContainer gc, StateBasedGame sgb, Graphics g) throws SlickException
 	{
 
-
-
 		g.setBackground(Color.black);
 		renderBackground(g);
-		
+
 		for(Zombie z : ghoulArmy)
 		{
-			g.drawImage(z.getImage(), z.getX(), z.getY());
-			z.getAnimation().draw(z.getX(), z.getY());
-			z.getAnimation().getCurrentFrame().setRotation(z.getAngle());
-			z.setAngle((float) (Math.atan2(z.getDY(), z.getDX()) * (180/Math.PI)) + 90f);
-			z.getImage().setRotation(z.getAngle());
+			if(z.getAlive() == true)
+			{
+				g.drawImage(z.getImage(), z.getX(), z.getY());
+				z.getAnimation().draw(z.getX(), z.getY());
+				z.getAnimation().getCurrentFrame().setRotation(z.getAngle());
+				z.setAngle((float) (Math.atan2(z.getDY(), z.getDX()) * (180/Math.PI)) + 90f);
+				z.getImage().setRotation(z.getAngle());
+			}
+
 		}
-		
+
 		for(Bullet b : bulletManager)
 		{
-			if(outOfBounds(b) == false)
+			if(outOfBounds(b) == false && b.getAlive() == true)
 			{
 				g.drawImage(b.getImage(), b.getBulletX(), b.getBulletY());
 			}
@@ -215,29 +162,24 @@ public class Play extends BasicGameState{
 		}
 
 
-		alphaMap.draw(hero.getX()  - alphaMap.getWidth()/2, hero.getY() - alphaMap.getHeight()/2);
+		//alphaMap.draw(hero.getX() - alphaMap.getWidth()/2, hero.getY() + 25 - alphaMap.getHeight()/2);
 
-	
-
-
-		//End Alpha Mapping
-		//////////////////////////////////////////////////////////////////////////////
 		g.drawImage(hero.getImage(), hero.getX(), hero.getY());
 
-		input = gc.getInput();
-		int mouseX = input.getMouseX();
-		int mouseY = input.getMouseY();
-		float mouseDX;
-		float mouseDY;
-		float mouseLength;
-		mouseDX = mouseX - hero.getX();
-		mouseDY = mouseY - hero.getY();
-		mouseLength = (float) Math.sqrt(Math.pow(mouseDX, 2) + Math.pow(mouseDY, 2));
+
 
 
 		//hero.setAngle((float) ((Math.atan2(controller.getRYAxisValue(), controller.getRXAxisValue())) * (180/Math.PI)) + 90f);
-		hero.setAngle((float) ((Math.atan2(mouseDY, mouseDX)) * (180/Math.PI)) + 90f);
+
 		hero.getImage().setRotation(hero.getAngle());
+
+		g.drawString("Number of Avaliable Bullets: " + numOfBullets, 20, 90);
+		for(int i = 0; i < bulletManager.size(); i++)
+		{
+			g.drawString("Alive? " + bulletManager.get(i).getAlive(), 20, 100 + (i * 20));
+		}
+
+
 
 
 
@@ -248,6 +190,16 @@ public class Play extends BasicGameState{
 	public void update(GameContainer gc, StateBasedGame sbg, int delta) throws SlickException
 	{
 
+		input = gc.getInput();
+		int mouseX = input.getMouseX();
+		int mouseY = input.getMouseY();
+		float mouseDX;
+		float mouseDY;
+		float mouseLength;
+		mouseDX = mouseX - hero.getX();
+		mouseDY = mouseY - hero.getY();
+		mouseLength = (float) Math.sqrt(Math.pow(mouseDX, 2) + Math.pow(mouseDY, 2));
+		hero.setAngle((float) ((Math.atan2(mouseDY, mouseDX)) * (180/Math.PI)) + 90f);
 
 
 		if(hero.getHealth() > 0)
@@ -305,25 +257,46 @@ public class Play extends BasicGameState{
 			//			}
 
 			//SHOOT USING MOUSE
-			for(Bullet b : bulletManager)
+			if(input.isMousePressed(0))
 			{
-				if(input.isMousePressed(0) && b.getBulletIsAlive() == false) 
-				{ 
+				for(Bullet b : bulletManager)
+				{
+					//If we've found a free bullet
+					if(b.getAlive() == false && numOfBullets > 0) 
+					{ 
 
-					b.setBulletIsAlive(true);
-					b.setBulletAngle(hero.getAngle() - 90f);
-					b.setBulletX(hero.getX() + 23);
-					b.setBulletY(hero.getY() + 23);
-					b.setBulletDx(30);
-					b.setBulletDy(30);
-					shoot.play();
+						b.setBulletIsAlive(true);
+						b.setBulletAngle(hero.getAngle() - 90f);
+						b.setBulletX(hero.getX() + 23);
+						b.setBulletY(hero.getY() + 23);
+						b.setBulletDx(30);
+						b.setBulletDy(30);
+						shoot.play();
+						
+						numOfBullets--;
+						return;
+					}
 				}
+
+			}
+
+			//RELOAD USING RIGHT MOUSE BUTTON
+			if(input.isMousePressed(1))
+			{
+				for(int i = 0; i < bulletManager.size(); i++)
+				{
+					bulletManager.get(i).setBulletIsAlive(false);
+				}
+				numOfBullets = 3;
+				reload.play();
+
 			}
 
 
+
 			for(Bullet b : bulletManager)
 			{
-				if(b.getBulletIsAlive() == true)
+				if(b.getAlive() == true)
 				{
 					//move the bullet along its 2D trajectory
 					b.moveBullet();
@@ -332,7 +305,6 @@ public class Play extends BasicGameState{
 					if(outOfBounds(b) == true)
 					{
 						b.setBulletIsAlive(false);
-
 					}
 				}
 			}
@@ -342,8 +314,12 @@ public class Play extends BasicGameState{
 
 			for(Zombie z : ghoulArmy)
 			{
-				z.move(hero);
-				z.updateRect();
+				if(z.getAlive() == true)
+				{
+					z.move(hero);
+					z.updateRect();
+				}
+
 			}
 
 
@@ -352,7 +328,11 @@ public class Play extends BasicGameState{
 
 			for(Bullet b : bulletManager)
 			{
-				b.updateRect();
+				if(b.getAlive() == true)
+				{
+					b.updateRect();
+				}
+
 			}
 
 
@@ -362,29 +342,32 @@ public class Play extends BasicGameState{
 
 			for(Zombie z : ghoulArmy)
 			{
-				if(hero.getRect().intersects(z.getRect()))
+				if(z.getAlive() == true)
 				{
-					hero.setHealth(-1);
+					if(hero.getRect().intersects(z.getRect()))
+					{
+						hero.setHealth(-1);
+					}
 				}
+
 			}
 
 
-			for(Bullet b : bulletManager)
+			for(int j = 0; j < bulletManager.size(); j++)
 			{
 				for(int i = 0; i < ghoulArmy.size(); i++)
 				{
 
-					if(b.getRect().intersects(ghoulArmy.get(i).getRect()))
+					//i shouldnt be removing them from bulletManager...same for ghoulArmy
+					if(bulletManager.get(j).getRect().intersects(ghoulArmy.get(i).getRect())
+							&& ghoulArmy.get(i).getAlive() == true
+							&& bulletManager.get(j).getAlive() == true)
 					{
-						System.out.println("Bullet Hit!" + ghoulArmy.size());
-
-						b.setBulletIsAlive(false);
-						ghoulArmy.remove(i);
+						bulletManager.get(j).setBulletIsAlive(false);
+						ghoulArmy.get(i).setGhoulIsAlive(false);						
 						zombieDie.play(0.9f,0.2f);
 					}
 				}
-
-
 
 			}
 
@@ -464,6 +447,58 @@ public class Play extends BasicGameState{
 			}
 		}
 
+	}
+
+
+	private ArrayList<Point2D> createSpawnPoints(ArrayList<Point2D> gsp, GameContainer gc) 
+	{
+		Random ran = new Random();
+		int numOfSpawnPoints = 20;
+
+		float x = 0;
+		float y = 0;
+		int quadFlipper;
+
+
+		for(int i = 0; i <= numOfSpawnPoints; i++)
+		{
+			quadFlipper = ran.nextInt(4);
+
+			//TOP
+			if(quadFlipper == 0)
+			{
+				x = ran.nextInt(gc.getWidth());
+				y = -100;
+			}
+
+			//RIGHT
+			if(quadFlipper == 1)
+			{
+				x = gc.getWidth() + 100;
+				y = ran.nextInt(gc.getHeight());
+			}
+
+			//BOTTOM
+			if(quadFlipper == 2)
+			{
+				x = ran.nextInt(gc.getWidth());
+				y = gc.getHeight()+ 100;
+			}
+
+			//LEFT
+			if(quadFlipper == 3)
+			{
+				x = -100;
+				y = ran.nextInt(gc.getHeight());
+			}
+
+
+			System.out.println("x: " + x + "  y: " + y);
+			gsp.add(new Point2D.Float(x, y));
+
+		}
+
+		return gsp;
 	}
 
 	/**

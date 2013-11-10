@@ -12,7 +12,9 @@ public class Bullet extends Image
 	private float bulletDx;
 	private float bulletDy;
 	private float bulletAngle;
+	private int   bulletDamage;
 	private boolean bulletIsAlive;
+	
 	private Image image;
 	
 	Rectangle bulletRect;
@@ -38,11 +40,6 @@ public class Bullet extends Image
 	public Image getImage()
 	{
 		return image;
-	}
-	
-	public boolean getBulletIsAlive()
-	{
-		return bulletIsAlive;
 	}
 	
 	public float getBulletAngle()
@@ -74,6 +71,7 @@ public class Bullet extends Image
 	{
 		bulletX += Math.cos(bulletAngle * (Math.PI / 180)) * bulletDx;
 		bulletY += Math.sin(bulletAngle * (Math.PI / 180)) * bulletDy;
+		this.image.setRotation(bulletAngle + 90f);
 	}
 
 	public void setBulletDx(int i) 
@@ -97,6 +95,12 @@ public class Bullet extends Image
 	{
 		this.bulletRect.setLocation(bulletX, bulletY);
 	}
+
+	public boolean getAlive() 
+	{
+		return this.bulletIsAlive;
+	}
+
 
 }
 
