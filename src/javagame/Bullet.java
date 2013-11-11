@@ -24,6 +24,7 @@ public class Bullet extends Image
 		this.image = new Image(string);
 		bulletIsAlive = false;
 		bulletRect = new Rectangle(bulletX, bulletY, 10, 10);
+		bulletDamage = 2;
 	
 	}
 	
@@ -99,6 +100,10 @@ public class Bullet extends Image
 	public boolean getAlive() 
 	{
 		return this.bulletIsAlive;
+	}
+
+	public int getDamage() {
+		return bulletDamage;
 	}
 
 

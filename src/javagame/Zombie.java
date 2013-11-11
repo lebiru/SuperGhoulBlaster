@@ -21,7 +21,7 @@ public class Zombie
 	private float zombieHeight = 50;
 	private float zombieSpeed = 3;
 	private float zombieAngle = 90f;
-	private int zombieHealth = 1;
+	private int zombieHealth = 10;
 	
 	private boolean isAlive = false;
 	
@@ -32,12 +32,18 @@ public class Zombie
 	Rectangle zombieRect;
 	Image zombieImage;
 	
+	Rectangle healthBar;
+	
+	
 	Zombie(Image i, float startX, float startY) throws SlickException
 	{
 		this.zombieX = startX;
 		this.zombieY = startY;
 		this.zombieRect = new Rectangle(this.zombieX, this.zombieY, this.zombieWidth, this.zombieHeight);
 		this.zombieImage = i;
+		
+		healthBar = new Rectangle(zombieX + 50, zombieY + 50, 100, 20);
+		
 		
 	}
 	
@@ -131,6 +137,10 @@ public class Zombie
 		zombieX += (zombiedx * zombieSpeed);
 		zombieY += (zombiedy * zombieSpeed);
 		
+		healthBar.setBounds(zombieX + 50, zombieY + 50, 100, 20);
+		
+		
+		
 	}
 
 	public void initializeZombieAnimation(SpriteSheet sp) 
@@ -164,6 +174,17 @@ public class Zombie
 	public boolean getAlive()
 	{
 		return this.isAlive;
+	}
+	
+	public void setHealth(int damage)
+	{
+		this.zombieHealth -= damage;
+	}
+
+	public void resetHealth() 
+	{
+		this.zombieHealth = 10;
+		
 	}
 
 	
