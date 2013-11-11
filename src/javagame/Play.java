@@ -28,6 +28,8 @@ public class Play extends BasicGameState{
 
 	ArrayList<Zombie> ghoulArmy = new ArrayList<Zombie>();
 	ArrayList<Point2D> ghoulSpawnPoints = new ArrayList<Point2D>();
+	
+	
 
 
 	ArrayList<ArrayList<String>> gridmap = new ArrayList<ArrayList<String>>();
@@ -113,17 +115,17 @@ public class Play extends BasicGameState{
 
 
 		input = gc.getInput();
-		controller = Controllers.getController(6);
+		//controller = Controllers.getController(6);
 
-		controller.setXAxisDeadZone(0.4f);
-		controller.setXAxisDeadZone(-0.4f);
-		controller.setYAxisDeadZone(0.4f);
-		controller.setYAxisDeadZone(-0.4f);
-
-		controller.setRXAxisDeadZone(0.4f);
-		controller.setRXAxisDeadZone(-0.4f);
-		controller.setRYAxisDeadZone(0.4f);
-		controller.setRYAxisDeadZone(-0.4f);
+//		controller.setXAxisDeadZone(0.4f);
+//		controller.setXAxisDeadZone(-0.4f);
+//		controller.setYAxisDeadZone(0.4f);
+//		controller.setYAxisDeadZone(-0.4f);
+//
+//		controller.setRXAxisDeadZone(0.4f);
+//		controller.setRXAxisDeadZone(-0.4f);
+//		controller.setRYAxisDeadZone(0.4f);
+//		controller.setRYAxisDeadZone(-0.4f);
 
 		//Preparing TileMap
 		tileMapWidth = gc.getWidth()/tileWidth;
