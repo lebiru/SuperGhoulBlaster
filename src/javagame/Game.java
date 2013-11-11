@@ -15,11 +15,11 @@ public class Game extends StateBasedGame
 	public static final int about = 2;
 	public static final int controls = 3;
 	public static final int gameOver = 4;
+	public static final int shop = 5;
 	
 	public static int SCREEN_WIDTH = 600;
 	public static int SCREEN_HEIGHT= 600;
 	static final int maxFPS = 60;
-	
 	
 	public Game(String gamename) throws SlickException
 	{
@@ -29,6 +29,7 @@ public class Game extends StateBasedGame
 		this.addState(new About(about));
 		this.addState(new Controls(controls));
 		this.addState(new GameOver(gameOver));
+		this.addState(new Shop(shop));
 		
 		
 	}
@@ -44,7 +45,7 @@ public class Game extends StateBasedGame
 //		this.getState(gameOver).init(gc, this);
 		
 		//enterState is the first screen the computer will show
-		this.enterState(play);
+		this.enterState(menu);
 		
 	}
 	

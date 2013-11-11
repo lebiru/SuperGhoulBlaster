@@ -1,15 +1,14 @@
 package javagame;
 
-
-import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.PriorityQueue;
 import java.util.Random;
 import org.lwjgl.input.Controller;
 import org.lwjgl.input.Controllers;
 import org.newdawn.slick.*;
 import org.newdawn.slick.state.*;
+import org.newdawn.slick.state.transition.FadeInTransition;
+import org.newdawn.slick.state.transition.FadeOutTransition;
 
 
 public class Play extends BasicGameState{
@@ -18,6 +17,8 @@ public class Play extends BasicGameState{
 	Sound mainBGM, gameBGM, gameoverBGM, shoot, zombieDie, reload;
 	private Image alphaMap;
 
+
+	public int waveNumber = 1;
 
 	ArrayList<Bullet> bulletManager = new ArrayList<Bullet>();
 	int numOfBullets = 3;
@@ -48,10 +49,11 @@ public class Play extends BasicGameState{
 
 	}
 
-	public void init(GameContainer gc, StateBasedGame sgb) throws SlickException
+	public void init(GameContainer gc, StateBasedGame sbg) throws SlickException
 	{
 
-
+	
+		
 		//IMAGES
 		hero = new Player(new Image("res/images/SGB_player_01.png"));
 		sand = new Image("res/images/SGB_sand_01.png");
@@ -78,13 +80,14 @@ public class Play extends BasicGameState{
 							ran.nextInt(gc.getWidth()), 
 							ran.nextInt(gc.getHeight())
 							);
-			ghoul.setPosition(ghoulSpawnPoints.remove((ran.nextInt(ghoulSpawnPoints.size()))));
+			ghoul.setPosition(ghoulSpawnPoints.get((ran.nextInt(ghoulSpawnPoints.size()))));
 			ghoul.setSpeed(ran.nextInt(2) + 1); //FUN?
 			ghoul.initializeZombieAnimation(new SpriteSheet("res/images/SGB_zombiesprite_01.png", 50, 62));
 			ghoul.setGhoulIsAlive(true);
 			ghoulArmy.add(ghoul);
 		}
 
+		//instantiate the bullets
 		for(int i = 0; i < numOfBullets; i++)
 		{
 			bulletManager.add(new Bullet("res/images/bulletOne.png", hero.getImage()));
@@ -127,8 +130,7 @@ public class Play extends BasicGameState{
 		tileMapHeight = gc.getHeight()/tileHeight;
 
 		makeBackground(gc.getGraphics());
-
-
+		
 
 	}
 
@@ -162,18 +164,20 @@ public class Play extends BasicGameState{
 		}
 
 
-		alphaMap.draw(hero.getX() + 25 - alphaMap.getWidth()/2, hero.getY() + 25 - alphaMap.getHeight()/2);
-	
 
 		g.drawImage(hero.getImage(), hero.getX(), hero.getY());
-
+		hero.getImage().setRotation(hero.getAngle());
+		
+		alphaMap.draw(hero.getX() + 25 - alphaMap.getWidth()/2, hero.getY() + 25 - alphaMap.getHeight()/2);
 		alphaMap.setRotation(hero.getAngle());
+
 		
 
 		//hero.setAngle((float) ((Math.atan2(controller.getRYAxisValue(), controller.getRXAxisValue())) * (180/Math.PI)) + 90f);
 
-		hero.getImage().setRotation(hero.getAngle());
 
+
+		g.drawString("Ghoul Army Size: " + ghoulArmy.size() , 20, 70);
 		g.drawString("Number of Avaliable Bullets: " + numOfBullets, 20, 90);
 		for(int i = 0; i < bulletManager.size(); i++)
 		{
@@ -377,6 +381,13 @@ public class Play extends BasicGameState{
 		if(hero.getHealth() <= 0)
 		{
 			sbg.enterState(4);
+			sbg.enterState(4, new FadeOutTransition(Color.red, 1000), new FadeInTransition(Color.black, 1000));
+		}
+		
+		if(checkWaveCleared() == true)
+		{
+			//Enter the shopping state
+			sbg.enterState(5);
 		}
 
 	}
@@ -522,5 +533,57 @@ public class Play extends BasicGameState{
 	{
 		return 1; //returns the ID of this class (play is 1)
 	}
+	
+	public boolean checkWaveCleared()
+	{
+		boolean clear = true;
+		for(Zombie z : ghoulArmy)
+		{
+			if(z.getAlive() == true)
+			{
+				clear = false;
+			}
+		}
+		
+		return clear;
+	}
+	
+	public void cleanUpLevel()
+	{
+		Random ran = new Random();
+		for(Zombie z : ghoulArmy)
+		{
+			z.setGhoulIsAlive(true);
+			ghoul.setPosition(ghoulSpawnPoints.get((ran.nextInt(ghoulSpawnPoints.size()))));
+		}
+		
+		
+	}
+	
+	public int getWaveNumber()
+	{
+		return waveNumber;
+	}
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
