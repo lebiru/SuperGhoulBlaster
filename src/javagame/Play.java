@@ -21,7 +21,8 @@ public class Play extends BasicGameState{
 	public int waveNumber = 1;
 
 	ArrayList<Bullet> bulletManager = new ArrayList<Bullet>();
-	int numOfBullets = 3;
+	int reloadSize = 30;
+	int numOfBullets = reloadSize;
 
 	Player hero;
 	Zombie ghoul;
@@ -29,7 +30,7 @@ public class Play extends BasicGameState{
 	ArrayList<Zombie> ghoulArmy = new ArrayList<Zombie>();
 	ArrayList<Point2D> ghoulSpawnPoints = new ArrayList<Point2D>();
 	
-	
+	int numOfZombies = 10;
 
 
 	ArrayList<ArrayList<String>> gridmap = new ArrayList<ArrayList<String>>();
@@ -73,7 +74,7 @@ public class Play extends BasicGameState{
 		ghoulSpawnPoints = createSpawnPoints(ghoulSpawnPoints, gc);
 
 		//Create the Zombies
-		for(int i = 0 ; i < 10; i++ )
+		for(int i = 0 ; i < numOfZombies; i++ )
 		{
 
 			ghoul = new Zombie
@@ -189,7 +190,7 @@ public class Play extends BasicGameState{
 		g.drawString("Number of Avaliable Bullets: " + numOfBullets, 20, 90);
 		for(int i = 0; i < bulletManager.size(); i++)
 		{
-			g.drawString("Alive? " + bulletManager.get(i).getAlive(), 20, 100 + (i * 20));
+			g.drawString("Alive? " + bulletManager.get(i).getAlive() + " dmg: " + bulletManager.get(i).getDamage(), 20, 100 + (i * 20));
 		}
 
 
@@ -300,7 +301,7 @@ public class Play extends BasicGameState{
 				{
 					bulletManager.get(i).setBulletIsAlive(false);
 				}
-				numOfBullets = 3;
+				numOfBullets = reloadSize;
 				reload.play();
 
 			}
@@ -478,7 +479,7 @@ public class Play extends BasicGameState{
 	private ArrayList<Point2D> createSpawnPoints(ArrayList<Point2D> gsp, GameContainer gc) 
 	{
 		Random ran = new Random();
-		int numOfSpawnPoints = 20;
+		int numOfSpawnPoints = numOfZombies;
 
 		float x = 0;
 		float y = 0;
@@ -570,8 +571,25 @@ public class Play extends BasicGameState{
 			z.resetHealth();
 			z.setPosition(ghoulSpawnPoints.get((ran.nextInt(ghoulSpawnPoints.size()))));
 		}
+		hero.setX(gc.getWidth()/2);
+		hero.setY(gc.getHeight()/2);
 
 
+	}
+	
+	public void gameOverCleanUpLevel()
+	{
+		Random ran = new Random();
+		for(Zombie z : ghoulArmy)
+		{
+			z.setGhoulIsAlive(true);
+			z.resetHealth();
+			z.setPosition(ghoulSpawnPoints.get((ran.nextInt(ghoulSpawnPoints.size()))));
+		}
+		hero.resetHealth();
+		hero.setX(gc.getWidth()/2);
+		hero.setY(gc.getHeight()/2);
+		
 	}
 
 	public int getWaveNumber()

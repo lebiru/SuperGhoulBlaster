@@ -11,9 +11,7 @@ public class Shop extends BasicGameState implements ComponentListener{
 
 
 	private MouseOverArea[] areas = new MouseOverArea[2];
-	Image playButton;
-	
-	Image logo;
+	Image playButton, logo, upgradeGunPowerButton;
 	StateBasedGame sbg;
 	GameContainer gc;
 
@@ -27,11 +25,8 @@ public class Shop extends BasicGameState implements ComponentListener{
 
 		//replace these with "Play" and "About"
 		playButton = new Image("res/images/playMenu.png");
-		
 		logo = new Image("res/images/SGB_logo_01.png");
-		
-		
-		
+		upgradeGunPowerButton = new Image("res/images/upgradeGunPower.png");
 		
 		
 		this.gc = gc;
@@ -40,8 +35,11 @@ public class Shop extends BasicGameState implements ComponentListener{
 		areas[0] = new MouseOverArea(gc, playButton, 200, 400 + (0*100), 200, 90, this);
 		areas[0].setNormalColor(new Color(1,1,1,0.8f));
 		areas[0].setMouseOverColor(new Color(1,1,1,0.9f));
-
-
+		
+		areas[1] = new MouseOverArea(gc, upgradeGunPowerButton, 200, 400 + (1*100), upgradeGunPowerButton.getWidth(), upgradeGunPowerButton.getHeight(), this);
+		areas[1].setNormalColor(new Color(1,1,1,0.8f));
+		areas[1].setMouseOverColor(new Color(1,1,1,0.9f));
+		
 	}
 
 	//for drawing things on screen
@@ -53,7 +51,8 @@ public class Shop extends BasicGameState implements ComponentListener{
 
 		g.drawString("What'er yer buyin?", 300, 300);
 
-		for (int i=0;i<1;i++) {
+		for (int i=0;i<2;i++) 
+		{
 			areas[i].render(gc, g);
 		}
 	}
@@ -79,6 +78,16 @@ public class Shop extends BasicGameState implements ComponentListener{
 			System.out.println("Entering Play State");
 			((Play)sbg.getState(1)).cleanUpLevel();
 			sbg.enterState(1);
+		}
+		
+		if (source == areas[1]) 
+		{
+			System.out.println("Upgrading Gun Power");
+			for(Bullet b : ((Play)sbg.getState(1)).bulletManager)
+			{
+				b.setBulletDamage(2);
+			}
+			
 		}
 
 	}

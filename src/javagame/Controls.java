@@ -53,6 +53,8 @@ public class Controls extends BasicGameState implements ComponentListener{
 		for (int i=0;i<1;i++) {
 			areas[i].render(gc, g);
 		}
+		
+		g.drawString("WASD to move. Right mouse shoot. Left mouse reload. Shoot the zombies. Good luck." , 20, 200);
 	}
 
 	//for updating logics of the game

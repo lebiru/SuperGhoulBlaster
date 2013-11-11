@@ -105,6 +105,11 @@ public class Bullet extends Image
 	public int getDamage() {
 		return bulletDamage;
 	}
+	
+	public void setBulletDamage(int newDamage)
+	{
+		this.bulletDamage += newDamage;
+	}
 
 
 }

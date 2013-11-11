@@ -74,6 +74,7 @@ public class GameOver extends BasicGameState implements ComponentListener{
 		if (source == areas[0]) 
 		{
 			System.out.println("Play Again pressed");
+			((Play)sbg.getState(1)).gameOverCleanUpLevel();
 			sbg.enterState(1);
 		}
 

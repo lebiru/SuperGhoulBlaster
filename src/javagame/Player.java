@@ -102,6 +102,11 @@ public class Player
 		playerHealth += foo;
 	}
 	
+	void resetHealth()
+	{
+		playerHealth = 100;
+	}
+	
 	float getTunnelingBuffer()
 	{
 		return tunnelingBuffer;
