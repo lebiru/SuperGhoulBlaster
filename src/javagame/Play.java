@@ -3,9 +3,13 @@ package javagame;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Random;
+
+import javax.swing.Box.Filler;
+
 import org.lwjgl.input.Controller;
 import org.lwjgl.input.Controllers;
 import org.newdawn.slick.*;
+import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.state.*;
 import org.newdawn.slick.state.transition.FadeInTransition;
 import org.newdawn.slick.state.transition.FadeOutTransition;
@@ -13,10 +17,14 @@ import org.newdawn.slick.state.transition.FadeOutTransition;
 
 public class Play extends BasicGameState{
 
-	Image sand, rock;
-	Sound mainBGM, gameBGM, gameoverBGM, shoot, zombieDie, reload;
+	Image sand, rock, door;
+	Sound shoot, zombieDie, reload;
 	private Image alphaMap;
-
+	
+	
+	float doorX;
+	float doorY;
+	Rectangle doorRect;
 
 	public int waveNumber = 1;
 
@@ -30,8 +38,8 @@ public class Play extends BasicGameState{
 	ArrayList<Zombie> ghoulArmy = new ArrayList<Zombie>();
 	ArrayList<Point2D> ghoulSpawnPoints = new ArrayList<Point2D>();
 	
-	int numOfZombies = 10;
-
+	int numOfZombies = 2;
+	float increasingSpeed = 2;
 
 	ArrayList<ArrayList<String>> gridmap = new ArrayList<ArrayList<String>>();
 	int tileWidth = 50;
@@ -46,6 +54,9 @@ public class Play extends BasicGameState{
 	Controller controller;
 	GameContainer gc;
 
+	public Sound gameBGM;
+	public Sound gameOverBGM;
+	
 
 	public Play(int state)
 	{
@@ -61,10 +72,12 @@ public class Play extends BasicGameState{
 		hero = new Player(new Image("res/images/SGB_player_01.png"));
 		sand = new Image("res/images/SGB_sand_01.png");
 		rock = new Image("res/images/SGB_rock_01.png");
+		door = new Image("res/images/door.png");
+		
+		doorX = gc.getWidth()/2;
+		doorY = 0;
+		doorRect = new Rectangle(doorX, doorY, door.getWidth(), door.getHeight());
 
-
-
-		//bullet = new Bullet("res/images/bullet.png", hero.getImage());
 		alphaMap = new Image("res/images/alphaClock2.png");
 
 		//Making ghoul army
@@ -104,11 +117,14 @@ public class Play extends BasicGameState{
 
 		//SOUND & MUSIC
 		shoot = new Sound("res/sound/fx/Gunshot.wav");
-		zombieDie = new Sound("res/sound/fx/Zombie Kill.wav");
-		Sound gameBGM = new Sound("res/sound/BGM/In Game.ogg");
+		zombieDie = new Sound("res/sound/fx/Zombie Kill.wav");		
 		reload = new Sound("res/sound/fx/Item.wav");
-
-		gameBGM.loop();
+		
+		gameBGM = new Sound("res/sound/BGM/In Game.ogg");
+		gameOverBGM = new Sound("res/sound/BGM/Game Over.ogg");
+		
+		//gameBGM.loop();
+		
 
 		gc.getGraphics().setBackground(Color.black);
 
@@ -116,17 +132,7 @@ public class Play extends BasicGameState{
 
 
 		input = gc.getInput();
-		//controller = Controllers.getController(6);
 
-//		controller.setXAxisDeadZone(0.4f);
-//		controller.setXAxisDeadZone(-0.4f);
-//		controller.setYAxisDeadZone(0.4f);
-//		controller.setYAxisDeadZone(-0.4f);
-//
-//		controller.setRXAxisDeadZone(0.4f);
-//		controller.setRXAxisDeadZone(-0.4f);
-//		controller.setRYAxisDeadZone(0.4f);
-//		controller.setRYAxisDeadZone(-0.4f);
 
 		//Preparing TileMap
 		tileMapWidth = gc.getWidth()/tileWidth;
@@ -181,16 +187,26 @@ public class Play extends BasicGameState{
 		alphaMap.setRotation(hero.getAngle());
 
 
-
-		//hero.setAngle((float) ((Math.atan2(controller.getRYAxisValue(), controller.getRXAxisValue())) * (180/Math.PI)) + 90f);
-
-
-
-		g.drawString("Ghoul Army Size: " + ghoulArmy.size() , 20, 70);
-		g.drawString("Number of Avaliable Bullets: " + numOfBullets, 20, 90);
-		for(int i = 0; i < bulletManager.size(); i++)
+		int aliveCount = 0;
+		for(Zombie z : ghoulArmy)
 		{
-			g.drawString("Alive? " + bulletManager.get(i).getAlive() + " dmg: " + bulletManager.get(i).getDamage(), 20, 100 + (i * 20));
+			if(z.getAlive() == true)
+			{
+				aliveCount++;
+			}
+		}
+		
+		g.drawString("Ghoul Army Size: " + ghoulArmy.size() + " Num of Alive Zombies: " + aliveCount , 20, 70);
+		g.drawString("Number of Avaliable Bullets: " + numOfBullets, 20, 90);
+//		for(int i = 0; i < bulletManager.size(); i++)
+//		{
+//			g.drawString("Alive? " + bulletManager.get(i).getAlive() + " dmg: " + bulletManager.get(i).getDamage(), 20, 100 + (i * 20));
+//		}
+		
+		if(checkWaveCleared() == true)
+		{
+			g.drawImage(door, doorX, doorY);
+			g.drawRect(doorX, doorY, door.getWidth(), door.getHeight());
 		}
 
 
@@ -219,25 +235,6 @@ public class Play extends BasicGameState{
 		if(hero.getHealth() > 0)
 		{
 
-			//			//MOVE USING CONTROLLER
-			//			if(controller.getXAxisValue() <= -0.4 && (hero.getX() + hero.getTunnelingBuffer() >= 0)) 
-			//			{ 
-			//				hero.setX(hero.getX() + (controller.getXAxisValue() * hero.getSpeed())); 
-			//			}
-			//			if(controller.getXAxisValue() >= 0.4 && ((hero.getX() + hero.getTunnelingBuffer() + hero.getWidth()) <= gc.getWidth())) 
-			//			{ 
-			//				hero.setX(hero.getX() + (controller.getXAxisValue() * hero.getSpeed())); 
-			//			}
-			//
-			//			if(controller.getYAxisValue() <= -0.4 && (hero.getY() + hero.getTunnelingBuffer() >= 0))
-			//			{ 
-			//				hero.setY(hero.getY() + (controller.getYAxisValue() * hero.getSpeed()));  
-			//			}
-			//			if(controller.getYAxisValue() >= 0.4 && ((hero.getY() + hero.getTunnelingBuffer() + hero.getHeight()) <= gc.getHeight()))  
-			//			{ 
-			//				hero.setY(hero.getY() + (controller.getYAxisValue() * hero.getSpeed()));
-			//			}
-
 			//MOVE USING KEYBOARD
 			if(input.isKeyDown(Input.KEY_A) && (hero.getX() + hero.getTunnelingBuffer() >= 0))
 			{ 
@@ -256,19 +253,6 @@ public class Play extends BasicGameState{
 				hero.setY(hero.getY() + hero.getSpeed()); 
 			}
 
-
-			//			//SHOOT USING CONTROLLER
-			//			if(controller.getZAxisValue() >= -1 && controller.getZAxisValue() <= -0.4 && bullet.getBulletIsAlive() == false ) 
-			//			{ 
-			//				bullet.setBulletIsAlive(true);
-			//				bullet.setBulletAngle(hero.getAngle() - 90f);
-			//				bullet.setBulletX(hero.getX() + 23);
-			//				bullet.setBulletY(hero.getY() + 23);
-			//				bullet.setBulletDx(30);
-			//				bullet.setBulletDy(30);
-			//				shoot.play();
-			//
-			//			}
 
 			//SHOOT USING MOUSE
 			if(input.isMousePressed(0))
@@ -392,16 +376,22 @@ public class Play extends BasicGameState{
 		//Game Over Condition
 		if(hero.getHealth() <= 0)
 		{
-			sbg.enterState(4);
+			gameBGM.stop();
+			gameOverBGM.loop();
 			sbg.enterState(4, new FadeOutTransition(Color.red, 1000), new FadeInTransition(Color.black, 1000));
 		}
 
 		//Cleared Wave Condition
 		if(checkWaveCleared() == true)
 		{
-			//Enter the shopping state
-			sbg.enterState(5, new FadeOutTransition(Color.white, 1000), new FadeInTransition(Color.white, 1000));
-
+		
+			if(hero.getRect().intersects(doorRect))
+			{				
+				//Enter the shopping state
+				sbg.enterState(5, new FadeOutTransition(Color.white, 1000), new FadeInTransition(Color.white, 1000));
+			}
+			
+			
 		}
 
 	}
@@ -580,12 +570,16 @@ public class Play extends BasicGameState{
 	public void gameOverCleanUpLevel()
 	{
 		Random ran = new Random();
+		
 		for(Zombie z : ghoulArmy)
 		{
 			z.setGhoulIsAlive(true);
 			z.resetHealth();
 			z.setPosition(ghoulSpawnPoints.get((ran.nextInt(ghoulSpawnPoints.size()))));
 		}
+		
+		numOfZombies = 2;
+	
 		hero.resetHealth();
 		hero.setX(gc.getWidth()/2);
 		hero.setY(gc.getHeight()/2);
@@ -596,6 +590,34 @@ public class Play extends BasicGameState{
 	{
 		return waveNumber;
 	}
+	
+	public void increaseLevelDifficulty() throws SlickException
+	{
+		int numOfEnemiesAdded = 2;
+		increasingSpeed += 0.1;
+		numOfZombies += numOfEnemiesAdded;
+		
+		ghoulSpawnPoints = createSpawnPoints(ghoulSpawnPoints, gc);
+		
+		Random ran = new Random();
+		for(int i = 0 ; i < numOfEnemiesAdded; i++ )
+		{
+
+			ghoul = new Zombie
+					(
+							new Image("res/images/SGB_zombiesprite_01.png").getSubImage(0, 0, 50, 62), 
+							ran.nextInt(gc.getWidth()), 
+							ran.nextInt(gc.getHeight())
+							);
+			ghoul.setPosition(ghoulSpawnPoints.get((ran.nextInt(ghoulSpawnPoints.size()))));
+			ghoul.setSpeed(ran.nextFloat() * increasingSpeed + 1); //FUN?
+			ghoul.initializeZombieAnimation(new SpriteSheet("res/images/SGB_zombiesprite_01.png", 50, 62));
+			ghoul.setGhoulIsAlive(true);
+			ghoulArmy.add(ghoul);
+		}
+	}
+	
+
 
 }
 

@@ -76,7 +76,8 @@ public class Controls extends BasicGameState implements ComponentListener{
 		if (source == areas[0]) 
 		{
 			System.out.println("Entering Game");
-			
+			((Menu)sbg.getState(0)).titleBGM.stop();
+			((Play)sbg.getState(1)).gameBGM.loop();
 			sbg.enterState(1, new FadeOutTransition(Color.white, 1000), new FadeInTransition(Color.white, 1000) );
 		}
 

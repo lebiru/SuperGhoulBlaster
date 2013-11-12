@@ -58,6 +58,7 @@ public class GameOver extends BasicGameState implements ComponentListener{
 	//for updating logics of the game
 	public void update(GameContainer gc, StateBasedGame sbg, int delta) throws SlickException 
 	{
+		
 
 
 	}
@@ -74,6 +75,8 @@ public class GameOver extends BasicGameState implements ComponentListener{
 		if (source == areas[0]) 
 		{
 			System.out.println("Play Again pressed");
+			((Play)sbg.getState(1)).gameOverBGM.stop();
+			((Play)sbg.getState(1)).gameBGM.loop();
 			((Play)sbg.getState(1)).gameOverCleanUpLevel();
 			sbg.enterState(1);
 		}
@@ -81,7 +84,10 @@ public class GameOver extends BasicGameState implements ComponentListener{
 		else if (source == areas[1]) 
 		{
 			System.out.println("Main Menu Pressed");
-			sbg.enterState(4);
+			((Play)sbg.getState(1)).gameOverBGM.stop();
+			((Menu)sbg.getState(0)).titleBGM.loop();
+			((Play)sbg.getState(1)).gameOverCleanUpLevel();
+			sbg.enterState(0);
 		}
 	}
 

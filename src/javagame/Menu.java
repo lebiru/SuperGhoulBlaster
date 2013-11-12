@@ -15,6 +15,8 @@ public class Menu extends BasicGameState implements ComponentListener{
 	Image aboutMenu;
 	Image logo;
 	StateBasedGame sbg;
+	
+	Sound titleBGM;
 
 	public Menu(int state)
 	{
@@ -30,9 +32,9 @@ public class Menu extends BasicGameState implements ComponentListener{
 		logo = new Image("res/images/SGB_logo_01.png");
 		
 		//Music
-		Sound titleBGM = new Sound("res/sound/BGM/Title.ogg");
-		Sound gameBGM = new Sound("res/sound/BGM/In Game.ogg");
-		Sound overBGM = new Sound("res/sound/BGM/Game Over.ogg");
+		titleBGM = new Sound("res/sound/BGM/Title.ogg");
+
+		titleBGM.loop();
 		
 		this.sbg = sbg;
 

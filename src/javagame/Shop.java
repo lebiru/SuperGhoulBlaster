@@ -5,6 +5,8 @@ import org.newdawn.slick.gui.AbstractComponent;
 import org.newdawn.slick.gui.ComponentListener;
 import org.newdawn.slick.gui.MouseOverArea;
 import org.newdawn.slick.state.*;
+import org.newdawn.slick.state.transition.FadeInTransition;
+import org.newdawn.slick.state.transition.FadeOutTransition;
 
 
 public class Shop extends BasicGameState implements ComponentListener{
@@ -75,9 +77,15 @@ public class Shop extends BasicGameState implements ComponentListener{
 
 		if (source == areas[0]) 
 		{
-			System.out.println("Entering Play State");
+			System.out.println("Entering Next Level");
 			((Play)sbg.getState(1)).cleanUpLevel();
-			sbg.enterState(1);
+			try {
+				((Play)sbg.getState(1)).increaseLevelDifficulty();
+			} catch (SlickException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			sbg.enterState(1, new FadeOutTransition(Color.black, 1000), new FadeInTransition(Color.black, 1000) );
 		}
 		
 		if (source == areas[1]) 
