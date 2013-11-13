@@ -18,10 +18,10 @@ import org.newdawn.slick.state.transition.FadeOutTransition;
 public class Play extends BasicGameState{
 
 	Image sand, rock, door;
-	Sound shoot, zombieDie, reload;
+	Sound shoot, zombieDie, reload, batswing;
 	private Image alphaMap;
-	
-	
+
+
 	float doorX;
 	float doorY;
 	Rectangle doorRect;
@@ -34,10 +34,11 @@ public class Play extends BasicGameState{
 
 	Player hero;
 	Zombie ghoul;
+	BaseballBat bat;
 
 	ArrayList<Zombie> ghoulArmy = new ArrayList<Zombie>();
 	ArrayList<Point2D> ghoulSpawnPoints = new ArrayList<Point2D>();
-	
+
 	int numOfZombies = 2;
 	float increasingSpeed = 2;
 
@@ -56,7 +57,7 @@ public class Play extends BasicGameState{
 
 	public Sound gameBGM;
 	public Sound gameOverBGM;
-	
+
 
 	public Play(int state)
 	{
@@ -73,7 +74,8 @@ public class Play extends BasicGameState{
 		sand = new Image("res/images/SGB_sand_01.png");
 		rock = new Image("res/images/SGB_rock_01.png");
 		door = new Image("res/images/door.png");
-		
+		bat = new BaseballBat("res/images/baseball_bat.png", hero.getImage());
+
 		doorX = gc.getWidth()/2;
 		doorY = 0;
 		doorRect = new Rectangle(doorX, doorY, door.getWidth(), door.getHeight());
@@ -106,7 +108,7 @@ public class Play extends BasicGameState{
 		//instantiate the bullets
 		for(int i = 0; i < numOfBullets; i++)
 		{
-			bulletManager.add(new Bullet("res/images/bulletOne.png", hero.getImage()));
+			bulletManager.add(new Bullet("res/images/bulletOne.png"));
 		}
 
 		//Player Initialization
@@ -119,12 +121,10 @@ public class Play extends BasicGameState{
 		shoot = new Sound("res/sound/fx/Gunshot.wav");
 		zombieDie = new Sound("res/sound/fx/Zombie Kill.wav");		
 		reload = new Sound("res/sound/fx/Item.wav");
-		
+		batswing = new Sound("res/sound/fx/batswing.wav");
+
 		gameBGM = new Sound("res/sound/BGM/In Game.ogg");
 		gameOverBGM = new Sound("res/sound/BGM/Game Over.ogg");
-		
-		//gameBGM.loop();
-		
 
 		gc.getGraphics().setBackground(Color.black);
 
@@ -139,6 +139,20 @@ public class Play extends BasicGameState{
 		tileMapHeight = gc.getHeight()/tileHeight;
 
 		makeBackground(gc.getGraphics());
+		
+		
+		/////TESTING BAT
+		ghoul = new Zombie
+				(
+						new Image("res/images/SGB_zombiesprite_01.png").getSubImage(0, 0, 50, 62), 
+						ran.nextInt(gc.getWidth()), 
+						ran.nextInt(gc.getHeight())
+						);
+		ghoul.setPosition(new Point2D.Float(200, 300));
+		ghoul.setSpeed(0); //FUN?
+		ghoul.initializeZombieAnimation(new SpriteSheet("res/images/SGB_zombiesprite_01.png", 50, 62));
+		ghoul.setGhoulIsAlive(true);
+		ghoulArmy.add(ghoul);
 
 
 	}
@@ -150,7 +164,7 @@ public class Play extends BasicGameState{
 		g.setBackground(Color.black);
 		renderBackground(g);
 
-		
+
 		for(Zombie z : ghoulArmy)
 		{
 			if(z.getAlive() == true)
@@ -161,7 +175,7 @@ public class Play extends BasicGameState{
 				z.setAngle((float) (Math.atan2(z.getDY(), z.getDX()) * (180/Math.PI)) + 90f);
 				z.getImage().setRotation(z.getAngle());
 				g.draw(z.healthBar);
-				
+
 				g.setColor(Color.red);
 				g.fillRect(z.healthBar.getX(), z.healthBar.getY(), z.getHealth() * 10, z.healthBar.getHeight());
 				g.setColor(Color.white);
@@ -195,18 +209,29 @@ public class Play extends BasicGameState{
 				aliveCount++;
 			}
 		}
-		
+
 		g.drawString("Ghoul Army Size: " + ghoulArmy.size() + " Num of Alive Zombies: " + aliveCount , 20, 70);
 		g.drawString("Number of Avaliable Bullets: " + numOfBullets, 20, 90);
-//		for(int i = 0; i < bulletManager.size(); i++)
-//		{
-//			g.drawString("Alive? " + bulletManager.get(i).getAlive() + " dmg: " + bulletManager.get(i).getDamage(), 20, 100 + (i * 20));
-//		}
-		
+		g.drawString("Bat Alive? " + bat.getAlive() + " Bat Angle: " + bat.getAngle()
+				+ "End: " + bat.endAngle + " Start: " + bat.startAngle, 20, 110);
+		//		for(int i = 0; i < bulletManager.size(); i++)
+		//		{
+		//			g.drawString("Alive? " + bulletManager.get(i).getAlive() + " dmg: " + bulletManager.get(i).getDamage(), 20, 100 + (i * 20));
+		//		}
+
 		if(checkWaveCleared() == true)
 		{
 			g.drawImage(door, doorX, doorY);
 			g.drawRect(doorX, doorY, door.getWidth(), door.getHeight());
+		}
+
+		//SWING BAT
+		if(bat.getAlive() == true)
+		{
+			bat.getImage().setRotation(bat.getAngle());
+			g.drawImage(bat.getImage(), hero.getX() - hero.getWidth()/2 + 50, hero.getY() + (hero.getHeight()/2) - bat.getImage().getHeight() + 10);
+			bat.getImage().setCenterOfRotation(0, 0);
+			bat.swing();
 		}
 
 
@@ -262,13 +287,7 @@ public class Play extends BasicGameState{
 					//If we've found a free bullet
 					if(b.getAlive() == false && numOfBullets > 0) 
 					{ 
-
-						b.setBulletIsAlive(true);
-						b.setBulletAngle(hero.getAngle() - 90f);
-						b.setBulletX(hero.getX() + 23);
-						b.setBulletY(hero.getY() + 23);
-						b.setBulletDx(30);
-						b.setBulletDy(30);
+						b.turnOn(hero);
 						shoot.play();
 
 						numOfBullets--;
@@ -277,6 +296,20 @@ public class Play extends BasicGameState{
 				}
 
 			}
+
+			//SWING BAT
+			if(input.isKeyPressed(Input.KEY_LSHIFT))
+			{
+				bat.turnOn(hero);
+				batswing.play();
+			}
+
+			
+			if(bat.isSwingEnd())
+			{
+				bat.turnOff();
+			}
+
 
 			//RELOAD USING RIGHT MOUSE BUTTON
 			if(input.isMousePressed(1))
@@ -291,7 +324,7 @@ public class Play extends BasicGameState{
 			}
 
 
-
+			//MOVE BULLETS
 			for(Bullet b : bulletManager)
 			{
 				if(b.getAlive() == true)
@@ -333,6 +366,8 @@ public class Play extends BasicGameState{
 
 			}
 
+			bat.updateRect();
+
 
 
 			//COLLISION
@@ -349,6 +384,27 @@ public class Play extends BasicGameState{
 				}
 
 			}
+
+			if(bat.isAlive)
+			{
+				for(Zombie z : ghoulArmy)
+				{
+					if(bat.getRect().intersects(z.getRect()))
+					{
+						System.out.println("BAT HIT");
+						z.setHealth(bat.getDamage());		
+						if(z.getHealth() <= 0)
+						{
+							z.setGhoulIsAlive(false);	
+						}
+						zombieDie.play(0.9f,0.2f);
+					}
+				}
+
+
+			}
+
+
 
 			//Bullet Collision
 			for(int j = 0; j < bulletManager.size(); j++)
@@ -384,14 +440,14 @@ public class Play extends BasicGameState{
 		//Cleared Wave Condition
 		if(checkWaveCleared() == true)
 		{
-		
+
 			if(hero.getRect().intersects(doorRect))
 			{				
 				//Enter the shopping state
 				sbg.enterState(5, new FadeOutTransition(Color.white, 1000), new FadeInTransition(Color.white, 1000));
 			}
-			
-			
+
+
 		}
 
 	}
@@ -566,39 +622,39 @@ public class Play extends BasicGameState{
 
 
 	}
-	
+
 	public void gameOverCleanUpLevel()
 	{
 		Random ran = new Random();
-		
+
 		for(Zombie z : ghoulArmy)
 		{
 			z.setGhoulIsAlive(true);
 			z.resetHealth();
 			z.setPosition(ghoulSpawnPoints.get((ran.nextInt(ghoulSpawnPoints.size()))));
 		}
-		
+
 		numOfZombies = 2;
-	
+
 		hero.resetHealth();
 		hero.setX(gc.getWidth()/2);
 		hero.setY(gc.getHeight()/2);
-		
+
 	}
 
 	public int getWaveNumber()
 	{
 		return waveNumber;
 	}
-	
+
 	public void increaseLevelDifficulty() throws SlickException
 	{
 		int numOfEnemiesAdded = 2;
 		increasingSpeed += 0.1;
 		numOfZombies += numOfEnemiesAdded;
-		
+
 		ghoulSpawnPoints = createSpawnPoints(ghoulSpawnPoints, gc);
-		
+
 		Random ran = new Random();
 		for(int i = 0 ; i < numOfEnemiesAdded; i++ )
 		{
@@ -616,7 +672,7 @@ public class Play extends BasicGameState{
 			ghoulArmy.add(ghoul);
 		}
 	}
-	
+
 
 
 }

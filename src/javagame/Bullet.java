@@ -19,7 +19,7 @@ public class Bullet extends Image
 	
 	Rectangle bulletRect;
 	
-	public Bullet(String string, Image parent) throws SlickException 
+	public Bullet(String string) throws SlickException 
 	{
 		this.image = new Image(string);
 		bulletIsAlive = false;
@@ -109,6 +109,17 @@ public class Bullet extends Image
 	public void setBulletDamage(int newDamage)
 	{
 		this.bulletDamage += newDamage;
+	}
+
+	public void turnOn(Player hero) 
+	{
+		this.setBulletIsAlive(true);
+		this.setBulletAngle(hero.getAngle() - 90f);
+		this.setBulletX(hero.getX() + 23);
+		this.setBulletY(hero.getY() + 23);
+		this.setBulletDx(30);
+		this.setBulletDy(30);
+		
 	}
 
 

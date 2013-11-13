@@ -48,7 +48,7 @@ public class Game extends StateBasedGame
 		
 		//enterState is the first screen the computer will show
 		
-		this.enterState(menu);
+		this.enterState(play);
 		
 	}
 	
