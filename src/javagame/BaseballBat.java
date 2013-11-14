@@ -3,7 +3,6 @@ package javagame;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Circle;
-import org.newdawn.slick.geom.Rectangle;
 
 public class BaseballBat {
 
@@ -13,7 +12,7 @@ public class BaseballBat {
 	float batX;
 	float batY;
 	
-	float batRadius = 130;
+	float batRadius = 70;
 	
 	float damage = 1f;
 	
@@ -32,8 +31,10 @@ public class BaseballBat {
 	BaseballBat(String string, Player hero) throws SlickException
 	{
 		this.batImage = new Image(string);
-		this.batX = hero.getX() - hero.getWidth()/2 + 50;
-		this.batY = hero.getY() + (hero.getHeight()/2) - this.batImage.getHeight() + 10;
+		//this.batX = hero.getX() - hero.getWidth()/2 + 50;
+		//this.batY = hero.getY() + (hero.getHeight()/2) - this.batImage.getHeight() + 10;
+		batX = hero.getX();
+		batY = hero.getY();
 		this.batCircle = new Circle(this.batX, this.batY, this.batRadius);
 		
 		

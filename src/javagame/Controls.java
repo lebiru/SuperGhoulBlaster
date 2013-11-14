@@ -29,7 +29,7 @@ public class Controls extends BasicGameState implements ComponentListener{
 
 
 		//replace these with "Play" and "About"
-		startButton = new Image("res/images/startButton.png");
+		startButton = new Image("res/images/SGB_buttonstart_01.png");
 
 		this.sbg = sbg;
 

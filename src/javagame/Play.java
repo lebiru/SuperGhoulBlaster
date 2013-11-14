@@ -17,14 +17,18 @@ import org.newdawn.slick.state.transition.FadeOutTransition;
 
 public class Play extends BasicGameState{
 
-	Image sand, rock, door;
+	Image sand, rock;
 	Sound shoot, zombieDie, reload, batswing;
 	private Image alphaMap;
-
-
+	
+	StatusBar sb;
+	
+	Image door;
 	float doorX;
 	float doorY;
 	Rectangle doorRect;
+	Animation doorAnimation;
+	SpriteSheet doorSpriteSheet;
 
 	public int waveNumber = 1;
 
@@ -73,14 +77,22 @@ public class Play extends BasicGameState{
 		hero = new Player(new Image("res/images/SGB_player_01.png"));
 		sand = new Image("res/images/SGB_sand_01.png");
 		rock = new Image("res/images/SGB_rock_01.png");
-		door = new Image("res/images/door.png");
+
+		doorAnimation = new Animation();
+		doorSpriteSheet = new SpriteSheet("res/images/SGB_doorsprite_01.png", 132, 137);
+		doorAnimation.addFrame(doorSpriteSheet.getSprite(0, 0), 500);
+		doorAnimation.addFrame(doorSpriteSheet.getSprite(1, 0), 500);
+		
+	
 		bat = new BaseballBat("res/images/baseball_bat.png", hero);
 
-		doorX = gc.getWidth()/2;
+		
+		
+		doorX = gc.getWidth()/2 - doorAnimation.getWidth()/2;
 		doorY = 0;
-		doorRect = new Rectangle(doorX, doorY, door.getWidth(), door.getHeight());
+		doorRect = new Rectangle(doorX, doorY, doorAnimation.getWidth(), doorAnimation.getHeight());
 
-		alphaMap = new Image("res/images/alphaClock2.png");
+		alphaMap = new Image("res/images/flashlight.png");
 
 		//Making ghoul army
 		Random ran = new Random();
@@ -140,19 +152,7 @@ public class Play extends BasicGameState{
 
 		makeBackground(gc.getGraphics());
 		
-		
-		/////TESTING BAT
-		ghoul = new Zombie
-				(
-						new Image("res/images/SGB_zombiesprite_01.png").getSubImage(0, 0, 50, 62), 
-						ran.nextInt(gc.getWidth()), 
-						ran.nextInt(gc.getHeight())
-						);
-		ghoul.setPosition(new Point2D.Float(200, 300));
-		ghoul.setSpeed(0); //FUN?
-		ghoul.initializeZombieAnimation(new SpriteSheet("res/images/SGB_zombiesprite_01.png", 50, 62));
-		ghoul.setGhoulIsAlive(true);
-		ghoulArmy.add(ghoul);
+		sb = new StatusBar(gc);
 
 
 	}
@@ -223,8 +223,7 @@ public class Play extends BasicGameState{
 
 		if(checkWaveCleared() == true)
 		{
-			g.drawImage(door, doorX, doorY);
-			g.drawRect(doorX, doorY, door.getWidth(), door.getHeight());
+			doorAnimation.draw(doorX, doorY);		
 		}
 
 		//SWING BAT
@@ -234,16 +233,11 @@ public class Play extends BasicGameState{
 			g.drawImage(bat.getImage(), hero.getX() - hero.getWidth()/2 + 50, hero.getY() + (hero.getHeight()/2) - bat.getImage().getHeight() + 10);
 			bat.getImage().setCenterOfRotation(0, 0);
 			bat.swing();
-			
-	
-			//g.fillOval(hero.getX() - 45, hero.getY() - 50, 130, 130);
-			
-			
+			g.draw(bat.getCircle());
 		}
-
-
-
-
+		
+		//Draw HUD
+		sb.render(g);
 
 	}
 

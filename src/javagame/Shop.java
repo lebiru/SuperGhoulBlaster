@@ -27,7 +27,7 @@ public class Shop extends BasicGameState implements ComponentListener{
 	{
 
 		//replace these with "Play" and "About"
-		playButton = new Image("res/images/playMenu.png");
+		playButton = new Image("res/images/SGB_buttonplay_01.png");
 		logo = new Image("res/images/SGB_logo_01.png");
 		upgradeGunPowerButton = new Image("res/images/upgradeGunPower.png");
 		

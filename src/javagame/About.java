@@ -26,7 +26,7 @@ public class About extends BasicGameState implements ComponentListener{
 
 
 		//replace these with "Play" and "About"
-		backButton = new Image("res/images/backButton.png");
+		backButton = new Image("res/images/SGB_buttonmainmenu_01.png");
 		this.sbg = sbg;
 
 		areas[0] = new MouseOverArea(gc, backButton, 200, 400 + (0*100), 200, 90, this);
