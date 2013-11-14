@@ -39,17 +39,7 @@ public class Game extends StateBasedGame
 	//gamecontainer manages game engine stuff, like framerate, game loop, etc...
 	public void initStatesList(GameContainer gc) throws SlickException
 	{
-
-//		this.getState(menu).init(gc, this);
-//		this.getState(play).init(gc, this);
-//		this.getState(about).init(gc, this);
-//		this.getState(controls).init(gc, this);
-//		this.getState(gameOver).init(gc, this);
-		
-		//enterState is the first screen the computer will show
-		
-		this.enterState(play);
-		
+		this.enterState(menu);	
 	}
 	
 	public static void main(String[] args) 

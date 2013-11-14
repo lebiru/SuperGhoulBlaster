@@ -176,9 +176,9 @@ public class Zombie
 		return this.isAlive;
 	}
 	
-	public void setHealth(int damage)
+	public void setHealth(float f)
 	{
-		this.zombieHealth -= damage;
+		this.zombieHealth -= f;
 	}
 
 	public void resetHealth() 

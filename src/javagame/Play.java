@@ -74,7 +74,7 @@ public class Play extends BasicGameState{
 		sand = new Image("res/images/SGB_sand_01.png");
 		rock = new Image("res/images/SGB_rock_01.png");
 		door = new Image("res/images/door.png");
-		bat = new BaseballBat("res/images/baseball_bat.png", hero.getImage());
+		bat = new BaseballBat("res/images/baseball_bat.png", hero);
 
 		doorX = gc.getWidth()/2;
 		doorY = 0;
@@ -214,6 +214,8 @@ public class Play extends BasicGameState{
 		g.drawString("Number of Avaliable Bullets: " + numOfBullets, 20, 90);
 		g.drawString("Bat Alive? " + bat.getAlive() + " Bat Angle: " + bat.getAngle()
 				+ "End: " + bat.endAngle + " Start: " + bat.startAngle, 20, 110);
+		g.drawString("Bat X: " + bat.getX() + " Bat Y: " + bat.getY(), 20, 130);
+		
 		//		for(int i = 0; i < bulletManager.size(); i++)
 		//		{
 		//			g.drawString("Alive? " + bulletManager.get(i).getAlive() + " dmg: " + bulletManager.get(i).getDamage(), 20, 100 + (i * 20));
@@ -232,6 +234,11 @@ public class Play extends BasicGameState{
 			g.drawImage(bat.getImage(), hero.getX() - hero.getWidth()/2 + 50, hero.getY() + (hero.getHeight()/2) - bat.getImage().getHeight() + 10);
 			bat.getImage().setCenterOfRotation(0, 0);
 			bat.swing();
+			
+	
+			//g.fillOval(hero.getX() - 45, hero.getY() - 50, 130, 130);
+			
+			
 		}
 
 
@@ -366,7 +373,7 @@ public class Play extends BasicGameState{
 
 			}
 
-			bat.updateRect();
+			bat.updateRect(hero);
 
 
 
@@ -387,17 +394,26 @@ public class Play extends BasicGameState{
 
 			if(bat.isAlive)
 			{
+				System.out.println("BAT ALIVE");
 				for(Zombie z : ghoulArmy)
 				{
-					if(bat.getRect().intersects(z.getRect()))
+					if(z.getAlive() == true && bat.getCircle().intersects(z.getRect()))
 					{
-						System.out.println("BAT HIT");
-						z.setHealth(bat.getDamage());		
+					
+						z.setHealth(bat.getDamage());
+						if(bat.hasPlayedSwingHit == false)
+						{
+							zombieDie.play(0.9f,0.2f);
+							bat.hasPlayedSwingHit = true;
+						}
+						
+						
 						if(z.getHealth() <= 0)
 						{
+							
 							z.setGhoulIsAlive(false);	
 						}
-						zombieDie.play(0.9f,0.2f);
+
 					}
 				}
 
@@ -444,6 +460,8 @@ public class Play extends BasicGameState{
 			if(hero.getRect().intersects(doorRect))
 			{				
 				//Enter the shopping state
+				gameBGM.stop();
+				((Shop)sbg.getState(5)).levelUp.loop();
 				sbg.enterState(5, new FadeOutTransition(Color.white, 1000), new FadeInTransition(Color.white, 1000));
 			}
 

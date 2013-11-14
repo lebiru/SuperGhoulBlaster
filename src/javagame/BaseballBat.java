@@ -2,24 +2,26 @@ package javagame;
 
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.geom.Circle;
 import org.newdawn.slick.geom.Rectangle;
 
 public class BaseballBat {
 
-	Rectangle batRect;
+	Circle batCircle;
 	Image batImage;
 	
 	float batX;
 	float batY;
 	
-	float batWidth;
-	float batHeight;
+	float batRadius = 130;
 	
-	int damage = 2;
+	float damage = 1f;
 	
 	float batAngle = 90f;
 	float startAngle;
 	float endAngle;
+	
+	boolean hasPlayedSwingHit = false;
 	
 	float speed = 40f;
 	
@@ -27,15 +29,22 @@ public class BaseballBat {
 	
 	
 	
-	BaseballBat(String string, Image parent) throws SlickException
+	BaseballBat(String string, Player hero) throws SlickException
 	{
-		this.batRect = new Rectangle(this.batX, this.batY, this.batWidth, this.batHeight);
 		this.batImage = new Image(string);
+		this.batX = hero.getX() - hero.getWidth()/2 + 50;
+		this.batY = hero.getY() + (hero.getHeight()/2) - this.batImage.getHeight() + 10;
+		this.batCircle = new Circle(this.batX, this.batY, this.batRadius);
+		
+		
 	}
 	
-	public void updateRect() 
+	public void updateRect(Player hero) 
 	{
-		this.batRect.setLocation(this.batX, this.batY);
+		this.batX = hero.getX() - 45;
+		this.batY = hero.getY() - 50;
+		this.batCircle.setLocation(batX, batY);
+		
 	}
 
 	public Image getImage() 
@@ -88,19 +97,39 @@ public class BaseballBat {
 		
 	}
 
+	//this could be a problem for enemies hitting coordinate -500, -500, ie big bosses...
 	public void turnOff() 
 	{
 		isAlive = false;
+		hasPlayedSwingHit = false;
+		batX = -500;
+		batY = -500;
 	}
 	
-	public Rectangle getRect()
+	//Called when hits a zombie, continues playing animation.
+	public void turnOffLogic()
 	{
-		return batRect;
+		batX = -500;
+		batY = -500;
+	}
+	
+	public Circle getCircle()
+	{
+		return batCircle;
 	}
 
-	public int getDamage() 
+	public float getDamage() 
 	{
 		return damage;
+	}
+
+	public float getX() 
+	{
+		return this.batX;
+	}
+	public float getY()
+	{
+		return this.batY;
 	}
 	
 }

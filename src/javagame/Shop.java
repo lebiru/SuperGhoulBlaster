@@ -14,6 +14,7 @@ public class Shop extends BasicGameState implements ComponentListener{
 
 	private MouseOverArea[] areas = new MouseOverArea[2];
 	Image playButton, logo, upgradeGunPowerButton;
+	Sound levelUp;
 	StateBasedGame sbg;
 	GameContainer gc;
 
@@ -29,6 +30,8 @@ public class Shop extends BasicGameState implements ComponentListener{
 		playButton = new Image("res/images/playMenu.png");
 		logo = new Image("res/images/SGB_logo_01.png");
 		upgradeGunPowerButton = new Image("res/images/upgradeGunPower.png");
+		
+		levelUp = new Sound("res/sound/BGM/Level Up.ogg");
 		
 		
 		this.gc = gc;
@@ -85,6 +88,9 @@ public class Shop extends BasicGameState implements ComponentListener{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			levelUp.stop();
+			((Play)sbg.getState(1)).gameBGM.loop();
+			
 			sbg.enterState(1, new FadeOutTransition(Color.black, 1000), new FadeInTransition(Color.black, 1000) );
 		}
 		
