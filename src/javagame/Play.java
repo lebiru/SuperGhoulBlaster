@@ -19,7 +19,10 @@ public class Play extends BasicGameState{
 
 	Image sand, rock;
 	Sound shoot, zombieDie, reload, batswing;
+	
 	private Image alphaMap;
+	private Image flashLightDarkness;
+	float flashLightPower = 0f;
 	
 	StatusBar sb;
 	
@@ -93,6 +96,8 @@ public class Play extends BasicGameState{
 	
 		bat = new BaseballBat("res/images/baseball_bat.png", hero);
 		m = new Money();
+		
+		
 
 		
 		
@@ -101,6 +106,7 @@ public class Play extends BasicGameState{
 		doorRect = new Rectangle(doorX, doorY, doorAnimation.getWidth(), doorAnimation.getHeight());
 
 		alphaMap = new Image("res/images/flashlight.png");
+		flashLightDarkness = new Image("res/images/flashLightDarkness.png");
 
 		//Making ghoul army
 		Random ran = new Random();
@@ -183,7 +189,7 @@ public class Play extends BasicGameState{
 				z.setAngle((float) (Math.atan2(z.getDY(), z.getDX()) * (180/Math.PI)) + 90f);
 				z.getImage().setRotation(z.getAngle());
 				g.draw(z.healthBar);
-
+				
 				g.setColor(Color.red);
 				g.fillRect(z.healthBar.getX(), z.healthBar.getY(), z.getHealth() * 10, z.healthBar.getHeight());
 				g.setColor(Color.white);
@@ -207,6 +213,10 @@ public class Play extends BasicGameState{
 
 		alphaMap.draw(hero.getX() + 25 - alphaMap.getWidth()/2, hero.getY() + 25 - alphaMap.getHeight()/2);
 		alphaMap.setRotation(hero.getAngle());
+		flashLightDarkness.draw(0, 0, gc.getWidth(), gc.getHeight());
+		flashLightDarkness.setAlpha(flashLightPower);
+		//flashLightPower += 0.001f;
+		
 
 
 		int aliveCount = 0;
@@ -241,7 +251,7 @@ public class Play extends BasicGameState{
 			g.drawImage(bat.getImage(), hero.getX() - hero.getWidth()/2 + 50, hero.getY() + (hero.getHeight()/2) - bat.getImage().getHeight() + 10);
 			bat.getImage().setCenterOfRotation(0, 0);
 			bat.swing();
-			g.draw(bat.getCircle());
+			//g.draw(bat.getCircle());
 		}
 		
 		//Draw HUD
@@ -253,6 +263,8 @@ public class Play extends BasicGameState{
 			g.drawString(levelWaveMessage + " " + waveNumber, gc.getWidth()/3, gc.getHeight()/6);
 		}
 		g.drawString("Current level: " + waveNumber, 100, 300);
+		g.drawString("Flashlight Power: " + flashLightPower, 100, 320);
+		
 		
 		
 		

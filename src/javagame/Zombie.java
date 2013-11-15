@@ -1,6 +1,7 @@
 package javagame;
 
 import java.awt.geom.Point2D;
+import java.util.Random;
 
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Image;
@@ -141,17 +142,24 @@ public class Zombie
 		
 		healthBar.setBounds(zombieX + 50, zombieY + 50, 100, 20);
 		
-		
-		
 	}
 
 	public void initializeZombieAnimation(SpriteSheet sp) 
 	{
 		//loading zombie animation
+		float green = new Random().nextFloat();
+		float red = new Random().nextFloat();
+		float blue = new Random().nextFloat();
+		
+		Image holder;
+		
 		zombieAnimation = new Animation();
 		for (int i=0;i<3;i++) 
 		{
-			zombieAnimation.addFrame(sp.getSprite(i,0), 500);
+			holder = sp.getSprite(i, 0);
+			holder.setImageColor(red, green, blue);
+			zombieAnimation.addFrame(holder, 500);
+			
 		}
 		
 	}
