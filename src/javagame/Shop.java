@@ -13,10 +13,24 @@ public class Shop extends BasicGameState implements ComponentListener{
 
 
 	private MouseOverArea[] areas = new MouseOverArea[2];
-	Image playButton, logo, upgradeGunPowerButton;
+	Image playButton, upgradeGunPowerButton;
+	Image gunImage, baseballBatImage;
 	Sound levelUp;
 	StateBasedGame sbg;
 	GameContainer gc;
+	
+	float gunColumn;
+	float batColumn;
+	
+	float upgradeOneRow;
+	float upgradeTwoRow;
+	float upgradeThreeRow;
+	
+	int currentCoin = 0;
+	
+	String currentMessage;
+	
+	private final int gunPowerCost = 50;
 
 	public Shop(int state)
 	{
@@ -28,10 +42,21 @@ public class Shop extends BasicGameState implements ComponentListener{
 
 		//replace these with "Play" and "About"
 		playButton = new Image("res/images/SGB_buttonplay_01.png");
-		logo = new Image("res/images/SGB_logo_01.png");
 		upgradeGunPowerButton = new Image("res/images/upgradeGunPower.png");
 		
+		gunImage = new Image("res/images/SGB_gun_01.png");
+		baseballBatImage = new Image("res/images/SGB_baseballbat_01.png");
+		
 		levelUp = new Sound("res/sound/BGM/Level Up.ogg");
+		
+		currentMessage = "Welcome...";
+		
+		gunColumn = gc.getWidth()/5 * 2;
+		batColumn = gc.getWidth()/5 * 3;
+		
+		upgradeOneRow = gc.getHeight()/4;
+		upgradeTwoRow = gc.getHeight()/3;
+		upgradeThreeRow = gc.getHeight()/2;
 		
 		
 		this.gc = gc;
@@ -51,10 +76,14 @@ public class Shop extends BasicGameState implements ComponentListener{
 	public void render(GameContainer gc, StateBasedGame sgb, Graphics g) throws SlickException
 	{
 		g.setBackground(Color.lightGray);
-		logo.draw(50, 0, 0.50f);
 
-
-		g.drawString("What'er yer buyin?", 300, 300);
+		//This is what the shop keeper might be saying
+		g.drawString(currentMessage, 300, 300);
+		
+		g.drawString("Coins: " + currentCoin, 300, 310);
+		
+		g.drawImage(gunImage, gunColumn, 100);
+		g.drawImage(baseballBatImage, batColumn, 100);
 
 		for (int i=0;i<2;i++) 
 		{
@@ -66,6 +95,7 @@ public class Shop extends BasicGameState implements ComponentListener{
 	public void update(GameContainer gc, StateBasedGame sbg, int delta) throws SlickException 
 	{
 		
+		currentCoin = ((Play)sbg.getState(1)).m.currentCoin;
 
 	}
 
@@ -94,13 +124,31 @@ public class Shop extends BasicGameState implements ComponentListener{
 			sbg.enterState(1, new FadeOutTransition(Color.black, 1000), new FadeInTransition(Color.black, 1000) );
 		}
 		
+		//Gun Power Upgrade
 		if (source == areas[1]) 
 		{
-			System.out.println("Upgrading Gun Power");
-			for(Bullet b : ((Play)sbg.getState(1)).bulletManager)
+			if(currentCoin >= gunPowerCost)
 			{
-				b.setBulletDamage(2);
+				System.out.println("Upgrading Gun Power");
+				for(Bullet b : ((Play)sbg.getState(1)).bulletManager)
+				{
+					b.setBulletDamage(2);
+				}
+				
+				//Decreasing Player Money
+				((Play)sbg.getState(1)).m.decreaseCurrentCoin(gunPowerCost);
+				
+				currentMessage = "Nice doing business with ya.";
+				
 			}
+			else
+			{
+				System.out.println("Not Enough Money!");
+				currentMessage = "Not enough money kid. Go kill some more zombies.";
+			}
+			
+			
+			
 			
 		}
 
@@ -108,3 +156,16 @@ public class Shop extends BasicGameState implements ComponentListener{
 
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -14,6 +14,7 @@ public class Bullet extends Image
 	private float bulletAngle;
 	private int   bulletDamage;
 	private boolean bulletIsAlive;
+	private float bulletRange = 100;
 	
 	private Image image;
 	
@@ -26,6 +27,16 @@ public class Bullet extends Image
 		bulletRect = new Rectangle(bulletX, bulletY, 10, 10);
 		bulletDamage = 2;
 	
+	}
+	
+	public float getBulletRange()
+	{
+		return bulletRange;
+	}
+	
+	public void setBulletRange(float newRange)
+	{
+		bulletRange = newRange;
 	}
 	
 	public float getBulletX()

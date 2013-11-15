@@ -23,6 +23,8 @@ public class Zombie
 	private float zombieAngle = 90f;
 	private int zombieHealth = 10;
 	
+	int moneyValue = 10;
+	
 	private boolean isAlive = false;
 	
 	Animation zombieAnimation;

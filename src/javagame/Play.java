@@ -29,8 +29,15 @@ public class Play extends BasicGameState{
 	Rectangle doorRect;
 	Animation doorAnimation;
 	SpriteSheet doorSpriteSheet;
+	
+	
+	
+	Money m;
 
 	public int waveNumber = 1;
+	String levelWaveMessage = "Level ";
+	float levelWaveMessageCountdown = 100;
+	
 
 	ArrayList<Bullet> bulletManager = new ArrayList<Bullet>();
 	int reloadSize = 30;
@@ -85,6 +92,7 @@ public class Play extends BasicGameState{
 		
 	
 		bat = new BaseballBat("res/images/baseball_bat.png", hero);
+		m = new Money();
 
 		
 		
@@ -152,7 +160,7 @@ public class Play extends BasicGameState{
 
 		makeBackground(gc.getGraphics());
 		
-		sb = new StatusBar(gc);
+		sb = new StatusBar(gc, hero);
 
 
 	}
@@ -210,11 +218,11 @@ public class Play extends BasicGameState{
 			}
 		}
 
-		g.drawString("Ghoul Army Size: " + ghoulArmy.size() + " Num of Alive Zombies: " + aliveCount , 20, 70);
-		g.drawString("Number of Avaliable Bullets: " + numOfBullets, 20, 90);
-		g.drawString("Bat Alive? " + bat.getAlive() + " Bat Angle: " + bat.getAngle()
-				+ "End: " + bat.endAngle + " Start: " + bat.startAngle, 20, 110);
-		g.drawString("Bat X: " + bat.getX() + " Bat Y: " + bat.getY(), 20, 130);
+//		g.drawString("Ghoul Army Size: " + ghoulArmy.size() + " Num of Alive Zombies: " + aliveCount , 20, 70);
+//		g.drawString("Number of Avaliable Bullets: " + numOfBullets, 20, 90);
+//		g.drawString("Bat Alive? " + bat.getAlive() + " Bat Angle: " + bat.getAngle()
+//				+ "End: " + bat.endAngle + " Start: " + bat.startAngle, 20, 110);
+//		g.drawString("Bat X: " + bat.getX() + " Bat Y: " + bat.getY(), 20, 130);
 		
 		//		for(int i = 0; i < bulletManager.size(); i++)
 		//		{
@@ -238,6 +246,16 @@ public class Play extends BasicGameState{
 		
 		//Draw HUD
 		sb.render(g);
+		
+		//Display Level Message
+		if(levelWaveMessageCountdown >= 0)
+		{
+			g.drawString(levelWaveMessage + " " + waveNumber, gc.getWidth()/3, gc.getHeight()/6);
+		}
+		g.drawString("Current level: " + waveNumber, 100, 300);
+		
+		
+		
 
 	}
 
@@ -368,7 +386,8 @@ public class Play extends BasicGameState{
 			}
 
 			bat.updateRect(hero);
-
+			sb.update(m, hero);
+			levelWaveMessageCountdown -= 1;
 
 
 			//COLLISION
@@ -404,8 +423,8 @@ public class Play extends BasicGameState{
 						
 						if(z.getHealth() <= 0)
 						{
-							
-							z.setGhoulIsAlive(false);	
+							z.setGhoulIsAlive(false);
+							m.setCurrentCoin(m.currentCoin + ghoulArmy.get(1).moneyValue);
 						}
 
 					}
@@ -430,8 +449,12 @@ public class Play extends BasicGameState{
 						if(ghoulArmy.get(i).getHealth() <= 0)
 						{
 							ghoulArmy.get(i).setGhoulIsAlive(false);	
+							m.setCurrentCoin(m.currentCoin + ghoulArmy.get(1).moneyValue);
 						}
 						zombieDie.play(0.9f,0.2f);
+						
+						
+						
 					}
 				}
 
@@ -647,10 +670,14 @@ public class Play extends BasicGameState{
 		}
 
 		numOfZombies = 2;
+		
+		m.reset();
 
 		hero.resetHealth();
 		hero.setX(gc.getWidth()/2);
 		hero.setY(gc.getHeight()/2);
+		
+		levelWaveMessageCountdown = 100;
 
 	}
 
@@ -664,6 +691,7 @@ public class Play extends BasicGameState{
 		int numOfEnemiesAdded = 2;
 		increasingSpeed += 0.1;
 		numOfZombies += numOfEnemiesAdded;
+		waveNumber += 1;
 
 		ghoulSpawnPoints = createSpawnPoints(ghoulSpawnPoints, gc);
 
@@ -683,6 +711,9 @@ public class Play extends BasicGameState{
 			ghoul.setGhoulIsAlive(true);
 			ghoulArmy.add(ghoul);
 		}
+		
+		levelWaveMessageCountdown = 100;
+		
 	}
 
 

@@ -13,7 +13,7 @@ public class Menu extends BasicGameState implements ComponentListener{
 	private MouseOverArea[] areas = new MouseOverArea[2];
 	Image playMenu;
 	Image aboutMenu;
-	Image logo;
+	Image backgroundImage;
 	StateBasedGame sbg;
 	
 	Sound titleBGM;
@@ -29,7 +29,7 @@ public class Menu extends BasicGameState implements ComponentListener{
 		//replace these with "Play" and "About"
 		playMenu = new Image("res/images/SGB_buttonplay_01.png");
 		aboutMenu = new Image("res/images/SGB_buttoncredits_01.png");
-		logo = new Image("res/images/SGB_logo_01.png");
+		backgroundImage = new Image("res/images/splashScreens/SGB_logo_02.jpg");
 		
 		//Music
 		titleBGM = new Sound("res/sound/BGM/Title.ogg");
@@ -53,7 +53,7 @@ public class Menu extends BasicGameState implements ComponentListener{
 	public void render(GameContainer gc, StateBasedGame sgb, Graphics g) throws SlickException
 	{
 		g.setBackground(Color.blue);
-		logo.draw(50, 0, 0.50f);
+		backgroundImage.draw(0, 0, gc.getWidth(), gc.getHeight());
 
 
 
