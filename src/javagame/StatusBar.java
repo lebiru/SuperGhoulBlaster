@@ -9,11 +9,8 @@ public class StatusBar
 {
 
 	float health;
-	float flashlightPower;
+	float flPower;
 	int coins;
-	
-	
-	
 	
 	GameContainer gc;
 	
@@ -52,12 +49,12 @@ public class StatusBar
 	
 	public void setFlashlightPower(float newFLPower)
 	{
-		flashlightPower = newFLPower;
+		flPower = newFLPower;
 	}
 	
 	public float getFlashlightPower()
 	{
-		return flashlightPower;
+		return flPower;
 	}
 	
 	public void setCoins(int newCoins)
@@ -80,10 +77,11 @@ public class StatusBar
 		return isVisible;
 	}
 	
-	public void update(Money m, Player hero)
+	public void update(Money m, Player hero, Flashlight fl)
 	{
 		coins = m.currentCoin;
 		health = hero.getHealth();
+		flPower = fl.getPower();
 		
 	}
 	
@@ -91,8 +89,8 @@ public class StatusBar
 	{
 		g.draw(this.statusBarHUD);
 		g.drawString("Coins: " + coins, gc.getWidth()/4, gc.getHeight() - 70);
-		g.drawString("Health: ", gc.getWidth()/2, gc.getHeight() - 70);
-		g.drawString("Flashlight Power: ", (gc.getWidth()/4)*3, gc.getHeight() - 70);
+		g.drawString("Health ", gc.getWidth()/2, gc.getHeight() - 70);
+		g.drawString("Flashlight Power: " + (100 - (flPower * 100)) + "%", (gc.getWidth()/4)*3, gc.getHeight() - 70);
 		
 		g.draw(heroHealthRect);
 		g.setColor(Color.red);

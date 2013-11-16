@@ -20,9 +20,6 @@ public class Play extends BasicGameState{
 	Image sand, rock;
 	Sound shoot, zombieDie, reload, batswing;
 
-	private Image alphaMap;
-	private Image flashLightDarkness;
-	float flashLightPower = 0f;
 
 	StatusBar sb;
 
@@ -49,6 +46,7 @@ public class Play extends BasicGameState{
 	Player hero;
 	Zombie ghoul;
 	BaseballBat bat;
+	Flashlight fl;
 
 	ArrayList<Zombie> ghoulArmy = new ArrayList<Zombie>();
 	ArrayList<Point2D> ghoulSpawnPoints = new ArrayList<Point2D>();
@@ -108,8 +106,9 @@ public class Play extends BasicGameState{
 		doorY = 0;
 		doorRect = new Rectangle(doorX, doorY, doorAnimation.getWidth(), doorAnimation.getHeight());
 
-		alphaMap = new Image("res/images/flashlight.png");
-		flashLightDarkness = new Image("res/images/flashLightDarkness.png");
+		//alphaMap = new Image("res/images/flashlight.png");
+		//flashLightDarkness = new Image("res/images/flashLightDarkness.png");
+		fl = new Flashlight("res/images/flashlight.png", "res/images/flashLightDarkness.png");
 
 		//Making ghoul army
 		Random ran = new Random();
@@ -231,33 +230,10 @@ public class Play extends BasicGameState{
 		g.drawImage(hero.getImage(), hero.getX(), hero.getY());
 		hero.getImage().setRotation(hero.getAngle());
 
-		alphaMap.draw(hero.getX() + 25 - alphaMap.getWidth()/2, hero.getY() + 25 - alphaMap.getHeight()/2);
-		alphaMap.setRotation(hero.getAngle());
-		flashLightDarkness.draw(0, 0, gc.getWidth(), gc.getHeight());
-		flashLightDarkness.setAlpha(flashLightPower);
-		//flashLightPower += 0.001f;
-
-
-
-		int aliveCount = 0;
-		for(Zombie z : ghoulArmy)
-		{
-			if(z.getAlive() == true)
-			{
-				aliveCount++;
-			}
-		}
-
-		//		g.drawString("Ghoul Army Size: " + ghoulArmy.size() + " Num of Alive Zombies: " + aliveCount , 20, 70);
-		//		g.drawString("Number of Avaliable Bullets: " + numOfBullets, 20, 90);
-		//		g.drawString("Bat Alive? " + bat.getAlive() + " Bat Angle: " + bat.getAngle()
-		//				+ "End: " + bat.endAngle + " Start: " + bat.startAngle, 20, 110);
-		//		g.drawString("Bat X: " + bat.getX() + " Bat Y: " + bat.getY(), 20, 130);
-
-		//		for(int i = 0; i < bulletManager.size(); i++)
-		//		{
-		//			g.drawString("Alive? " + bulletManager.get(i).getAlive() + " dmg: " + bulletManager.get(i).getDamage(), 20, 100 + (i * 20));
-		//		}
+		fl.flashlightImage.draw(hero.getX() + 25 - fl.flashlightImage.getWidth()/2, hero.getY() + 25 - fl.flashlightImage.getHeight()/2);
+		fl.flashlightImage.setRotation(hero.getAngle());
+		fl.darknessImage.draw(0, 0, gc.getWidth(), gc.getHeight());
+		fl.darknessImage.setAlpha(fl.getPower());
 
 		if(checkWaveCleared() == true)
 		{
@@ -271,7 +247,7 @@ public class Play extends BasicGameState{
 			g.drawImage(bat.getImage(), hero.getX() - hero.getWidth()/2 + 50, hero.getY() + (hero.getHeight()/2) - bat.getImage().getHeight() + 10);
 			bat.getImage().setCenterOfRotation(0, 0);
 			bat.swing();
-			//g.draw(bat.getCircle());
+			
 		}
 
 		//Draw HUD
@@ -283,7 +259,7 @@ public class Play extends BasicGameState{
 			g.drawString(levelWaveMessage + " " + waveNumber, gc.getWidth()/3, gc.getHeight()/6);
 		}
 		g.drawString("Current level: " + waveNumber, 100, 300);
-		g.drawString("Flashlight Power: " + flashLightPower, 100, 320);
+		g.drawString("Flashlight Power: " + fl.getPower(), 100, 320);
 		g.drawString("Boss Level? " + isBossLevel(), 100, 340);
 		
 	}
@@ -415,7 +391,8 @@ public class Play extends BasicGameState{
 			}
 
 			bat.updateRect(hero);
-			sb.update(m, hero);
+			sb.update(m, hero, fl);
+			fl.update();
 			levelWaveMessageCountdown -= 1;
 
 
@@ -769,6 +746,7 @@ public class Play extends BasicGameState{
 				ghoulArmy.add(ghoul);
 			}
 		}
+		
 
 	}
 
