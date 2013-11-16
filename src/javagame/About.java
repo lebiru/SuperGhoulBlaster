@@ -11,7 +11,8 @@ public class About extends BasicGameState implements ComponentListener{
 
 
 	private MouseOverArea[] areas = new MouseOverArea[2];
-	Image backButton;
+	Image backButton, creditsImage;
+	
 	
 	Image logo;
 	StateBasedGame sbg;
@@ -27,6 +28,7 @@ public class About extends BasicGameState implements ComponentListener{
 
 		//replace these with "Play" and "About"
 		backButton = new Image("res/images/SGB_buttonmainmenu_01.png");
+		creditsImage = new Image("res/images/credits.png");
 		this.sbg = sbg;
 
 		areas[0] = new MouseOverArea(gc, backButton, 200, 400 + (0*100), 200, 90, this);
@@ -42,8 +44,7 @@ public class About extends BasicGameState implements ComponentListener{
 	{
 		g.setBackground(Color.black);
 		
-
-
+		creditsImage.draw(0, 0, gc.getWidth(), gc.getHeight());
 
 		for (int i=0; i < 1 ; i++) 
 		{
