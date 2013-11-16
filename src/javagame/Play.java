@@ -749,7 +749,7 @@ public class Play extends BasicGameState{
 				ghoulArmy.add(ghoul);
 			}
 		}
-
+		
 		else
 		{
 			//if not boss level
