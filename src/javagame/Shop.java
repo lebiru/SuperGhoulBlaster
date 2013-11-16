@@ -113,7 +113,7 @@ public class Shop extends BasicGameState implements ComponentListener{
 			System.out.println("Entering Next Level");
 			((Play)sbg.getState(1)).cleanUpLevel();
 			try {
-				((Play)sbg.getState(1)).increaseLevelDifficulty();
+				((Play)sbg.getState(1)).increaseLevelDifficulty(((Play)sbg.getState(1)).isBossLevel());
 			} catch (SlickException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

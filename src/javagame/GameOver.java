@@ -45,7 +45,7 @@ public class GameOver extends BasicGameState implements ComponentListener{
 	//for drawing things on screen
 	public void render(GameContainer gc, StateBasedGame sgb, Graphics g) throws SlickException
 	{
-		g.setBackground(Color.white);
+		g.setBackground(Color.blue);
 		logo.draw(50, 0, 0.50f);
 
 

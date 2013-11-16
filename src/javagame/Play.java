@@ -19,28 +19,28 @@ public class Play extends BasicGameState{
 
 	Image sand, rock;
 	Sound shoot, zombieDie, reload, batswing;
-	
+
 	private Image alphaMap;
 	private Image flashLightDarkness;
 	float flashLightPower = 0f;
-	
+
 	StatusBar sb;
-	
+
 	Image door;
 	float doorX;
 	float doorY;
 	Rectangle doorRect;
 	Animation doorAnimation;
 	SpriteSheet doorSpriteSheet;
-	
-	
-	
+
+
+
 	Money m;
 
 	public int waveNumber = 1;
 	String levelWaveMessage = "Level ";
 	float levelWaveMessageCountdown = 100;
-	
+
 
 	ArrayList<Bullet> bulletManager = new ArrayList<Bullet>();
 	int reloadSize = 30;
@@ -55,6 +55,9 @@ public class Play extends BasicGameState{
 
 	int numOfZombies = 2;
 	float increasingSpeed = 2;
+	int numOfBosses = waveNumber / 2;
+	float bossSize = 5;
+
 
 	ArrayList<ArrayList<String>> gridmap = new ArrayList<ArrayList<String>>();
 	int tileWidth = 50;
@@ -92,15 +95,15 @@ public class Play extends BasicGameState{
 		doorSpriteSheet = new SpriteSheet("res/images/SGB_doorsprite_01.png", 132, 137);
 		doorAnimation.addFrame(doorSpriteSheet.getSprite(0, 0), 500);
 		doorAnimation.addFrame(doorSpriteSheet.getSprite(1, 0), 500);
-		
-	
+
+
 		bat = new BaseballBat("res/images/baseball_bat.png", hero);
 		m = new Money();
-		
-		
 
-		
-		
+
+
+
+
 		doorX = gc.getWidth()/2 - doorAnimation.getWidth()/2;
 		doorY = 0;
 		doorRect = new Rectangle(doorX, doorY, doorAnimation.getWidth(), doorAnimation.getHeight());
@@ -165,7 +168,7 @@ public class Play extends BasicGameState{
 		tileMapHeight = gc.getHeight()/tileHeight;
 
 		makeBackground(gc.getGraphics());
-		
+
 		sb = new StatusBar(gc, hero);
 
 
@@ -183,16 +186,33 @@ public class Play extends BasicGameState{
 		{
 			if(z.getAlive() == true)
 			{
-				g.drawImage(z.getImage(), z.getX(), z.getY());
-				z.getAnimation().draw(z.getX(), z.getY());
-				z.getAnimation().getCurrentFrame().setRotation(z.getAngle());
+
 				z.setAngle((float) (Math.atan2(z.getDY(), z.getDX()) * (180/Math.PI)) + 90f);
-				z.getImage().setRotation(z.getAngle());
+
+				if(isBossLevel())
+				{
+					z.getImage().draw(z.getX(), z.getY(), bossSize);
+					z.getAnimation().draw(z.getX(), z.getY());
+					z.getAnimation().getCurrentFrame().draw(z.getX(), z.getY(), bossSize);
+					z.getAnimation().getCurrentFrame().setRotation(z.getAngle());
+				}
+				else
+				{
+					g.drawImage(z.getImage(), z.getX(), z.getY());
+					z.getAnimation().draw(z.getX(), z.getY());
+					z.getAnimation().getCurrentFrame().setRotation(z.getAngle());
+				}
+
+
+
+				//z.getImage().setRotation(z.getAngle());
 				g.draw(z.healthBar);
-				
+
 				g.setColor(Color.red);
 				g.fillRect(z.healthBar.getX(), z.healthBar.getY(), z.getHealth() * 10, z.healthBar.getHeight());
 				g.setColor(Color.white);
+
+
 			}
 
 		}
@@ -216,7 +236,7 @@ public class Play extends BasicGameState{
 		flashLightDarkness.draw(0, 0, gc.getWidth(), gc.getHeight());
 		flashLightDarkness.setAlpha(flashLightPower);
 		//flashLightPower += 0.001f;
-		
+
 
 
 		int aliveCount = 0;
@@ -228,12 +248,12 @@ public class Play extends BasicGameState{
 			}
 		}
 
-//		g.drawString("Ghoul Army Size: " + ghoulArmy.size() + " Num of Alive Zombies: " + aliveCount , 20, 70);
-//		g.drawString("Number of Avaliable Bullets: " + numOfBullets, 20, 90);
-//		g.drawString("Bat Alive? " + bat.getAlive() + " Bat Angle: " + bat.getAngle()
-//				+ "End: " + bat.endAngle + " Start: " + bat.startAngle, 20, 110);
-//		g.drawString("Bat X: " + bat.getX() + " Bat Y: " + bat.getY(), 20, 130);
-		
+		//		g.drawString("Ghoul Army Size: " + ghoulArmy.size() + " Num of Alive Zombies: " + aliveCount , 20, 70);
+		//		g.drawString("Number of Avaliable Bullets: " + numOfBullets, 20, 90);
+		//		g.drawString("Bat Alive? " + bat.getAlive() + " Bat Angle: " + bat.getAngle()
+		//				+ "End: " + bat.endAngle + " Start: " + bat.startAngle, 20, 110);
+		//		g.drawString("Bat X: " + bat.getX() + " Bat Y: " + bat.getY(), 20, 130);
+
 		//		for(int i = 0; i < bulletManager.size(); i++)
 		//		{
 		//			g.drawString("Alive? " + bulletManager.get(i).getAlive() + " dmg: " + bulletManager.get(i).getDamage(), 20, 100 + (i * 20));
@@ -253,10 +273,10 @@ public class Play extends BasicGameState{
 			bat.swing();
 			//g.draw(bat.getCircle());
 		}
-		
+
 		//Draw HUD
 		sb.render(g);
-		
+
 		//Display Level Message
 		if(levelWaveMessageCountdown >= 0)
 		{
@@ -264,11 +284,8 @@ public class Play extends BasicGameState{
 		}
 		g.drawString("Current level: " + waveNumber, 100, 300);
 		g.drawString("Flashlight Power: " + flashLightPower, 100, 320);
+		g.drawString("Boss Level? " + isBossLevel(), 100, 340);
 		
-		
-		
-		
-
 	}
 
 
@@ -335,7 +352,7 @@ public class Play extends BasicGameState{
 				batswing.play();
 			}
 
-			
+
 			if(bat.isSwingEnd())
 			{
 				bat.turnOff();
@@ -424,15 +441,15 @@ public class Play extends BasicGameState{
 				{
 					if(z.getAlive() == true && bat.getCircle().intersects(z.getRect()))
 					{
-					
+
 						z.setHealth(bat.getDamage());
 						if(bat.hasPlayedSwingHit == false)
 						{
 							zombieDie.play(0.9f,0.2f);
 							bat.hasPlayedSwingHit = true;
 						}
-						
-						
+
+
 						if(z.getHealth() <= 0)
 						{
 							z.setGhoulIsAlive(false);
@@ -464,9 +481,9 @@ public class Play extends BasicGameState{
 							m.setCurrentCoin(m.currentCoin + ghoulArmy.get(1).moneyValue);
 						}
 						zombieDie.play(0.9f,0.2f);
-						
-						
-						
+
+
+
 					}
 				}
 
@@ -682,13 +699,13 @@ public class Play extends BasicGameState{
 		}
 
 		numOfZombies = 2;
-		
+
 		m.reset();
 
 		hero.resetHealth();
 		hero.setX(gc.getWidth()/2);
 		hero.setY(gc.getHeight()/2);
-		
+
 		levelWaveMessageCountdown = 100;
 
 	}
@@ -698,34 +715,72 @@ public class Play extends BasicGameState{
 		return waveNumber;
 	}
 
-	public void increaseLevelDifficulty() throws SlickException
+	public void increaseLevelDifficulty(boolean isBossLevel) throws SlickException
 	{
+		levelWaveMessageCountdown = 100;
 		int numOfEnemiesAdded = 2;
 		increasingSpeed += 0.1;
 		numOfZombies += numOfEnemiesAdded;
 		waveNumber += 1;
 
+
 		ghoulSpawnPoints = createSpawnPoints(ghoulSpawnPoints, gc);
 
 		Random ran = new Random();
-		for(int i = 0 ; i < numOfEnemiesAdded; i++ )
-		{
 
-			ghoul = new Zombie
-					(
-							new Image("res/images/SGB_zombiesprite_01.png").getSubImage(0, 0, 50, 62), 
-							ran.nextInt(gc.getWidth()), 
-							ran.nextInt(gc.getHeight())
-							);
-			ghoul.setPosition(ghoulSpawnPoints.get((ran.nextInt(ghoulSpawnPoints.size()))));
-			ghoul.setSpeed(ran.nextFloat() * increasingSpeed + 1); //FUN?
-			ghoul.initializeZombieAnimation(new SpriteSheet("res/images/SGB_zombiesprite_01.png", 50, 62));
-			ghoul.setGhoulIsAlive(true);
-			ghoulArmy.add(ghoul);
+	
+		if(isBossLevel())
+		{
+			//If boss level
+			numOfBosses = waveNumber/2;
+			for(int i = 0 ; i <= numOfBosses; i++ )
+			{
+
+				ghoul = new Zombie
+						(
+								new Image("res/images/SGB_zombiesprite_01.png").getSubImage(0, 0, 50, 62), 
+								ran.nextInt(gc.getWidth()), 
+								ran.nextInt(gc.getHeight())
+								);
+				ghoul.setPosition(ghoulSpawnPoints.get((ran.nextInt(ghoulSpawnPoints.size()))));
+				ghoul.setSpeed(ran.nextFloat() * increasingSpeed + 1); //Bosses must be slow
+				ghoul.initializeZombieAnimation(new SpriteSheet("res/images/SGB_zombiesprite_01.png", 50, 62));
+				ghoul.setGhoulIsAlive(true);			
+				ghoulArmy.add(ghoul);
+			}
 		}
-		
-		levelWaveMessageCountdown = 100;
-		
+
+		else
+		{
+			//if not boss level
+			for(int i = 0 ; i < numOfEnemiesAdded; i++ )
+			{
+
+				ghoul = new Zombie
+						(
+								new Image("res/images/SGB_zombiesprite_01.png").getSubImage(0, 0, 50, 62), 
+								ran.nextInt(gc.getWidth()), 
+								ran.nextInt(gc.getHeight())
+								);
+				ghoul.setPosition(ghoulSpawnPoints.get((ran.nextInt(ghoulSpawnPoints.size()))));
+				ghoul.setSpeed(ran.nextFloat() * increasingSpeed + 1); //FUN?
+				ghoul.initializeZombieAnimation(new SpriteSheet("res/images/SGB_zombiesprite_01.png", 50, 62));
+				ghoul.setGhoulIsAlive(true);
+				ghoulArmy.add(ghoul);
+			}
+		}
+
+	}
+
+	public boolean isBossLevel()
+	{
+		if(waveNumber%2 == 0)
+		{
+			return true;
+		}
+
+		return false;
+
 	}
 
 
