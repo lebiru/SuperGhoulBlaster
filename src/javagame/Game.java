@@ -5,6 +5,8 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.newdawn.slick.*;
 import org.newdawn.slick.state.*;
+import org.newdawn.slick.state.transition.FadeInTransition;
+import org.newdawn.slick.state.transition.FadeOutTransition;
 
 public class Game extends StateBasedGame
 {
@@ -22,24 +24,22 @@ public class Game extends StateBasedGame
 	static final int maxFPS = 60;
 	
 
-	
 	public Game(String gamename) throws SlickException
 	{
 		super(gamename);
+		this.addState(new About(about));
+		this.addState(new Shop(shop));
 		this.addState(new Menu(menu));
 		this.addState(new Play(play));
-		this.addState(new About(about));
 		this.addState(new Controls(controls));
 		this.addState(new GameOver(gameOver));
-		this.addState(new Shop(shop));
-		
 		
 	}
 	
 	//gamecontainer manages game engine stuff, like framerate, game loop, etc...
 	public void initStatesList(GameContainer gc) throws SlickException
 	{
-		this.enterState(menu);	
+		this.enterState(about);
 	}
 	
 	public static void main(String[] args) 
@@ -53,6 +53,7 @@ public class Game extends StateBasedGame
 			
 			
 			DisplayMode[] modes;
+			
 			//Enabling Full-Screen Mode
 			try {
 				modes = Display.getAvailableDisplayModes();
@@ -68,10 +69,9 @@ public class Game extends StateBasedGame
 				
 				e.printStackTrace();
 			}
+		
+			
 
-	     
-	         
-	         
 			appgc.setDisplayMode(SCREEN_WIDTH, SCREEN_HEIGHT, false); //third argument is fullscreen
 			appgc.start();
 		}catch(SlickException e)

@@ -12,7 +12,7 @@ public class Menu extends BasicGameState implements ComponentListener{
 
 	private MouseOverArea[] areas = new MouseOverArea[2];
 	Image playMenu;
-	Image aboutMenu;
+	//Image aboutMenu;
 	Image backgroundImage;
 	StateBasedGame sbg;
 	
@@ -28,7 +28,7 @@ public class Menu extends BasicGameState implements ComponentListener{
 
 		//replace these with "Play" and "About"
 		playMenu = new Image("res/images/SGB_buttonplay_01.png");
-		aboutMenu = new Image("res/images/SGB_buttoncredits_01.png");
+		//aboutMenu = new Image("res/images/SGB_buttoncredits_01.png");
 		backgroundImage = new Image("res/images/splashScreens/SGB_logo_02.jpg");
 		
 		//Music
@@ -42,9 +42,9 @@ public class Menu extends BasicGameState implements ComponentListener{
 		areas[0].setNormalColor(new Color(1,1,1,0.8f));
 		areas[0].setMouseOverColor(new Color(1,1,1,0.9f));
 
-		areas[1] = new MouseOverArea(gc, aboutMenu, 200, 400 + (1*100), 200, 90, this);
-		areas[1].setNormalColor(new Color(1,1,1,0.8f));
-		areas[1].setMouseOverColor(new Color(1,1,1,0.9f));
+//		areas[1] = new MouseOverArea(gc, aboutMenu, 200, 400 + (1*100), 200, 90, this);
+//		areas[1].setNormalColor(new Color(1,1,1,0.8f));
+//		areas[1].setMouseOverColor(new Color(1,1,1,0.9f));
 
 
 	}
@@ -85,12 +85,12 @@ public class Menu extends BasicGameState implements ComponentListener{
 			sbg.enterState(3);
 		}
 
-		else if (source == areas[1]) 
-		{
-			//Enter the Credits 
-			System.out.println("Entering Credits");
-			sbg.enterState(2);
-		}
+//		else if (source == areas[1]) 
+//		{
+//			//Enter the Credits 
+//			System.out.println("Entering Credits");
+//			sbg.enterState(2);
+//		}
 	}
 
 

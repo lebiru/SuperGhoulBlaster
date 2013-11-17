@@ -5,6 +5,8 @@ import org.newdawn.slick.gui.AbstractComponent;
 import org.newdawn.slick.gui.ComponentListener;
 import org.newdawn.slick.gui.MouseOverArea;
 import org.newdawn.slick.state.*;
+import org.newdawn.slick.state.transition.FadeInTransition;
+import org.newdawn.slick.state.transition.FadeOutTransition;
 
 
 public class About extends BasicGameState implements ComponentListener{
@@ -17,6 +19,8 @@ public class About extends BasicGameState implements ComponentListener{
 	Image logo;
 	StateBasedGame sbg;
 
+	private float countdown = 100f;
+	
 	public About(int state)
 	{
 
@@ -27,13 +31,13 @@ public class About extends BasicGameState implements ComponentListener{
 
 
 		//replace these with "Play" and "About"
-		backButton = new Image("res/images/SGB_buttonmainmenu_01.png");
+		//backButton = new Image("res/images/SGB_buttonmainmenu_01.png");
 		creditsImage = new Image("res/images/credits.png");
 		this.sbg = sbg;
-
-		areas[0] = new MouseOverArea(gc, backButton, 200, 400 + (0*100), 200, 90, this);
-		areas[0].setNormalColor(new Color(1,1,1,0.8f));
-		areas[0].setMouseOverColor(new Color(1,1,1,0.9f));
+//
+//		areas[0] = new MouseOverArea(gc, backButton, 200, 400 + (0*100), 200, 90, this);
+//		areas[0].setNormalColor(new Color(1,1,1,0.8f));
+//		areas[0].setMouseOverColor(new Color(1,1,1,0.9f));
 
 
 
@@ -46,16 +50,20 @@ public class About extends BasicGameState implements ComponentListener{
 		
 		creditsImage.draw(0, 0, gc.getWidth(), gc.getHeight());
 
-		for (int i=0; i < 1 ; i++) 
-		{
-			areas[i].render(gc, g);
-		}
+//		for (int i=0; i < 1 ; i++) 
+//		{
+//			areas[i].render(gc, g);
+//		}
 	}
 
 	//for updating logics of the game
 	public void update(GameContainer gc, StateBasedGame sbg, int delta) throws SlickException 
 	{
-
+		countdown--;
+		if(countdown <= 0)
+		{
+			sbg.enterState(0, new FadeOutTransition(Color.black, 1000), new FadeInTransition(Color.black, 1000) );
+		}
 
 	}
 
