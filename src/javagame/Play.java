@@ -40,8 +40,11 @@ public class Play extends BasicGameState
 	int numOfBosses = waveNumber / 2;
 
 	ArrayList<Bullet> bulletManager = new ArrayList<Bullet>();
-	int reloadSize = 30;
+	int reloadSize = 5;
 	int numOfBullets = reloadSize;
+	float reloadTime = 500;
+	boolean canShoot = true;
+	boolean isReloading = false;
 
 	Player hero;
 	Zombie ghoul;
@@ -50,7 +53,13 @@ public class Play extends BasicGameState
 
 	ArrayList<Zombie> ghoulArmy = new ArrayList<Zombie>();
 	ArrayList<Point2D> ghoulSpawnPoints = new ArrayList<Point2D>();
-
+	
+	//GameOver Statistics
+	double bulletsFired = 0;
+	double bulletsHit = 0;
+	int zombiesKilled = 0;
+	int totalCoinsEarned = 0;
+	////////////////////////
 
 
 	ArrayList<ArrayList<String>> gridmap = new ArrayList<ArrayList<String>>();
@@ -237,6 +246,11 @@ public class Play extends BasicGameState
 		{
 			g.drawString(levelWaveMessage + " " + waveNumber, gc.getWidth()/3, gc.getHeight()/6);
 		}
+		
+		g.drawString("Reload Time: " + reloadTime, 10, 30);
+		g.drawString("Can Shoot: " + canShoot, 10, 50);
+		g.drawString("isReloading: " + isReloading, 10, 70);
+		
 
 	}
 
@@ -277,7 +291,7 @@ public class Play extends BasicGameState
 
 
 		//SHOOT USING MOUSE
-		if(input.isMousePressed(0))
+		if(input.isMousePressed(0) && canShoot == true)
 		{
 			for(Bullet b : bulletManager)
 			{
@@ -286,8 +300,8 @@ public class Play extends BasicGameState
 				{ 
 					b.turnOn(hero);
 					shoot.play();
-
 					numOfBullets--;
+					bulletsFired++;
 					return;
 				}
 			}
@@ -311,13 +325,7 @@ public class Play extends BasicGameState
 		//RELOAD USING RIGHT MOUSE BUTTON
 		if(input.isMousePressed(1))
 		{
-			for(int i = 0; i < bulletManager.size(); i++)
-			{
-				bulletManager.get(i).setBulletIsAlive(false);
-			}
-			numOfBullets = reloadSize;
-			reload.play();
-
+			reloadGunTurnOn();
 		}
 
 
@@ -368,9 +376,15 @@ public class Play extends BasicGameState
 
 		bat.updateRect(hero);
 		sb.update(m, hero, fl);
-		fl.update();
 		levelWaveMessageCountdown -= 1;
-
+		if(checkWaveCleared() == false)
+		{
+			fl.update();
+		}
+		if(isReloading)
+		{
+			reloadGun();
+		}
 
 		//COLLISION
 
@@ -382,6 +396,7 @@ public class Play extends BasicGameState
 				if(hero.getRect().intersects(z.getRect()))
 				{
 					hero.setHealth(-1);
+					
 				}
 			}
 
@@ -405,6 +420,8 @@ public class Play extends BasicGameState
 					if(z.getHealth() <= 0)
 					{
 						z.setGhoulIsAlive(false);
+						zombiesKilled++;
+						totalCoinsEarned += ghoulArmy.get(1).moneyValue;
 						m.setCurrentCoin(m.currentCoin + ghoulArmy.get(1).moneyValue);
 					}
 
@@ -428,10 +445,13 @@ public class Play extends BasicGameState
 					bulletManager.get(j).setBulletIsAlive(false);
 					ghoulArmy.get(i).setHealth(bulletManager.get(j).getDamage());
 					ghoulArmy.get(i).turnOnDamaged();
+					bulletsHit++;
 					if(ghoulArmy.get(i).getHealth() <= 0)
 					{
 						ghoulArmy.get(i).setGhoulIsAlive(false);	
-						m.setCurrentCoin(m.currentCoin + ghoulArmy.get(1).moneyValue);
+						m.setCurrentCoin(m.currentCoin + ghoulArmy.get(i).moneyValue);
+						totalCoinsEarned += ghoulArmy.get(i).moneyValue;
+						zombiesKilled++;
 					}
 					zombieDie.play(0.9f,0.2f);
 				}
@@ -464,6 +484,32 @@ public class Play extends BasicGameState
 
 		}
 
+	}
+
+	private void reloadGun() 
+	{
+		reloadTime--;
+		if(reloadTime <= 0)
+		{
+			for(int i = 0; i < bulletManager.size(); i++)
+			{
+				bulletManager.get(i).setBulletIsAlive(false);
+			}
+			numOfBullets = reloadSize;
+			reload.play();
+			isReloading = false;
+			canShoot = true;
+			reloadTime = 500;
+		}
+		
+	}
+
+	private void reloadGunTurnOn() 
+	{
+		isReloading = true;
+		canShoot = false;
+		
+		
 	}
 
 	private void renderBackground(Graphics g) 
@@ -655,6 +701,11 @@ public class Play extends BasicGameState
 		hero.resetHealth();
 		hero.setX(gc.getWidth()/2);
 		hero.setY(gc.getHeight()/2);
+		
+		bulletsFired = 0;
+		bulletsHit = 0;
+		totalCoinsEarned = 0;
+		zombiesKilled = 0;
 
 		levelWaveMessageCountdown = 100;
 

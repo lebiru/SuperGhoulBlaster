@@ -48,6 +48,9 @@ public class GameOver extends BasicGameState implements ComponentListener{
 		g.setBackground(Color.blue);
 		logo.draw(50, 0, 0.50f);
 
+		g.drawString("Zombies Killed: " + ((Play)sgb.getState(1)).zombiesKilled, 10, 30);
+		g.drawString("Accuracy: " + Math.round((((Play)sgb.getState(1)).bulletsHit / ((Play)sgb.getState(1)).bulletsFired) * 100 )+ "%", 10, 50);
+		g.drawString("Total Coins Earned: " + ((Play)sgb.getState(1)).totalCoinsEarned, 10, 70);
 
 
 		for (int i=0;i<2;i++) {

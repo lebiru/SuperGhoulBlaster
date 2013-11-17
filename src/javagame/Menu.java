@@ -55,9 +55,8 @@ public class Menu extends BasicGameState implements ComponentListener{
 		g.setBackground(Color.blue);
 		backgroundImage.draw(0, 0, gc.getWidth(), gc.getHeight());
 
-
-
-		for (int i=0;i<2;i++) {
+		for (int i=0;i<1;i++) 
+		{
 			areas[i].render(gc, g);
 		}
 	}
