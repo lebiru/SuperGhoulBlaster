@@ -15,11 +15,11 @@ import org.newdawn.slick.state.transition.FadeInTransition;
 import org.newdawn.slick.state.transition.FadeOutTransition;
 
 
-public class Play extends BasicGameState{
+public class Play extends BasicGameState
+{
 
 	Image sand, rock;
 	Sound shoot, zombieDie, reload, batswing;
-
 
 	StatusBar sb;
 
@@ -30,14 +30,14 @@ public class Play extends BasicGameState{
 	Animation doorAnimation;
 	SpriteSheet doorSpriteSheet;
 
-
-
 	Money m;
 
 	public int waveNumber = 1;
 	String levelWaveMessage = "Level ";
 	float levelWaveMessageCountdown = 100;
-
+	int numOfZombies = 2;
+	float increasingSpeed = 2;
+	int numOfBosses = waveNumber / 2;
 
 	ArrayList<Bullet> bulletManager = new ArrayList<Bullet>();
 	int reloadSize = 30;
@@ -51,9 +51,7 @@ public class Play extends BasicGameState{
 	ArrayList<Zombie> ghoulArmy = new ArrayList<Zombie>();
 	ArrayList<Point2D> ghoulSpawnPoints = new ArrayList<Point2D>();
 
-	int numOfZombies = 2;
-	float increasingSpeed = 2;
-	int numOfBosses = waveNumber / 2;
+
 
 	ArrayList<ArrayList<String>> gridmap = new ArrayList<ArrayList<String>>();
 	int tileWidth = 50;
@@ -80,6 +78,8 @@ public class Play extends BasicGameState{
 	public void init(GameContainer gc, StateBasedGame sbg) throws SlickException
 	{
 
+		this.gc = gc;
+		
 		//IMAGES
 		hero = new Player(new Image("res/images/SGB_player_01.png"));
 		sand = new Image("res/images/SGB_sand_01.png");
@@ -147,11 +147,9 @@ public class Play extends BasicGameState{
 
 		gc.getGraphics().setBackground(Color.black);
 
-		this.gc = gc;
-
+		
 
 		input = gc.getInput();
-
 
 		//Preparing TileMap
 		tileMapWidth = gc.getWidth()/tileWidth;
@@ -194,7 +192,6 @@ public class Play extends BasicGameState{
 				g.setColor(Color.red);
 				g.fillRect(z.healthBar.getX(), z.healthBar.getY(), z.getHealth() * 10, z.healthBar.getHeight());
 				g.setColor(Color.white);
-				//g.draw(z.getRect());
 
 			}
 
@@ -240,11 +237,6 @@ public class Play extends BasicGameState{
 		{
 			g.drawString(levelWaveMessage + " " + waveNumber, gc.getWidth()/3, gc.getHeight()/6);
 		}
-		
-		
-//		g.drawString("Current level: " + waveNumber, 100, 300);
-//		g.drawString("Flashlight Power: " + fl.getPower(), 100, 320);
-//		g.drawString("Boss Level? " + isBossLevel(), 100, 340);
 
 	}
 
@@ -354,9 +346,11 @@ public class Play extends BasicGameState{
 			{
 				z.move(hero);
 				z.updateRect(isBossLevel());	
-				
+				if(z.isDamaged())
+				{
+					z.updateDamageTick();
+				}
 			}
-
 		}
 
 
@@ -432,16 +426,14 @@ public class Play extends BasicGameState{
 						&& bulletManager.get(j).getAlive() == true)
 				{
 					bulletManager.get(j).setBulletIsAlive(false);
-					ghoulArmy.get(i).setHealth(bulletManager.get(j).getDamage());		
+					ghoulArmy.get(i).setHealth(bulletManager.get(j).getDamage());
+					ghoulArmy.get(i).turnOnDamaged();
 					if(ghoulArmy.get(i).getHealth() <= 0)
 					{
 						ghoulArmy.get(i).setGhoulIsAlive(false);	
 						m.setCurrentCoin(m.currentCoin + ghoulArmy.get(1).moneyValue);
 					}
 					zombieDie.play(0.9f,0.2f);
-
-
-
 				}
 			}
 
@@ -693,17 +685,16 @@ public class Play extends BasicGameState{
 			numOfBosses = waveNumber/2;
 			for(int i = 0 ; i <= numOfBosses; i++ )
 			{
-
 				ghoul = new Zombie
 						(
-								new Image("res/images/SGB_zombiesprite_01.png").getSubImage(0, 0, 50, 62), 
+								new SpriteSheet("res/images/SGB_zombiesprite_01.png", 50, 62), 
 								ran.nextInt(gc.getWidth()), 
 								ran.nextInt(gc.getHeight())
 								);
+				ghoul.setImage(ghoul.getAnimation().getCurrentFrame());
 				ghoul.setPosition(ghoulSpawnPoints.get((ran.nextInt(ghoulSpawnPoints.size()))));
-				ghoul.setSpeed(ran.nextFloat() * increasingSpeed + 1); //Bosses must be slow
-				ghoul.initializeZombieAnimation(new SpriteSheet("res/images/SGB_zombiesprite_01.png", 50, 62));
-				ghoul.setGhoulIsAlive(true);			
+				ghoul.setSpeed(ran.nextInt(2) + 1);
+				ghoul.setGhoulIsAlive(true);
 				ghoulArmy.add(ghoul);
 			}
 		}
@@ -716,13 +707,13 @@ public class Play extends BasicGameState{
 
 				ghoul = new Zombie
 						(
-								new Image("res/images/SGB_zombiesprite_01.png").getSubImage(0, 0, 50, 62), 
+								new SpriteSheet("res/images/SGB_zombiesprite_01.png", 50, 62), 
 								ran.nextInt(gc.getWidth()), 
 								ran.nextInt(gc.getHeight())
 								);
+				ghoul.setImage(ghoul.getAnimation().getCurrentFrame());
 				ghoul.setPosition(ghoulSpawnPoints.get((ran.nextInt(ghoulSpawnPoints.size()))));
-				ghoul.setSpeed(ran.nextFloat() * increasingSpeed + 1); //FUN?
-				ghoul.initializeZombieAnimation(new SpriteSheet("res/images/SGB_zombiesprite_01.png", 50, 62));
+				ghoul.setSpeed(ran.nextInt(2) + 1);
 				ghoul.setGhoulIsAlive(true);
 				ghoulArmy.add(ghoul);
 			}

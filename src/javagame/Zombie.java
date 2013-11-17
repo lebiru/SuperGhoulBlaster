@@ -12,47 +12,35 @@ import org.newdawn.slick.geom.Rectangle;
 public class Zombie 
 {
 
+	public float bossSize = 200;
 	private float zombieX = 300;
 	private float zombieY = 300;
-
-	float zombiedx = 0;
-	float zombiedy = 0;
-	
-	public float bossSize = 200;
-
 	private float zombieWidth = 50;
 	private float zombieHeight = 50;
 	private float zombieSpeed = 3;
 	private float zombieAngle = 90f;
-	private int zombieHealth = 10;
+	float zombiedx = 0;
+	float zombiedy = 0;
+	float zombieLength = 0;
 
+	private int zombieHealth = 10;
 	int moneyValue = 10;
 
 	private boolean isAlive = false;
 
 	Animation zombieAnimation;
 
-	float zombieLength = 0;
-
 	Rectangle zombieRect;
-	Image zombieImage;
-
 	Rectangle healthBar;
-
-
-	Zombie(Image i, float startX, float startY) throws SlickException
-	{
-		this.zombieX = startX;
-		this.zombieY = startY;
-		this.zombieRect = new Rectangle(this.zombieX, this.zombieY, this.zombieWidth, this.zombieHeight);
-		this.zombieImage = i;
-
-		healthBar = new Rectangle(zombieX + 50, zombieY + 50, 100, 20);
-
-
-
-
-	}
+	
+	Image zombieImage;
+	
+	private float dmgTicker = 0f;
+	private float dmgTickerMax = 10f;
+	private float dmgTickerIncrement = 1f;
+	private boolean isDamaged = false;
+	
+	private float knockback = 3f; //this should be a weapon attribute
 
 	Zombie(SpriteSheet sp, float startX, float startY) throws SlickException
 	{
@@ -61,10 +49,6 @@ public class Zombie
 		this.zombieRect = new Rectangle(this.zombieX, this.zombieY, this.zombieWidth, this.zombieHeight);
 
 		healthBar = new Rectangle(zombieX + 50, zombieY + 50, 100, 20);
-		//loading zombie animation
-//		float green = new Random().nextFloat();
-//		float red = new Random().nextFloat();
-//		float blue = new Random().nextFloat();
 
 		Image holder;
 
@@ -72,9 +56,7 @@ public class Zombie
 		for (int i=0;i<3;i++) 
 		{
 			holder = sp.getSprite(i, 0);
-			//holder.setImageColor(red, green, blue);
 			zombieAnimation.addFrame(holder, 500);
-
 		}
 	}
 
@@ -188,10 +170,6 @@ public class Zombie
 
 	public void initializeZombieAnimation(SpriteSheet sp) 
 	{
-		//loading zombie animation
-		float green = new Random().nextFloat();
-		float red = new Random().nextFloat();
-		float blue = new Random().nextFloat();
 
 		Image holder;
 
@@ -199,7 +177,6 @@ public class Zombie
 		for (int i=0;i<3;i++) 
 		{
 			holder = sp.getSprite(i, 0);
-			holder.setImageColor(red, green, blue);
 			zombieAnimation.addFrame(holder, 500);
 
 		}
@@ -236,9 +213,50 @@ public class Zombie
 	public void resetHealth() 
 	{
 		this.zombieHealth = 10;
-
 	}
 
+
+	public void turnOnDamaged() 
+	{
+		isDamaged = true;
+	}
+	
+	public void turnOffDamaged()
+	{
+		isDamaged = false;
+	}
+
+	public boolean isDamaged() 
+	{
+		return isDamaged;
+	}
+
+	public void updateDamageTick() 
+	{
+		if(dmgTicker <= dmgTickerMax)
+		{
+			dmgTicker += dmgTickerIncrement;
+			//turnRed
+			for(int i = 0 ; i < zombieAnimation.getFrameCount(); i++)
+			{
+				zombieAnimation.getImage(i).setImageColor(255, 0, 0);
+			}
+			//moveBack
+			zombieX += (zombiedx * (zombieSpeed + knockback)) * -1;
+			zombieY += (zombiedy * (zombieSpeed + knockback)) * -1;
+			
+		}
+		else
+		{
+			for(int i = 0 ; i < zombieAnimation.getFrameCount(); i++)
+			{
+				zombieAnimation.getImage(i).setImageColor(100, 100, 100);
+			}
+			turnOffDamaged();
+			dmgTicker = 0f;
+		}
+		
+	}
 
 }
 
