@@ -705,6 +705,8 @@ public class Play extends BasicGameState
 		bulletsHit = 0;
 		totalCoinsEarned = 0;
 		zombiesKilled = 0;
+		fl.resetPower();
+		
 
 		levelWaveMessageCountdown = 100;
 

@@ -46,6 +46,11 @@ public class Flashlight
 		}
 		
 	}
+
+	public void resetPower() 
+	{
+		flPower = 0.0f;
+	}
 	
 	
 }

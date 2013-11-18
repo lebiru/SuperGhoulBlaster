@@ -81,7 +81,7 @@ public class Shop extends BasicGameState implements ComponentListener{
 		areas[2].setNormalColor(new Color(1,1,1,0.8f));
 		areas[2].setMouseOverColor(new Color(1,1,1,0.9f));
 
-		areas[3] = new MouseOverArea(gc, reloadButton, gunColumn, 600, 
+		areas[3] = new MouseOverArea(gc, reloadButton, gunColumn, 400, 
 				reloadButton.getWidth(), reloadButton.getHeight(), this);
 		areas[3].setNormalColor(new Color(1,1,1,0.8f));
 		areas[3].setMouseOverColor(new Color(1,1,1,0.9f));
