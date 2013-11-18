@@ -42,9 +42,10 @@ public class Play extends BasicGameState
 	ArrayList<Bullet> bulletManager = new ArrayList<Bullet>();
 	int reloadSize = 5;
 	int numOfBullets = reloadSize;
-	float reloadTime = 500;
+	float reloadTimeMax = 100;
+	float reloadTime = reloadTimeMax;
+	float reloadTick = 2;
 	boolean canShoot = true;
-	boolean isReloading = false;
 
 	Player hero;
 	Zombie ghoul;
@@ -217,16 +218,18 @@ public class Play extends BasicGameState
 
 		g.drawImage(hero.getImage(), hero.getX(), hero.getY());
 		hero.getImage().setRotation(hero.getAngle());
+		
+		if(checkWaveCleared() == true)
+		{
+			doorAnimation.draw(doorX, doorY);		
+		}
 
 		fl.flashlightImage.draw(hero.getX() + 25 - fl.flashlightImage.getWidth()/2, hero.getY() + 25 - fl.flashlightImage.getHeight()/2);
 		fl.flashlightImage.setRotation(hero.getAngle());
 		fl.darknessImage.draw(0, 0, gc.getWidth(), gc.getHeight());
 		fl.darknessImage.setAlpha(fl.getPower());
 
-		if(checkWaveCleared() == true)
-		{
-			doorAnimation.draw(doorX, doorY);		
-		}
+		
 
 		//SWING BAT
 		if(bat.getAlive() == true)
@@ -247,9 +250,6 @@ public class Play extends BasicGameState
 			g.drawString(levelWaveMessage + " " + waveNumber, gc.getWidth()/3, gc.getHeight()/6);
 		}
 		
-		g.drawString("Reload Time: " + reloadTime, 10, 30);
-		g.drawString("Can Shoot: " + canShoot, 10, 50);
-		g.drawString("isReloading: " + isReloading, 10, 70);
 		
 
 	}
@@ -375,13 +375,13 @@ public class Play extends BasicGameState
 		}
 
 		bat.updateRect(hero);
-		sb.update(m, hero, fl);
+		sb.update(m, hero, fl, reloadTime);
 		levelWaveMessageCountdown -= 1;
 		if(checkWaveCleared() == false)
 		{
 			fl.update();
 		}
-		if(isReloading)
+		if(canShoot == false)
 		{
 			reloadGun();
 		}
@@ -410,6 +410,7 @@ public class Play extends BasicGameState
 				{
 
 					z.setHealth(bat.getDamage());
+					z.turnOnDamaged();
 					if(bat.hasPlayedSwingHit == false)
 					{
 						zombieDie.play(0.9f,0.2f);
@@ -488,7 +489,7 @@ public class Play extends BasicGameState
 
 	private void reloadGun() 
 	{
-		reloadTime--;
+		reloadTime -= reloadTick;
 		if(reloadTime <= 0)
 		{
 			for(int i = 0; i < bulletManager.size(); i++)
@@ -496,17 +497,15 @@ public class Play extends BasicGameState
 				bulletManager.get(i).setBulletIsAlive(false);
 			}
 			numOfBullets = reloadSize;
-			reload.play();
-			isReloading = false;
 			canShoot = true;
-			reloadTime = 500;
+			reloadTime = reloadTimeMax;
 		}
 		
 	}
 
 	private void reloadGunTurnOn() 
 	{
-		isReloading = true;
+		reload.play();
 		canShoot = false;
 		
 		

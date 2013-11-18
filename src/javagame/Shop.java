@@ -12,12 +12,14 @@ import org.newdawn.slick.state.transition.FadeOutTransition;
 public class Shop extends BasicGameState implements ComponentListener{
 
 
-	private MouseOverArea[] areas = new MouseOverArea[3];
-	Image playButton, upgradeGunPowerButton, refillLightButton;
+	private MouseOverArea[] areas = new MouseOverArea[4];
+	Image playButton, upgradeGunPowerButton, refillLightButton, reloadButton;
 	Image gunImage, baseballBatImage;
 	Sound levelUp;
 	StateBasedGame sbg;
 	GameContainer gc;
+	
+	Sound buy, notEnoughMoney;
 
 	int gunColumn;
 	int batColumn;
@@ -41,15 +43,17 @@ public class Shop extends BasicGameState implements ComponentListener{
 	public void init(GameContainer gc, StateBasedGame sbg) throws SlickException
 	{
 
-		//replace these with "Play" and "About"
 		playButton = new Image("res/images/SGB_buttonplay_01.png");
 		upgradeGunPowerButton = new Image("res/images/upgradeGunPower.png");
 		refillLightButton = new Image("res/images/refillLightButton.png");
+		reloadButton = new Image("res/images/buttons/reloadButton.png");
 
 		gunImage = new Image("res/images/SGB_gun_01.png");
 		baseballBatImage = new Image("res/images/SGB_baseballbat_01.png");
 
 		levelUp = new Sound("res/sound/BGM/Level Up.ogg");
+		buy = new Sound("res/sound/fx/buy.wav");
+		notEnoughMoney = new Sound("res/sound/fx/notEnoughMoney.wav");
 
 		currentMessage = "Welcome...";
 
@@ -77,6 +81,11 @@ public class Shop extends BasicGameState implements ComponentListener{
 		areas[2].setNormalColor(new Color(1,1,1,0.8f));
 		areas[2].setMouseOverColor(new Color(1,1,1,0.9f));
 
+		areas[3] = new MouseOverArea(gc, reloadButton, gunColumn, 600, 
+				reloadButton.getWidth(), reloadButton.getHeight(), this);
+		areas[3].setNormalColor(new Color(1,1,1,0.8f));
+		areas[3].setMouseOverColor(new Color(1,1,1,0.9f));
+
 	}
 
 	//for drawing things on screen
@@ -91,7 +100,7 @@ public class Shop extends BasicGameState implements ComponentListener{
 		g.drawImage(gunImage, gunColumn, 100);
 		g.drawImage(baseballBatImage, batColumn, 100);		
 
-		for (int i=0;i<3;i++) 
+		for (int i=0;i<4;i++) 
 		{
 			areas[i].render(gc, g);
 		}
@@ -143,14 +152,15 @@ public class Shop extends BasicGameState implements ComponentListener{
 
 				//Decreasing Player Money
 				((Play)sbg.getState(1)).m.decreaseCurrentCoin(gunPowerCost);
-
 				currentMessage = "Nice doing business with ya.";
+				buy.play();
 
 			}
 			else
 			{
 				System.out.println("Not Enough Money!");
 				currentMessage = "Not enough money kid. Go kill some more zombies.";
+				notEnoughMoney.play();
 			}
 
 		}
@@ -167,11 +177,35 @@ public class Shop extends BasicGameState implements ComponentListener{
 				((Play)sbg.getState(1)).m.decreaseCurrentCoin(flCost);
 
 				currentMessage = "Nice doing business with ya.";
+				buy.play();
 
 			}
 			else
 			{
 				currentMessage = "That costs 100 coins. You don't have enough money.";
+				notEnoughMoney.play();
+			}
+
+		}
+
+		//Reload Upgrade
+		if (source == areas[3]) 
+		{
+			if(currentCoin >= 30)
+			{
+				System.out.println("Reload Upgrade");
+				((Play)sbg.getState(1)).reloadTick = ((Play)sbg.getState(1)).reloadTick + 0.5f;
+
+				//Decreasing Player Money
+				((Play)sbg.getState(1)).m.decreaseCurrentCoin(30);
+				currentMessage = "Nice doing business with ya.";
+				buy.play();
+
+			}
+			else
+			{
+				currentMessage = "That costs 30 coins. You don't have enough money.";
+				notEnoughMoney.play();
 			}
 
 		}
