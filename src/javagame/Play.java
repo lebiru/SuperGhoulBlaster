@@ -51,6 +51,8 @@ public class Play extends BasicGameState
 	Zombie ghoul;
 	BaseballBat bat;
 	Flashlight fl;
+	
+	boolean isPaused = false;
 
 	ArrayList<Zombie> ghoulArmy = new ArrayList<Zombie>();
 	ArrayList<Point2D> ghoulSpawnPoints = new ArrayList<Point2D>();
@@ -78,6 +80,7 @@ public class Play extends BasicGameState
 
 	public Sound gameBGM;
 	public Sound gameOverBGM;
+	public Sound bossBGM;
 
 
 	public Play(int state)
@@ -101,7 +104,7 @@ public class Play extends BasicGameState
 		doorAnimation.addFrame(doorSpriteSheet.getSprite(1, 0), 500);
 
 
-		bat = new BaseballBat("res/images/baseball_bat.png", hero);
+		bat = new BaseballBat("res/images/SGB_baseballbat_02.png", hero);
 		m = new Money();
 
 		doorX = gc.getWidth()/2 - doorAnimation.getWidth()/2;
@@ -154,6 +157,7 @@ public class Play extends BasicGameState
 
 		gameBGM = new Sound("res/sound/BGM/In Game.ogg");
 		gameOverBGM = new Sound("res/sound/BGM/Game Over.ogg");
+		bossBGM = new Sound("res/sound/BGM/Boss Fight.ogg");
 
 		gc.getGraphics().setBackground(Color.black);
 
@@ -189,12 +193,16 @@ public class Play extends BasicGameState
 
 				if(isBossLevel())
 				{
-					z.getAnimation().draw(z.getX(), z.getY(), z.bossSize, z.bossSize);
+					z.getAnimation().draw(z.getX() - 25, z.getY() - 25, z.bossSize, z.bossSize);
+					
+					z.getAnimation().getCurrentFrame().setCenterOfRotation(100,100);
+					
 					z.getAnimation().getCurrentFrame().setRotation(z.getAngle());
 				}
 				else
 				{
 					z.getAnimation().draw(z.getX(), z.getY());
+					z.getAnimation().getCurrentFrame().setCenterOfRotation(25, 25);
 					z.getAnimation().getCurrentFrame().setRotation(z.getAngle());
 				}
 
@@ -202,6 +210,7 @@ public class Play extends BasicGameState
 				g.setColor(Color.red);
 				g.fillRect(z.healthBar.getX(), z.healthBar.getY(), z.getHealth() * 10, z.healthBar.getHeight());
 				g.setColor(Color.white);
+				g.draw(z.getRect());
 
 			}
 
@@ -260,6 +269,7 @@ public class Play extends BasicGameState
 	{
 
 		input = gc.getInput();
+		
 		int mouseX = input.getMouseX();
 		int mouseY = input.getMouseY();
 		float mouseDX;
@@ -270,7 +280,13 @@ public class Play extends BasicGameState
 		mouseLength = (float) Math.sqrt(Math.pow(mouseDX, 2) + Math.pow(mouseDY, 2));
 		hero.setAngle((float) ((Math.atan2(mouseDY, mouseDX)) * (180/Math.PI)) + 90f);
 
+		if(input.isKeyPressed(Input.KEY_P))
+		{
+			isPaused = !isPaused;
+		}
 
+		if(!isPaused)
+		{
 		//MOVE USING KEYBOARD
 		if(input.isKeyDown(Input.KEY_A) && (hero.getX() + hero.getTunnelingBuffer() >= 0))
 		{ 
@@ -466,6 +482,7 @@ public class Play extends BasicGameState
 		if(hero.getHealth() <= 0)
 		{
 			gameBGM.stop();
+			bossBGM.stop();
 			gameOverBGM.loop();
 			sbg.enterState(4, new FadeOutTransition(Color.red, 1000), new FadeInTransition(Color.black, 1000));
 		}
@@ -473,16 +490,15 @@ public class Play extends BasicGameState
 		//Cleared Wave Condition
 		if(checkWaveCleared() == true)
 		{
-
 			if(hero.getRect().intersects(doorRect))
 			{				
 				//Enter the shopping state
 				gameBGM.stop();
+				bossBGM.stop();
 				((Shop)sbg.getState(5)).levelUp.loop();
 				sbg.enterState(5, new FadeOutTransition(Color.white, 1000), new FadeInTransition(Color.white, 1000));
 			}
-
-
+		}
 		}
 
 	}
@@ -549,10 +565,8 @@ public class Play extends BasicGameState
 
 	}
 
-	private void makeBackground(Graphics g) {
-
-
-
+	private void makeBackground(Graphics g) 
+	{
 		Random ran = new Random();
 		int chance = ran.nextInt(20);
 		//render the background
@@ -776,14 +790,12 @@ public class Play extends BasicGameState
 
 	public boolean isBossLevel()
 	{
-//		if(waveNumber%2 == 0)
-//		{
-//			return true;
-//		}
-//
-//		return false;
-		return false;
+		if(waveNumber%5 == 0)
+		{
+			return true;
+		}
 
+		return false;
 	}
 
 

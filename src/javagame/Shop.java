@@ -134,7 +134,15 @@ public class Shop extends BasicGameState implements ComponentListener{
 				e.printStackTrace();
 			}
 			levelUp.stop();
-			((Play)sbg.getState(1)).gameBGM.loop();
+			if((((Play)sbg.getState(1)).isBossLevel()))
+			{
+				((Play)sbg.getState(1)).bossBGM.loop();
+			}
+			else
+			{
+				((Play)sbg.getState(1)).gameBGM.loop();
+			}
+			
 
 			sbg.enterState(1, new FadeOutTransition(Color.black, 1000), new FadeInTransition(Color.black, 1000) );
 		}

@@ -89,12 +89,15 @@ public class Zombie
 	{
 		if(isBossLevel)
 		{
-			this.zombieRect.setLocation(zombieX - 100, zombieY - 100);
+			this.zombieRect.setLocation(zombieX - (zombieAnimation.getCurrentFrame().getWidth()/2), 
+										zombieY - (zombieAnimation.getCurrentFrame().getHeight()/2));
 			this.zombieRect.setSize(bossSize, bossSize);
 		}
 		else
 		{
 			this.zombieRect.setLocation(zombieX, zombieY);
+			this.zombieRect.setSize(zombieAnimation.getCurrentFrame().getWidth(),
+									zombieAnimation.getCurrentFrame().getHeight());
 		}
 		
 	}
@@ -178,7 +181,6 @@ public class Zombie
 		{
 			holder = sp.getSprite(i, 0);
 			zombieAnimation.addFrame(holder, 500);
-
 		}
 
 	}
