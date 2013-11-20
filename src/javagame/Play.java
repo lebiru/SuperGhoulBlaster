@@ -19,7 +19,7 @@ public class Play extends BasicGameState
 {
 
 	Image sand, rock;
-	Sound shoot, zombieDie, reload, batswing;
+	Sound shoot, zombieDie, reload, batswing, batHit, coin, footsteps;
 
 	StatusBar sb;
 
@@ -46,6 +46,10 @@ public class Play extends BasicGameState
 	float reloadTime = reloadTimeMax;
 	float reloadTick = 2;
 	boolean canShoot = true;
+	
+	ArrayList<Coin> coinManager = new ArrayList<Coin>();
+	int numOfCoins = 5;
+	
 
 	Player hero;
 	Zombie ghoul;
@@ -142,6 +146,12 @@ public class Play extends BasicGameState
 		{
 			bulletManager.add(new Bullet("res/images/bulletOne.png"));
 		}
+		
+		//instantiate the coins
+		for(int i = 0; i < numOfCoins; i++)
+		{
+			coinManager.add(new Coin(new SpriteSheet("res/images/coin.png", 50, 50)));
+		}
 
 		//Player Initialization
 		hero.setX(gc.getWidth()/2);
@@ -150,11 +160,14 @@ public class Play extends BasicGameState
 
 
 		//SOUND & MUSIC
-		shoot = new Sound("res/sound/fx/Gunshot.wav");
-		zombieDie = new Sound("res/sound/fx/Zombie Kill.wav");		
-		reload = new Sound("res/sound/fx/Item.wav");
-		batswing = new Sound("res/sound/fx/batswing.wav");
-
+		shoot = new Sound("res/sound/fx/Gunshot.ogg");
+		zombieDie = new Sound("res/sound/fx/Zombie Kill.ogg");		
+		reload = new Sound("res/sound/fx/Item.ogg");
+		batswing = new Sound("res/sound/fx/Bat Miss.ogg");
+		coin = new Sound("res/sound/fx/Coin.ogg");
+		batHit = new Sound("res/sound/fx/Bat.ogg");
+		footsteps = new Sound("res/sound/fx/Footsteps.ogg");
+		
 		gameBGM = new Sound("res/sound/BGM/In Game.ogg");
 		gameOverBGM = new Sound("res/sound/BGM/Game Over.ogg");
 		bossBGM = new Sound("res/sound/BGM/Boss Fight.ogg");
@@ -259,6 +272,22 @@ public class Play extends BasicGameState
 			g.drawString(levelWaveMessage + " " + waveNumber, gc.getWidth()/3, gc.getHeight()/6);
 		}
 		
+		for(Coin c : coinManager)
+		{
+			if(c.isAlive())
+			{
+				if(c.getTick() >= c.getTickMax()/2)
+				{
+					c.getAnimation().draw(c.getX(), c.getY());	
+				}
+				else if(c.getTick() < c.getTickMax()/2 && c.getTick()%2 == 0 || c.getTick()%3 == 0)
+				{
+					c.getAnimation().draw(c.getX(), c.getY());	
+				}	
+				
+			}
+		}
+		
 		
 
 	}
@@ -288,22 +317,8 @@ public class Play extends BasicGameState
 		if(!isPaused)
 		{
 		//MOVE USING KEYBOARD
-		if(input.isKeyDown(Input.KEY_A) && (hero.getX() + hero.getTunnelingBuffer() >= 0))
-		{ 
-			hero.setX(hero.getX() - hero.getSpeed()); 
-		}
-		if(input.isKeyDown(Input.KEY_D) && (hero.getX() + hero.getTunnelingBuffer() + hero.getWidth() <= gc.getWidth()))
-		{ 
-			hero.setX(hero.getX() + hero.getSpeed()); 
-		}
-		if(input.isKeyDown(Input.KEY_W) && (hero.getY() + hero.getTunnelingBuffer() >= 0))
-		{ 
-			hero.setY(hero.getY() - hero.getSpeed()); 
-		}
-		if(input.isKeyDown(Input.KEY_S) && (hero.getY() + hero.getTunnelingBuffer() + hero.getHeight() <= gc.getHeight()))
-		{ 
-			hero.setY(hero.getY() + hero.getSpeed()); 
-		}
+		hero.move(input, gc, footsteps);
+		
 
 
 		//SHOOT USING MOUSE
@@ -328,7 +343,7 @@ public class Play extends BasicGameState
 		if(input.isKeyPressed(Input.KEY_LSHIFT))
 		{
 			bat.turnOn(hero);
-			batswing.play();
+			batswing.play(1f, 0.2f);
 		}
 
 
@@ -401,6 +416,14 @@ public class Play extends BasicGameState
 		{
 			reloadGun();
 		}
+		
+		for(Coin c : coinManager)
+		{
+			if(c.isAlive())
+			{
+				c.update();
+			}
+		}
 
 		//COLLISION
 
@@ -429,7 +452,8 @@ public class Play extends BasicGameState
 					z.turnOnDamaged();
 					if(bat.hasPlayedSwingHit == false)
 					{
-						zombieDie.play(0.9f,0.2f);
+						//zombieDie.play(0.9f,0.2f);
+						batHit.play();
 						bat.hasPlayedSwingHit = true;
 					}
 
@@ -440,6 +464,17 @@ public class Play extends BasicGameState
 						zombiesKilled++;
 						totalCoinsEarned += ghoulArmy.get(1).moneyValue;
 						m.setCurrentCoin(m.currentCoin + ghoulArmy.get(1).moneyValue);
+						
+						for(Coin c : coinManager)
+						{
+							if(!c.isAlive())
+							{
+								c.turnOn(z);
+								System.out.println("Coin turned on");
+								return;
+							}
+						}
+						
 					}
 
 				}
@@ -469,11 +504,39 @@ public class Play extends BasicGameState
 						m.setCurrentCoin(m.currentCoin + ghoulArmy.get(i).moneyValue);
 						totalCoinsEarned += ghoulArmy.get(i).moneyValue;
 						zombiesKilled++;
+						
+						for(Coin c : coinManager)
+						{
+							if(!c.isAlive())
+							{
+								c.turnOn(ghoulArmy.get(i));
+								System.out.println("Coin turned on");
+								return;
+							}
+						}
+						
 					}
 					zombieDie.play(0.9f,0.2f);
 				}
 			}
 
+		}
+		
+		for(Coin c : coinManager)
+		{
+			if(c.isAlive() && hero.getRect().intersects(c.getRect()))
+			{
+				c.turnOff();
+				m.setCurrentCoin(m.currentCoin + c.getCoinValue());
+				totalCoinsEarned += c.getCoinValue();
+				coin.play();
+			}
+			
+			else if(c.isAlive() && c.getTick() <= 0)
+			{
+				c.turnOff();
+			}
+			
 		}
 
 

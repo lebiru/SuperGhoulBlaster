@@ -27,7 +27,7 @@ public class Menu extends BasicGameState implements ComponentListener{
 	{
 
 		//replace these with "Play" and "About"
-		playMenu = new Image("res/images/SGB_buttonplay_01.png");
+		playMenu = new Image("res/images/buttons/SGB_buttonplay_01.png");
 		//aboutMenu = new Image("res/images/SGB_buttoncredits_01.png");
 		backgroundImage = new Image("res/images/splashScreens/SGB_logo_02.jpg");
 		

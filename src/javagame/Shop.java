@@ -13,7 +13,7 @@ public class Shop extends BasicGameState implements ComponentListener{
 
 
 	private MouseOverArea[] areas = new MouseOverArea[4];
-	Image playButton, upgradeGunPowerButton, refillLightButton, reloadButton;
+	Image playButton, upgradeGunPowerButton, refillLightButton, reloadButton, batKnockbackButton;
 	Image gunImage, baseballBatImage;
 	Sound levelUp;
 	StateBasedGame sbg;
@@ -43,9 +43,9 @@ public class Shop extends BasicGameState implements ComponentListener{
 	public void init(GameContainer gc, StateBasedGame sbg) throws SlickException
 	{
 
-		playButton = new Image("res/images/SGB_buttonplay_01.png");
-		upgradeGunPowerButton = new Image("res/images/upgradeGunPower.png");
-		refillLightButton = new Image("res/images/refillLightButton.png");
+		playButton = new Image("res/images/buttons/SGB_buttonplay_01.png");
+		upgradeGunPowerButton = new Image("res/images/buttons/upgradeGunPower.png");
+		refillLightButton = new Image("res/images/buttons/refillLightButton.png");
 		reloadButton = new Image("res/images/buttons/reloadButton.png");
 
 		gunImage = new Image("res/images/SGB_gun_01.png");

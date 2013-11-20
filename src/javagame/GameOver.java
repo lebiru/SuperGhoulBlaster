@@ -26,8 +26,8 @@ public class GameOver extends BasicGameState implements ComponentListener{
 
 
 		//replace these with "Play" and "About"
-		playMenu = new Image("res/images/SGB_buttonretry_01.png");
-		aboutMenu = new Image("res/images/SGB_buttongiveup_01.png");
+		playMenu = new Image("res/images/buttons/SGB_buttonretry_01.png");
+		aboutMenu = new Image("res/images/buttons/SGB_buttongiveup_01.png");
 		logo = new Image("res/images/SGB_logo_01.png");
 		this.sbg = sbg;
 
