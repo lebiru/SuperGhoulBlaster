@@ -13,7 +13,7 @@ public class GameOver extends BasicGameState implements ComponentListener{
 	private MouseOverArea[] areas = new MouseOverArea[2];
 	Image playMenu;
 	Image aboutMenu;
-	Image logo;
+	Image gameOverBackground;
 	StateBasedGame sbg;
 
 	public GameOver(int state)
@@ -28,7 +28,7 @@ public class GameOver extends BasicGameState implements ComponentListener{
 		//replace these with "Play" and "About"
 		playMenu = new Image("res/images/buttons/SGB_buttonretry_01.png");
 		aboutMenu = new Image("res/images/buttons/SGB_buttongiveup_01.png");
-		logo = new Image("res/images/SGB_logo_01.png");
+		gameOverBackground = new Image("res/images/splashScreens/SGB_SplashScreenGameOver_01.jpg");
 		this.sbg = sbg;
 
 		areas[0] = new MouseOverArea(gc, playMenu, 200, 400 + (0*100), 200, 90, this);
@@ -45,8 +45,9 @@ public class GameOver extends BasicGameState implements ComponentListener{
 	//for drawing things on screen
 	public void render(GameContainer gc, StateBasedGame sgb, Graphics g) throws SlickException
 	{
-		g.setBackground(Color.blue);
-		logo.draw(50, 0, 0.50f);
+		
+		g.drawImage(gameOverBackground, 0, 0);
+		gameOverBackground.draw(50, 0, 0.50f);
 
 		g.drawString("Zombies Killed: " + ((Play)sgb.getState(1)).zombiesKilled, 10, 30);
 		g.drawString("Accuracy: " + Math.round((((Play)sgb.getState(1)).bulletsHit / ((Play)sgb.getState(1)).bulletsFired) * 100 )+ "%", 10, 50);

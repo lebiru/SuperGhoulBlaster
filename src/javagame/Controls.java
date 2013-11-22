@@ -1,7 +1,5 @@
 package javagame;
 
-import javax.sound.midi.Soundbank;
-
 import org.newdawn.slick.*;
 import org.newdawn.slick.gui.AbstractComponent;
 import org.newdawn.slick.gui.ComponentListener;
@@ -15,7 +13,7 @@ public class Controls extends BasicGameState implements ComponentListener{
 
 
 	private MouseOverArea[] areas = new MouseOverArea[2];
-	Image startButton;
+	Image startButton, controlBackground;
 
 	StateBasedGame sbg;
 
@@ -30,6 +28,7 @@ public class Controls extends BasicGameState implements ComponentListener{
 
 		//replace these with "Play" and "About"
 		startButton = new Image("res/images/buttons/SGB_buttonstart_01.png");
+		controlBackground = new Image("res/images/splashScreens/SGB_SplashScreenHowToPlay_01.jpg");
 
 		this.sbg = sbg;
 
@@ -45,9 +44,7 @@ public class Controls extends BasicGameState implements ComponentListener{
 	//for drawing things on screen
 	public void render(GameContainer gc, StateBasedGame sgb, Graphics g) throws SlickException
 	{
-		g.setBackground(Color.red);
-		
-
+		g.drawImage(controlBackground, 0, 0);
 
 
 		for (int i=0;i<1;i++) {

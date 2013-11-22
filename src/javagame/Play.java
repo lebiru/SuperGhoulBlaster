@@ -150,7 +150,7 @@ public class Play extends BasicGameState
 		//instantiate the coins
 		for(int i = 0; i < numOfCoins; i++)
 		{
-			coinManager.add(new Coin(new SpriteSheet("res/images/coin.png", 50, 50)));
+			coinManager.add(new Coin(new SpriteSheet("res/images/SGB_coin_01.png", 50, 50)));
 		}
 
 		//Player Initialization
@@ -223,7 +223,6 @@ public class Play extends BasicGameState
 				g.setColor(Color.red);
 				g.fillRect(z.healthBar.getX(), z.healthBar.getY(), z.getHealth() * 10, z.healthBar.getHeight());
 				g.setColor(Color.white);
-				g.draw(z.getRect());
 
 			}
 

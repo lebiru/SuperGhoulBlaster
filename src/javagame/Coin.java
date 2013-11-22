@@ -21,7 +21,7 @@ public class Coin extends Image
 	
 	private boolean isAlive;
 	
-	private int coinAnimationSpeed = 500;
+	private int coinAnimationSpeed = 100;
 	
 	//private Image image;
 	private Animation animation;
@@ -37,7 +37,7 @@ public class Coin extends Image
 		Image holder;
 		
 		
-		for (int i=0 ; i <= 3 ; i++) 
+		for (int i=0 ; i <= 19 ; i++) 
 		{
 			holder = sp.getSprite(i, 0);
 			animation.addFrame(holder, coinAnimationSpeed);

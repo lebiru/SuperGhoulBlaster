@@ -15,6 +15,7 @@ public class Shop extends BasicGameState implements ComponentListener{
 	private MouseOverArea[] areas = new MouseOverArea[4];
 	Image playButton, upgradeGunPowerButton, refillLightButton, reloadButton, batKnockbackButton;
 	Image gunImage, baseballBatImage;
+	Image shopBackground;
 	Sound levelUp;
 	StateBasedGame sbg;
 	GameContainer gc;
@@ -51,9 +52,13 @@ public class Shop extends BasicGameState implements ComponentListener{
 		gunImage = new Image("res/images/SGB_gun_01.png");
 		baseballBatImage = new Image("res/images/SGB_baseballbat_01.png");
 
+		shopBackground = new Image("res/images/splashScreens/SGB_SplashShop_01.jpg");
+		
 		levelUp = new Sound("res/sound/BGM/Level Up.ogg");
 		buy = new Sound("res/sound/fx/buy.wav");
 		notEnoughMoney = new Sound("res/sound/fx/notEnoughMoney.wav");
+		
+		
 
 		currentMessage = "Welcome...";
 
@@ -91,14 +96,16 @@ public class Shop extends BasicGameState implements ComponentListener{
 	//for drawing things on screen
 	public void render(GameContainer gc, StateBasedGame sgb, Graphics g) throws SlickException
 	{
-		g.setBackground(Color.lightGray);
+		g.drawImage(shopBackground, 0, 0);
 
 		//This is what the shop keeper might be saying
 		g.drawString(currentMessage, 10, 30);
 		g.drawString("Coins: " + currentCoin, 10, 50);
 
 		g.drawImage(gunImage, gunColumn, 100);
-		g.drawImage(baseballBatImage, batColumn, 100);		
+		g.drawImage(baseballBatImage, batColumn, 100);	
+		
+		
 
 		for (int i=0;i<4;i++) 
 		{
