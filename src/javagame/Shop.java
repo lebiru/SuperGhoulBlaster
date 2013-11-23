@@ -14,7 +14,6 @@ public class Shop extends BasicGameState implements ComponentListener{
 
 	private MouseOverArea[] areas = new MouseOverArea[4];
 	Image playButton, upgradeGunPowerButton, refillLightButton, reloadButton, batKnockbackButton;
-	Image gunImage, baseballBatImage;
 	Image shopBackground;
 	Sound levelUp;
 	StateBasedGame sbg;
@@ -48,9 +47,6 @@ public class Shop extends BasicGameState implements ComponentListener{
 		upgradeGunPowerButton = new Image("res/images/buttons/upgradeGunPower.png");
 		refillLightButton = new Image("res/images/buttons/refillLightButton.png");
 		reloadButton = new Image("res/images/buttons/reloadButton.png");
-
-		gunImage = new Image("res/images/SGB_gun_01.png");
-		baseballBatImage = new Image("res/images/SGB_baseballbat_01.png");
 
 		shopBackground = new Image("res/images/splashScreens/SGB_SplashShop_01.jpg");
 		
@@ -101,11 +97,6 @@ public class Shop extends BasicGameState implements ComponentListener{
 		//This is what the shop keeper might be saying
 		g.drawString(currentMessage, 10, 30);
 		g.drawString("Coins: " + currentCoin, 10, 50);
-
-		g.drawImage(gunImage, gunColumn, 100);
-		g.drawImage(baseballBatImage, batColumn, 100);	
-		
-		
 
 		for (int i=0;i<4;i++) 
 		{

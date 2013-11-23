@@ -51,7 +51,7 @@ public class Controls extends BasicGameState implements ComponentListener{
 			areas[i].render(gc, g);
 		}
 		
-		g.drawString("WASD to move. Shift Key to swing baseball bat. Left mouse shoot. Right mouse reload. Shoot the zombies. Good luck." , 20, 200);
+		
 	}
 
 	//for updating logics of the game

@@ -18,7 +18,7 @@ import org.newdawn.slick.state.transition.FadeOutTransition;
 public class Play extends BasicGameState
 {
 
-	Image sand, rock;
+	Image sand, rock, dune, grass, bush;
 	Sound shoot, zombieDie, reload, batswing, batHit, coin, footsteps;
 
 	StatusBar sb;
@@ -101,11 +101,17 @@ public class Play extends BasicGameState
 		hero = new Player(new Image("res/images/SGB_player_01.png"));
 		sand = new Image("res/images/SGB_sand_01.png");
 		rock = new Image("res/images/SGB_rock_01.png");
+		bush = new Image("res/images/levelart/bush.png");
+		grass = new Image("res/images/levelart/grass.png");
+		dune = new Image("res/images/levelart/dune.png");
 
 		doorAnimation = new Animation();
-		doorSpriteSheet = new SpriteSheet("res/images/SGB_doorsprite_01.png", 132, 137);
-		doorAnimation.addFrame(doorSpriteSheet.getSprite(0, 0), 500);
-		doorAnimation.addFrame(doorSpriteSheet.getSprite(1, 0), 500);
+		doorSpriteSheet = new SpriteSheet("res/images/SGB_DoorSprite_02.png", 135, 134);
+		for(int i = 0; i <= 35; i++)
+		{
+			doorAnimation.addFrame(doorSpriteSheet.getSprite(i, 0), 100);
+		}
+		
 
 
 		bat = new BaseballBat("res/images/SGB_baseballbat_02.png", hero);
@@ -610,6 +616,24 @@ public class Play extends BasicGameState
 					g.drawImage(sand, offsetX, offsetY);
 					offsetX += tileWidth;
 				}
+				else if(gridmap.get(i).get(j) == "b")
+				{
+					g.drawImage(bush, offsetX, offsetY);
+					offsetX += tileWidth;
+				}
+				
+				else if(gridmap.get(i).get(j) == "g")
+				{
+					g.drawImage(grass, offsetX, offsetY);
+					offsetX += tileWidth;
+				}
+				
+				else if(gridmap.get(i).get(j) == "d")
+				{
+					g.drawImage(dune, offsetX, offsetY);
+					offsetX += tileWidth;
+				}
+				
 				else
 				{
 					System.out.println("Unknown tile");
@@ -643,7 +667,20 @@ public class Play extends BasicGameState
 				{
 					gridmap.get(i).add("r");
 				}
-
+				else if (chance <= 6 && chance > 3)
+				{
+					gridmap.get(i).add("b");
+				}
+				else if (chance <= 9 && chance > 7)
+				{
+					gridmap.get(i).add("g");
+				}
+				else if (chance <= 12 && chance > 8)
+				{
+					gridmap.get(i).add("d");
+				}
+				
+				//empty sand
 				else
 				{
 					gridmap.get(i).add("s");
@@ -653,6 +690,8 @@ public class Play extends BasicGameState
 
 			}
 		}
+		
+		
 
 	}
 
