@@ -44,7 +44,7 @@ public class Controls extends BasicGameState implements ComponentListener{
 	//for drawing things on screen
 	public void render(GameContainer gc, StateBasedGame sgb, Graphics g) throws SlickException
 	{
-		g.drawImage(controlBackground, 0, 0);
+		controlBackground.draw(0, 0, gc.getWidth(), gc.getHeight());
 
 
 		for (int i=0;i<1;i++) {
