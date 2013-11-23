@@ -96,7 +96,7 @@ public class Shop extends BasicGameState implements ComponentListener{
 	//for drawing things on screen
 	public void render(GameContainer gc, StateBasedGame sgb, Graphics g) throws SlickException
 	{
-		g.drawImage(shopBackground, 0, 0);
+		shopBackground.draw(0, 0, gc.getWidth(), gc.getHeight());
 
 		//This is what the shop keeper might be saying
 		g.drawString(currentMessage, 10, 30);

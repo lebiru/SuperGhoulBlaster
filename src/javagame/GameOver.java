@@ -46,8 +46,7 @@ public class GameOver extends BasicGameState implements ComponentListener{
 	public void render(GameContainer gc, StateBasedGame sgb, Graphics g) throws SlickException
 	{
 		
-		g.drawImage(gameOverBackground, 0, 0);
-		gameOverBackground.draw(50, 0, 0.50f);
+		gameOverBackground.draw(0, 0, gc.getWidth(), gc.getHeight());
 
 		g.drawString("Zombies Killed: " + ((Play)sgb.getState(1)).zombiesKilled, 10, 30);
 		g.drawString("Accuracy: " + Math.round((((Play)sgb.getState(1)).bulletsHit / ((Play)sgb.getState(1)).bulletsFired) * 100 )+ "%", 10, 50);
