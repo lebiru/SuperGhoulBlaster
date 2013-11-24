@@ -39,7 +39,7 @@ public class Game extends StateBasedGame
 	//gamecontainer manages game engine stuff, like framerate, game loop, etc...
 	public void initStatesList(GameContainer gc) throws SlickException
 	{
-		this.enterState(about);
+		this.enterState(menu);
 	}
 	
 	public static void main(String[] args) 

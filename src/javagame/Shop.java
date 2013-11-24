@@ -45,9 +45,9 @@ public class Shop extends BasicGameState implements ComponentListener{
 	{
 
 		playButton = new Image("res/images/buttons/SGB_buttonplay_01.png");
-		upgradeGunPowerButton = new Image("res/images/buttons/upgradeGunPower.png");
-		refillLightButton = new Image("res/images/buttons/refillLightButton.png");
-		reloadButton = new Image("res/images/buttons/reloadButton.png");
+		upgradeGunPowerButton = new Image("res/images/ShopButtons/SGB_ShopButton_GunDamage_01.png");
+		refillLightButton = new Image("res/images/ShopButtons/SGB_ShopButton_RefillFlashlight_01.png");
+		reloadButton = new Image("res/images/ShopButtons/SGB_ShopButton_GunReloadSpeed_01.png");
 		batKnockbackButton = new Image("res/images/ShopButtons/SGB_ShopButton_BatKnockback_01.png");
 		
 		shopBackground = new Image("res/images/splashScreens/SGB_SplashShop_01.jpg");
@@ -61,22 +61,23 @@ public class Shop extends BasicGameState implements ComponentListener{
 
 		currentMessage = "Welcome...";
 
-		gunColumn = gc.getWidth()/5 * 2;
-		batColumn = gc.getWidth()/5 * 3;
+		gunColumn = gc.getWidth()/12;
+		batColumn = gc.getWidth()/7 * 5;
 
-		upgradeOneRow = gc.getHeight()/4;
-		upgradeTwoRow = gc.getHeight()/3;
-		upgradeThreeRow = gc.getHeight()/2;
+		upgradeOneRow = gc.getHeight()/10 * 6;
+		upgradeTwoRow = gc.getHeight()/10 * 7;
+		upgradeThreeRow = gc.getHeight()/10 * 8;
 
 
 		this.gc = gc;
 		this.sbg = sbg;
 
-		areas[0] = new MouseOverArea(gc, playButton, 200, 400 + (0*100), 200, 90, this);
+		areas[0] = new MouseOverArea(gc, playButton, gc.getWidth()/2 - 50, gc.getHeight() - 100, 200, 90, this);
 		areas[0].setNormalColor(new Color(1,1,1,0.8f));
 		areas[0].setMouseOverColor(new Color(1,1,1,0.9f));
 
-		areas[1] = new MouseOverArea(gc, upgradeGunPowerButton, gunColumn, 400 + (1*100), upgradeGunPowerButton.getWidth(), upgradeGunPowerButton.getHeight(), this);
+		areas[1] = new MouseOverArea(gc, upgradeGunPowerButton, gunColumn, upgradeOneRow, 
+				upgradeGunPowerButton.getWidth(), upgradeGunPowerButton.getHeight(), this);
 		areas[1].setNormalColor(new Color(1,1,1,0.8f));
 		areas[1].setMouseOverColor(new Color(1,1,1,0.9f));
 
@@ -85,7 +86,7 @@ public class Shop extends BasicGameState implements ComponentListener{
 		areas[2].setNormalColor(new Color(1,1,1,0.8f));
 		areas[2].setMouseOverColor(new Color(1,1,1,0.9f));
 
-		areas[3] = new MouseOverArea(gc, reloadButton, gunColumn, 400, 
+		areas[3] = new MouseOverArea(gc, reloadButton, gunColumn, upgradeTwoRow, 
 				reloadButton.getWidth(), reloadButton.getHeight(), this);
 		areas[3].setNormalColor(new Color(1,1,1,0.8f));
 		areas[3].setMouseOverColor(new Color(1,1,1,0.9f));
@@ -134,20 +135,21 @@ public class Shop extends BasicGameState implements ComponentListener{
 		{
 			System.out.println("Entering Next Level");
 			((Play)sbg.getState(1)).cleanUpLevel();
-			try {
+			try 
+			{
 				((Play)sbg.getState(1)).increaseLevelDifficulty(((Play)sbg.getState(1)).isBossLevel());
-			} catch (SlickException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			} catch (SlickException e) 
+			{
+				System.out.println(e);
 			}
 			levelUp.stop();
 			if((((Play)sbg.getState(1)).isBossLevel()))
 			{
-				((Play)sbg.getState(1)).bossBGM.loop();
+				//((Play)sbg.getState(1)).bossBGM.loop();
 			}
 			else
 			{
-				((Play)sbg.getState(1)).gameBGM.loop();
+				//((Play)sbg.getState(1)).gameBGM.loop();
 			}
 			
 

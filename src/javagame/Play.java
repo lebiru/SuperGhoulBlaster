@@ -305,7 +305,15 @@ public class Play extends BasicGameState
 		//Display Level Message
 		if(levelWaveMessageCountdown >= 0)
 		{
-			g.drawString(levelWaveMessage + " " + waveNumber, gc.getWidth()/2, gc.getHeight()/6);
+			if(isBossLevel())
+			{	
+				g.drawString("BOSS LEVEL!", gc.getWidth()/2, gc.getHeight()/6);
+			}
+			else
+			{
+				g.drawString(levelWaveMessage + " " + waveNumber, gc.getWidth()/2, gc.getHeight()/6);
+			}
+			
 		}
 		
 		for(Coin c : coinManager)
@@ -329,6 +337,8 @@ public class Play extends BasicGameState
 			g.drawString(cl.getChains() + " Chains!", 10, 50);
 		}
 
+		
+
 	}
 
 
@@ -337,6 +347,21 @@ public class Play extends BasicGameState
 	{
 
 		input = gc.getInput();
+		
+		if(isBossLevel())
+		{
+			if(!bossBGM.playing())
+			{
+				bossBGM.loop();
+			}
+		}
+		else
+		{
+			if(!gameBGM.playing())
+			{
+				gameBGM.loop();
+			}
+		}
 		
 		int mouseX = input.getMouseX();
 		int mouseY = input.getMouseY();
@@ -511,7 +536,6 @@ public class Play extends BasicGameState
 							if(!c.isAlive())
 							{
 								c.turnOn(z);
-								System.out.println("Coin turned on");
 								return;
 							}
 						}
@@ -552,7 +576,6 @@ public class Play extends BasicGameState
 							if(!c.isAlive())
 							{
 								c.turnOn(ghoulArmy.get(i));
-								System.out.println("Coin turned on");
 								return;
 							}
 						}
