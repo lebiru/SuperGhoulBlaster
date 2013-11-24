@@ -1,5 +1,7 @@
 package javagame;
 
+import java.util.ArrayList;
+
 import org.newdawn.slick.*;
 import org.newdawn.slick.gui.AbstractComponent;
 import org.newdawn.slick.gui.ComponentListener;
@@ -12,14 +14,22 @@ import org.newdawn.slick.state.transition.FadeOutTransition;
 public class Shop extends BasicGameState implements ComponentListener{
 
 
-	private MouseOverArea[] areas = new MouseOverArea[5];
+	int areasSize = 7;
+	private MouseOverArea[] areas = new MouseOverArea[areasSize];
 	Image playButton, upgradeGunPowerButton, refillLightButton, 
-	reloadButton, batKnockbackButton;
+	reloadButton, batKnockbackButton, batDamageButton, gunPierceButton;
+	
+	Image gunDamageLevel;
+	Image lv0, lv1, lv2, lv3, lv4, lv5;
+	ArrayList<Image> upgradeLevel = new ArrayList<Image>();
+	
+	int gunPowerLevel = 0;
+	
 	Image shopBackground;
 	Sound levelUp;
 	StateBasedGame sbg;
 	GameContainer gc;
-	
+
 	Sound buy, notEnoughMoney;
 
 	int gunColumn;
@@ -49,15 +59,21 @@ public class Shop extends BasicGameState implements ComponentListener{
 		refillLightButton = new Image("res/images/ShopButtons/SGB_ShopButton_RefillFlashlight_01.png");
 		reloadButton = new Image("res/images/ShopButtons/SGB_ShopButton_GunReloadSpeed_01.png");
 		batKnockbackButton = new Image("res/images/ShopButtons/SGB_ShopButton_BatKnockback_01.png");
+		batDamageButton = new Image("res/images/ShopButtons/SGB_ShopButton_BatDamage_01.png");
+		gunPierceButton = new Image("res/images/ShopButtons/SGB_ShopButton_GunArmorPiercing_01.png");
+		gunDamageLevel = new Image("res/images/ShopButtons/SGB_ShopButton_Level0.png");
+
+		for(int i = 0; i <= 5; i++)
+		{
+			upgradeLevel.add(new Image("res/images/ShopButtons/SGB_ShopButton_Level" + i + ".png"));
+		}
+
 		
 		shopBackground = new Image("res/images/splashScreens/SGB_SplashShop_01.jpg");
-		
+
 		levelUp = new Sound("res/sound/BGM/Level Up.ogg");
 		buy = new Sound("res/sound/fx/buy.wav");
 		notEnoughMoney = new Sound("res/sound/fx/notEnoughMoney.wav");
-		
-		
-		
 
 		currentMessage = "Welcome...";
 
@@ -90,12 +106,22 @@ public class Shop extends BasicGameState implements ComponentListener{
 				reloadButton.getWidth(), reloadButton.getHeight(), this);
 		areas[3].setNormalColor(new Color(1,1,1,0.8f));
 		areas[3].setMouseOverColor(new Color(1,1,1,0.9f));
-		
+
 		areas[4] = new MouseOverArea(gc, batKnockbackButton, batColumn, upgradeOneRow, 
 				batKnockbackButton.getWidth(), batKnockbackButton.getHeight(), this);
 		areas[4].setNormalColor(new Color(1,1,1,0.8f));
 		areas[4].setMouseOverColor(new Color(1,1,1,0.9f));
-		
+
+		areas[5] = new MouseOverArea(gc, batDamageButton, batColumn, upgradeTwoRow, 
+				batDamageButton.getWidth(), batDamageButton.getHeight(), this);
+		areas[5].setNormalColor(new Color(1,1,1,0.8f));
+		areas[5].setMouseOverColor(new Color(1,1,1,0.9f));
+
+		areas[6] = new MouseOverArea(gc, gunPierceButton, gunColumn, upgradeThreeRow, 
+				gunPierceButton.getWidth(), gunPierceButton.getHeight(), this);
+		areas[6].setNormalColor(new Color(1,1,1,0.8f));
+		areas[6].setMouseOverColor(new Color(1,1,1,0.9f));
+
 
 	}
 
@@ -108,10 +134,12 @@ public class Shop extends BasicGameState implements ComponentListener{
 		g.drawString(currentMessage, 10, 30);
 		g.drawString("Coins: " + currentCoin, 10, 50);
 
-		for (int i=0;i<5;i++) 
+		for (int i=0;i<areasSize;i++) 
 		{
 			areas[i].render(gc, g);
 		}
+		
+		gunDamageLevel.draw(gunColumn + upgradeGunPowerButton.getWidth() + 10, upgradeOneRow);
 	}
 
 	//for updating logics of the game
@@ -151,7 +179,7 @@ public class Shop extends BasicGameState implements ComponentListener{
 			{
 				//((Play)sbg.getState(1)).gameBGM.loop();
 			}
-			
+
 
 			sbg.enterState(1, new FadeOutTransition(Color.black, 1000), new FadeInTransition(Color.black, 1000) );
 		}
@@ -171,6 +199,8 @@ public class Shop extends BasicGameState implements ComponentListener{
 				((Play)sbg.getState(1)).m.decreaseCurrentCoin(gunPowerCost);
 				currentMessage = "Nice doing business with ya.";
 				buy.play();
+				gunPowerLevel++;
+				gunDamageLevel = upgradeLevel.get(gunPowerLevel); 
 
 			}
 			else
@@ -226,29 +256,79 @@ public class Shop extends BasicGameState implements ComponentListener{
 			}
 
 		}
-		
+
 		//Bat Knockback Upgrade
-				if (source == areas[4]) 
+		if (source == areas[4]) 
+		{
+			if(currentCoin >= 30)
+			{
+				System.out.println("Bat Knockback Upgrade");
+
+				((Play)sbg.getState(1)).bat.setKnockback(((Play)sbg.getState(1)).bat.getKnockback() + 3f);
+
+				//Decreasing Player Money
+				((Play)sbg.getState(1)).m.decreaseCurrentCoin(30);
+				currentMessage = "Nice doing business with ya.";
+				buy.play();
+
+			}
+			else
+			{
+				currentMessage = "That costs 30 coins. You don't have enough money.";
+				notEnoughMoney.play();
+			}
+
+		}
+
+		//Bat Damage Upgrade
+		if (source == areas[5]) 
+		{
+			if(currentCoin >= 30)
+			{
+				System.out.println("Bat Damage Upgrade");
+
+				((Play)sbg.getState(1)).bat.setDamage(((Play)sbg.getState(1)).bat.getDamage() + 2f);
+
+				//Decreasing Player Money
+				((Play)sbg.getState(1)).m.decreaseCurrentCoin(30);
+				currentMessage = "Nice doing business with ya.";
+				buy.play();
+
+			}
+			else
+			{
+				currentMessage = "That costs 30 coins. You don't have enough money.";
+				notEnoughMoney.play();
+			}
+
+		}
+
+		//Gun Pierce Upgrade
+		if (source == areas[6]) 
+		{
+			if(currentCoin >= 30)
+			{
+				System.out.println("Gun Pierce Upgrade");
+
+				for(Bullet b : ((Play)sbg.getState(1)).bulletManager)
 				{
-					if(currentCoin >= 30)
-					{
-						System.out.println("Bat Knockback Upgrade");
-						
-						((Play)sbg.getState(1)).bat.setKnockback(((Play)sbg.getState(1)).bat.getKnockback() + 3f);
-
-						//Decreasing Player Money
-						((Play)sbg.getState(1)).m.decreaseCurrentCoin(30);
-						currentMessage = "Nice doing business with ya.";
-						buy.play();
-
-					}
-					else
-					{
-						currentMessage = "That costs 30 coins. You don't have enough money.";
-						notEnoughMoney.play();
-					}
-
+					b.setPierceLevel(b.getPierceLevel() + 1);
 				}
+				
+
+				//Decreasing Player Money
+				((Play)sbg.getState(1)).m.decreaseCurrentCoin(30);
+				currentMessage = "Nice doing business with ya.";
+				buy.play();
+
+			}
+			else
+			{
+				currentMessage = "That costs 30 coins. You don't have enough money.";
+				notEnoughMoney.play();
+			}
+
+		}
 
 	}
 

@@ -3,6 +3,7 @@ package javagame;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
+import org.newdawn.slick.SlickException;
 import org.newdawn.slick.Sound;
 import org.newdawn.slick.geom.Rectangle;
 
@@ -27,12 +28,24 @@ public class Player
 	Rectangle playerRect;
 	Image playerImage;
 
+	private float dmgTicker = 0f;
+	private float dmgTickerMax = 10f;
+	private float dmgTickerIncrement = 1f;
+	private boolean isDamaged = false;
+	public Sound grunt;
+
 	Player(Image i)
 	{
 		this.playerRect = new Rectangle(this.playerX, this.playerY, this.playerWidth, this.playerHeight);
 		this.playerImage = i;
 		this.playerCenterX = playerWidth/2;
 		this.playerCenterY = playerHeight/2;
+		try {
+			grunt = new Sound("res/sound/fx/Grunt.ogg");
+		} catch (SlickException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	void setX(float x)
@@ -115,9 +128,47 @@ public class Player
 		return tunnelingBuffer;
 	}
 
+	public void turnOnDamaged() 
+	{
+		isDamaged = true;
+
+	}
+
+	public void turnOffDamaged()
+	{
+		isDamaged = false;
+	}
+
+	public boolean isDamaged() 
+	{
+		return isDamaged;
+	}
+
+	public void updateDamageTick() 
+	{
+		if(dmgTicker <= dmgTickerMax)
+		{
+			dmgTicker += dmgTickerIncrement;
+			//turnRed
+			playerImage.setImageColor(255, 0, 0);
+
+
+		}
+		else
+		{
+			playerImage.setImageColor(100, 100, 100);
+			turnOffDamaged();
+			dmgTicker = 0f;
+		}
+		
+
+	}
+
+
+
 	public void move(Input in, GameContainer gc, Sound footsteps) 
 	{
-		
+
 
 		if(in.isKeyDown(Input.KEY_A) && (this.getX() + this.getTunnelingBuffer() >= 0))
 		{ 

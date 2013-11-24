@@ -39,7 +39,7 @@ public class Game extends StateBasedGame
 	//gamecontainer manages game engine stuff, like framerate, game loop, etc...
 	public void initStatesList(GameContainer gc) throws SlickException
 	{
-		this.enterState(menu);
+		this.enterState(about);
 	}
 	
 	public static void main(String[] args) 
@@ -50,30 +50,14 @@ public class Game extends StateBasedGame
 			appgc = new AppGameContainer(new Game(gamename));
 			appgc.setTargetFrameRate(maxFPS);
 			appgc.setVSync(true);
-			
-			
-			DisplayMode[] modes;
-			
-			//Enabling Full-Screen Mode
-			try {
-				modes = Display.getAvailableDisplayModes();
-			    for (int i=0;i<modes.length;i++) {
-		             DisplayMode current = modes[i];
-		             System.out.println(current.getWidth() + "x" + current.getHeight() + "x" +
-		                                 current.getBitsPerPixel() + " " + current.getFrequency() + "Hz");
-		             SCREEN_WIDTH = current.getWidth();
-		             SCREEN_HEIGHT = current.getHeight();
-		         }
-		         System.out.println(appgc.getAspectRatio());
-			} catch (LWJGLException e) {
-				
-				e.printStackTrace();
-			}
 		
-			
 
-			appgc.setDisplayMode(SCREEN_WIDTH, SCREEN_HEIGHT, false); //third argument is fullscreen
+			appgc.setDisplayMode(Display.getDesktopDisplayMode().getWidth(), 
+								 Display.getDesktopDisplayMode().getHeight(), 
+								 false); //third argument is fullscreen
+			appgc.setIcon("res/images/icon.png");
 			appgc.start();
+			
 		}catch(SlickException e)
 		{
 			e.printStackTrace();

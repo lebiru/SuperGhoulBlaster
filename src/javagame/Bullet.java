@@ -15,6 +15,7 @@ public class Bullet extends Image
 	private int   bulletDamage;
 	private boolean bulletIsAlive;
 	private float bulletRange = 100;
+	private int pierceLevel = 1;
 	
 	private Image image;
 	
@@ -27,6 +28,16 @@ public class Bullet extends Image
 		bulletRect = new Rectangle(bulletX, bulletY, 10, 10);
 		bulletDamage = 2;
 	
+	}
+	
+	public int getPierceLevel()
+	{
+		return pierceLevel;
+	}
+	
+	public void setPierceLevel(int i)
+	{
+		pierceLevel = i;
 	}
 	
 	public float getBulletRange()

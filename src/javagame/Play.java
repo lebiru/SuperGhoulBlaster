@@ -336,6 +336,17 @@ public class Play extends BasicGameState
 		{
 			g.drawString(cl.getChains() + " Chains!", 10, 50);
 		}
+		
+//		int pierce = 20 ;
+//		for(Bullet b : bulletManager)
+//		{
+//			
+//			g.drawString("Pierce level: " + b.getPierceLevel(), 10, 20 + pierce);
+//			pierce += 10;
+//		}
+		
+		g.drawString("In damage mode?" + hero.isDamaged(), 10, 30);
+		
 
 		
 
@@ -459,6 +470,10 @@ public class Play extends BasicGameState
 
 		//UPDATE
 		hero.updateRect();
+		if(hero.isDamaged())
+		{
+			hero.updateDamageTick();
+		}
 		cl.update();
 
 		for(Bullet b : bulletManager)
@@ -500,6 +515,11 @@ public class Play extends BasicGameState
 				if(hero.getRect().intersects(z.getRect()))
 				{
 					hero.setHealth(-1);
+					hero.turnOnDamaged();
+					if(!hero.grunt.playing())
+					{
+						hero.grunt.play();
+					}
 					
 				}
 			}

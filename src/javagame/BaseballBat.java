@@ -135,6 +135,11 @@ public class BaseballBat {
 	{
 		return damage;
 	}
+	
+	public void setDamage(float f)
+	{
+		damage = f;
+	}
 
 	public float getX() 
 	{
