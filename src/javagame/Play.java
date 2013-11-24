@@ -23,6 +23,7 @@ public class Play extends BasicGameState
 	Sound shoot, zombieDie, reload, batswing, batHit, coin, footsteps, playerDie, doorSound;
 
 	StatusBar sb;
+	ChainLogic cl;
 
 	Image door;
 	float doorX;
@@ -35,8 +36,6 @@ public class Play extends BasicGameState
 	
 	Font UIFont1;
 	org.newdawn.slick.UnicodeFont bombardFont;
-	
-	
 
 	public int waveNumber = 1;
 	String levelWaveMessage = "Level ";
@@ -103,6 +102,7 @@ public class Play extends BasicGameState
 	{
 
 		this.gc = gc;
+		cl = new ChainLogic();
 		
 		//Setting Up the Font
 		try {
@@ -305,7 +305,7 @@ public class Play extends BasicGameState
 		//Display Level Message
 		if(levelWaveMessageCountdown >= 0)
 		{
-			g.drawString(levelWaveMessage + " " + waveNumber, gc.getWidth()/3, gc.getHeight()/6);
+			g.drawString(levelWaveMessage + " " + waveNumber, gc.getWidth()/2, gc.getHeight()/6);
 		}
 		
 		for(Coin c : coinManager)
@@ -324,10 +324,10 @@ public class Play extends BasicGameState
 			}
 		}
 		
-		
-		
-		
-		
+		if(cl.getChains() >= 2)
+		{
+			g.drawString(cl.getChains() + " Chains!", 10, 50);
+		}
 
 	}
 
@@ -434,6 +434,7 @@ public class Play extends BasicGameState
 
 		//UPDATE
 		hero.updateRect();
+		cl.update();
 
 		for(Bullet b : bulletManager)
 		{
@@ -499,6 +500,7 @@ public class Play extends BasicGameState
 
 					if(z.getHealth() <= 0)
 					{
+						cl.turnOn();
 						z.setGhoulIsAlive(false);
 						zombiesKilled++;
 						totalCoinsEarned += ghoulArmy.get(1).moneyValue;
@@ -540,6 +542,7 @@ public class Play extends BasicGameState
 					if(ghoulArmy.get(i).getHealth() <= 0)
 					{
 						ghoulArmy.get(i).setGhoulIsAlive(false);	
+						cl.turnOn();
 						m.setCurrentCoin(m.currentCoin + ghoulArmy.get(i).moneyValue);
 						totalCoinsEarned += ghoulArmy.get(i).moneyValue;
 						zombiesKilled++;
