@@ -1,25 +1,26 @@
 package javagame;
 
+import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Random;
-
-import javax.swing.Box.Filler;
-
 import org.lwjgl.input.Controller;
-import org.lwjgl.input.Controllers;
 import org.newdawn.slick.*;
+import org.newdawn.slick.font.effects.ColorEffect;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.state.*;
 import org.newdawn.slick.state.transition.FadeInTransition;
 import org.newdawn.slick.state.transition.FadeOutTransition;
+import java.awt.font.*;
+import java.io.IOException;
 
 
 public class Play extends BasicGameState
 {
 
 	Image sand, rock, dune, grass, bush;
-	Sound shoot, zombieDie, reload, batswing, batHit, coin, footsteps;
+	Sound shoot, zombieDie, reload, batswing, batHit, coin, footsteps, playerDie, doorSound;
 
 	StatusBar sb;
 
@@ -31,6 +32,11 @@ public class Play extends BasicGameState
 	SpriteSheet doorSpriteSheet;
 
 	Money m;
+	
+	Font UIFont1;
+	org.newdawn.slick.UnicodeFont bombardFont;
+	
+	
 
 	public int waveNumber = 1;
 	String levelWaveMessage = "Level ";
@@ -92,10 +98,31 @@ public class Play extends BasicGameState
 
 	}
 
+	@SuppressWarnings("unchecked")
 	public void init(GameContainer gc, StateBasedGame sbg) throws SlickException
 	{
 
 		this.gc = gc;
+		
+		//Setting Up the Font
+		try {
+			UIFont1 = java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT, 
+					org.newdawn.slick.util.ResourceLoader.getResourceAsStream("res/images/fonts/BOMBARD.ttf"));
+		} catch (FontFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		UIFont1 = UIFont1.deriveFont(java.awt.Font.PLAIN, 24.0f);
+		bombardFont = new org.newdawn.slick.UnicodeFont(UIFont1);
+		bombardFont.addAsciiGlyphs();
+		bombardFont.getEffects().add(new ColorEffect(java.awt.Color.GREEN));
+		bombardFont.loadGlyphs();
+		//End Setting up the Font
+		
 		
 		//IMAGES
 		hero = new Player(new Image("res/images/SGB_player_01.png"));
@@ -173,6 +200,8 @@ public class Play extends BasicGameState
 		coin = new Sound("res/sound/fx/Coin.ogg");
 		batHit = new Sound("res/sound/fx/Bat.ogg");
 		footsteps = new Sound("res/sound/fx/Footsteps.ogg");
+		playerDie = new Sound("res/sound/fx/Player Death.ogg");
+		doorSound = new Sound("res/sound/fx/Creaky Door Opening.ogg");
 		
 		gameBGM = new Sound("res/sound/BGM/In Game.ogg");
 		gameOverBGM = new Sound("res/sound/BGM/Game Over.ogg");
@@ -201,6 +230,8 @@ public class Play extends BasicGameState
 
 		g.setBackground(Color.black);
 		renderBackground(g);
+		
+		g.setFont(bombardFont);
 
 
 		for(Zombie z : ghoulArmy)
@@ -292,6 +323,9 @@ public class Play extends BasicGameState
 				
 			}
 		}
+		
+		
+		
 		
 		
 
@@ -454,7 +488,7 @@ public class Play extends BasicGameState
 				{
 
 					z.setHealth(bat.getDamage());
-					z.turnOnDamaged();
+					z.turnOnDamaged(bat.getKnockback());
 					if(bat.hasPlayedSwingHit == false)
 					{
 						//zombieDie.play(0.9f,0.2f);
@@ -501,7 +535,7 @@ public class Play extends BasicGameState
 				{
 					bulletManager.get(j).setBulletIsAlive(false);
 					ghoulArmy.get(i).setHealth(bulletManager.get(j).getDamage());
-					ghoulArmy.get(i).turnOnDamaged();
+					ghoulArmy.get(i).turnOnDamaged(5f);
 					bulletsHit++;
 					if(ghoulArmy.get(i).getHealth() <= 0)
 					{
@@ -551,6 +585,7 @@ public class Play extends BasicGameState
 		{
 			gameBGM.stop();
 			bossBGM.stop();
+			playerDie.play();
 			gameOverBGM.loop();
 			sbg.enterState(4, new FadeOutTransition(Color.red, 1000), new FadeInTransition(Color.black, 1000));
 		}
@@ -563,6 +598,7 @@ public class Play extends BasicGameState
 				//Enter the shopping state
 				gameBGM.stop();
 				bossBGM.stop();
+				doorSound.play();
 				((Shop)sbg.getState(5)).levelUp.loop();
 				sbg.enterState(5, new FadeOutTransition(Color.white, 1000), new FadeInTransition(Color.white, 1000));
 			}

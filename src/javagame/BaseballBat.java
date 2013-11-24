@@ -16,6 +16,8 @@ public class BaseballBat {
 	
 	float damage = 1f;
 	
+	float knockback = 5f;
+	
 	float batAngle = 90f;
 	float startAngle;
 	float endAngle;
@@ -64,6 +66,16 @@ public class BaseballBat {
 	public boolean getAlive()
 	{
 		return isAlive;
+	}
+	
+	public float getKnockback()
+	{
+		return knockback;
+	}
+	
+	public void setKnockback(float f)
+	{
+		knockback = f;
 	}
 	
 	public void swing()

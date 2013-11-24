@@ -12,8 +12,9 @@ import org.newdawn.slick.state.transition.FadeOutTransition;
 public class Shop extends BasicGameState implements ComponentListener{
 
 
-	private MouseOverArea[] areas = new MouseOverArea[4];
-	Image playButton, upgradeGunPowerButton, refillLightButton, reloadButton, batKnockbackButton;
+	private MouseOverArea[] areas = new MouseOverArea[5];
+	Image playButton, upgradeGunPowerButton, refillLightButton, 
+	reloadButton, batKnockbackButton;
 	Image shopBackground;
 	Sound levelUp;
 	StateBasedGame sbg;
@@ -47,12 +48,14 @@ public class Shop extends BasicGameState implements ComponentListener{
 		upgradeGunPowerButton = new Image("res/images/buttons/upgradeGunPower.png");
 		refillLightButton = new Image("res/images/buttons/refillLightButton.png");
 		reloadButton = new Image("res/images/buttons/reloadButton.png");
-
+		batKnockbackButton = new Image("res/images/ShopButtons/SGB_ShopButton_BatKnockback_01.png");
+		
 		shopBackground = new Image("res/images/splashScreens/SGB_SplashShop_01.jpg");
 		
 		levelUp = new Sound("res/sound/BGM/Level Up.ogg");
 		buy = new Sound("res/sound/fx/buy.wav");
 		notEnoughMoney = new Sound("res/sound/fx/notEnoughMoney.wav");
+		
 		
 		
 
@@ -86,6 +89,12 @@ public class Shop extends BasicGameState implements ComponentListener{
 				reloadButton.getWidth(), reloadButton.getHeight(), this);
 		areas[3].setNormalColor(new Color(1,1,1,0.8f));
 		areas[3].setMouseOverColor(new Color(1,1,1,0.9f));
+		
+		areas[4] = new MouseOverArea(gc, batKnockbackButton, batColumn, upgradeOneRow, 
+				batKnockbackButton.getWidth(), batKnockbackButton.getHeight(), this);
+		areas[4].setNormalColor(new Color(1,1,1,0.8f));
+		areas[4].setMouseOverColor(new Color(1,1,1,0.9f));
+		
 
 	}
 
@@ -98,7 +107,7 @@ public class Shop extends BasicGameState implements ComponentListener{
 		g.drawString(currentMessage, 10, 30);
 		g.drawString("Coins: " + currentCoin, 10, 50);
 
-		for (int i=0;i<4;i++) 
+		for (int i=0;i<5;i++) 
 		{
 			areas[i].render(gc, g);
 		}
@@ -215,6 +224,29 @@ public class Shop extends BasicGameState implements ComponentListener{
 			}
 
 		}
+		
+		//Bat Knockback Upgrade
+				if (source == areas[4]) 
+				{
+					if(currentCoin >= 30)
+					{
+						System.out.println("Bat Knockback Upgrade");
+						
+						((Play)sbg.getState(1)).bat.setKnockback(((Play)sbg.getState(1)).bat.getKnockback() + 3f);
+
+						//Decreasing Player Money
+						((Play)sbg.getState(1)).m.decreaseCurrentCoin(30);
+						currentMessage = "Nice doing business with ya.";
+						buy.play();
+
+					}
+					else
+					{
+						currentMessage = "That costs 30 coins. You don't have enough money.";
+						notEnoughMoney.play();
+					}
+
+				}
 
 	}
 

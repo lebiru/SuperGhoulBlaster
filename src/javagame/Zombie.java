@@ -40,7 +40,7 @@ public class Zombie
 	private float dmgTickerIncrement = 1f;
 	private boolean isDamaged = false;
 	
-	private float knockback = 3f; //this should be a weapon attribute
+	private float knockback = 0f; //this should be a weapon attribute
 
 	Zombie(SpriteSheet sp, float startX, float startY) throws SlickException
 	{
@@ -218,9 +218,11 @@ public class Zombie
 	}
 
 
-	public void turnOnDamaged() 
+	public void turnOnDamaged(float f) 
 	{
 		isDamaged = true;
+		knockback = f;
+		
 	}
 	
 	public void turnOffDamaged()
@@ -256,6 +258,7 @@ public class Zombie
 			}
 			turnOffDamaged();
 			dmgTicker = 0f;
+			knockback = 0f;
 		}
 		
 	}
