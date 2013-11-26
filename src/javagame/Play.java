@@ -32,8 +32,11 @@ public class Play extends BasicGameState
 	Animation doorAnimation;
 	SpriteSheet doorSpriteSheet;
 
+	Random growlRandom = new Random();
+	int growlHolder = 0;
+
 	Money m;
-	
+
 	Font UIFont1;
 	org.newdawn.slick.UnicodeFont bombardFont;
 
@@ -51,22 +54,22 @@ public class Play extends BasicGameState
 	float reloadTime = reloadTimeMax;
 	float reloadTick = 2;
 	boolean canShoot = true;
-	
+
 	ArrayList<Coin> coinManager = new ArrayList<Coin>();
 	int numOfCoins = 5;
-	
+
 
 	Player hero;
 	Zombie ghoul;
 	BaseballBat bat;
 	Flashlight fl;
-	
+
 	boolean isPaused = false;
 
 	ArrayList<Zombie> ghoulArmy = new ArrayList<Zombie>();
 	ArrayList<Point2D> ghoulSpawnPoints = new ArrayList<Point2D>();
 	ArrayList<Sound> zombieGrowls = new ArrayList<Sound>();
-	
+
 	//GameOver Statistics
 	double bulletsFired = 0;
 	double bulletsHit = 0;
@@ -104,7 +107,7 @@ public class Play extends BasicGameState
 
 		this.gc = gc;
 		cl = new ChainLogic();
-		
+
 		//Setting Up the Font
 		try {
 			UIFont1 = java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT, 
@@ -116,15 +119,15 @@ public class Play extends BasicGameState
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		UIFont1 = UIFont1.deriveFont(java.awt.Font.PLAIN, 24.0f);
 		bombardFont = new org.newdawn.slick.UnicodeFont(UIFont1);
 		bombardFont.addAsciiGlyphs();
 		bombardFont.getEffects().add(new ColorEffect(java.awt.Color.GREEN));
 		bombardFont.loadGlyphs();
 		//End Setting up the Font
-		
-		
+
+
 		//IMAGES
 		hero = new Player(new Image("res/images/SGB_player_01.png"));
 		sand = new Image("res/images/SGB_sand_01.png");
@@ -139,7 +142,7 @@ public class Play extends BasicGameState
 		{
 			doorAnimation.addFrame(doorSpriteSheet.getSprite(i, 0), 100);
 		}
-		
+
 
 
 		bat = new BaseballBat("res/images/SGB_baseballbat_02.png", hero);
@@ -173,7 +176,7 @@ public class Play extends BasicGameState
 			ghoul.setGhoulIsAlive(true);
 			ghoulArmy.add(ghoul);
 		}
-		
+
 		//initializing zombie Growls
 		for(int i = 1; i < 11; i++)
 		{
@@ -186,7 +189,7 @@ public class Play extends BasicGameState
 		{
 			bulletManager.add(new Bullet("res/images/bulletOne.png"));
 		}
-		
+
 		//instantiate the coins
 		for(int i = 0; i < numOfCoins; i++)
 		{
@@ -209,14 +212,14 @@ public class Play extends BasicGameState
 		footsteps = new Sound("res/sound/fx/Footsteps.ogg");
 		playerDie = new Sound("res/sound/fx/Player Death.ogg");
 		doorSound = new Sound("res/sound/fx/Creaky Door Opening.ogg");
-		
+
 		gameBGM = new Sound("res/sound/BGM/In Game.ogg");
 		gameOverBGM = new Sound("res/sound/BGM/Game Over.ogg");
 		bossBGM = new Sound("res/sound/BGM/Boss Fight.ogg");
 
 		gc.getGraphics().setBackground(Color.black);
 
-		
+
 
 		input = gc.getInput();
 
@@ -237,7 +240,7 @@ public class Play extends BasicGameState
 
 		g.setBackground(Color.black);
 		renderBackground(g);
-		
+
 		g.setFont(bombardFont);
 
 
@@ -249,9 +252,9 @@ public class Play extends BasicGameState
 				if(isBossLevel())
 				{
 					z.getAnimation().draw(z.getX() - 25, z.getY() - 25, z.bossSize, z.bossSize);
-					
+
 					z.getAnimation().getCurrentFrame().setCenterOfRotation(100,100);
-					
+
 					z.getAnimation().getCurrentFrame().setRotation(Math.round(z.getAngle()));
 				}
 				else
@@ -260,8 +263,8 @@ public class Play extends BasicGameState
 					z.getAnimation().getCurrentFrame().setCenterOfRotation(25, 25);
 					z.getAnimation().getCurrentFrame().setRotation(Math.round(z.getAngle()));
 				}
-				
-	
+
+
 
 				g.draw(z.healthBar);
 				g.setColor(Color.red);
@@ -283,7 +286,7 @@ public class Play extends BasicGameState
 
 		g.drawImage(hero.getImage(), hero.getX(), hero.getY());
 		hero.getImage().setRotation(hero.getAngle());
-		
+
 		if(checkWaveCleared() == true)
 		{
 			doorAnimation.draw(doorX, doorY);		
@@ -294,7 +297,7 @@ public class Play extends BasicGameState
 		fl.darknessImage.draw(0, 0, gc.getWidth(), gc.getHeight());
 		fl.darknessImage.setAlpha(fl.getPower());
 
-		
+
 
 		//SWING BAT
 		if(bat.getAlive() == true)
@@ -320,9 +323,9 @@ public class Play extends BasicGameState
 			{
 				g.drawString(levelWaveMessage + " " + waveNumber, gc.getWidth()/2, gc.getHeight()/6);
 			}
-			
+
 		}
-		
+
 		for(Coin c : coinManager)
 		{
 			if(c.isAlive())
@@ -335,10 +338,10 @@ public class Play extends BasicGameState
 				{
 					c.getAnimation().draw(c.getX(), c.getY());	
 				}	
-				
+
 			}
 		}
-		
+
 		if(cl.getChains() >= 2)
 		{
 			g.drawString(cl.getChains() + " Chains!", 10, 50);
@@ -353,7 +356,7 @@ public class Play extends BasicGameState
 	{
 
 		input = gc.getInput();
-		
+
 		if(isBossLevel())
 		{
 			if(!bossBGM.playing())
@@ -368,7 +371,7 @@ public class Play extends BasicGameState
 				gameBGM.loop();
 			}
 		}
-		
+
 		int mouseX = input.getMouseX();
 		int mouseY = input.getMouseY();
 		float mouseDX;
@@ -386,269 +389,273 @@ public class Play extends BasicGameState
 
 		if(!isPaused)
 		{
-		//MOVE USING KEYBOARD
-		hero.move(input, gc, footsteps);
-		
+			//MOVE USING KEYBOARD
+			hero.move(input, gc, footsteps);
 
 
-		//SHOOT USING MOUSE
-		if(input.isMousePressed(0) && canShoot == true)
-		{
+
+			//SHOOT USING MOUSE
+			if(input.isMousePressed(0) && canShoot == true)
+			{
+				for(Bullet b : bulletManager)
+				{
+					//If we've found a free bullet
+					if(b.getAlive() == false && numOfBullets > 0) 
+					{ 
+						b.turnOn(hero);
+						shoot.play();
+						numOfBullets--;
+						bulletsFired++;
+						return;
+					}
+				}
+
+			}
+
+			//SWING BAT
+			if(input.isKeyPressed(Input.KEY_SPACE))
+			{
+				bat.turnOn(hero);
+				batswing.play(1f, 0.2f);
+			}
+
+
+			if(bat.isSwingEnd())
+			{
+				bat.turnOff();
+			}
+
+
+			//RELOAD USING RIGHT MOUSE BUTTON
+			if(input.isMousePressed(1))
+			{
+				reloadGunTurnOn();
+			}
+
+
+			//MOVE BULLETS
 			for(Bullet b : bulletManager)
 			{
-				//If we've found a free bullet
-				if(b.getAlive() == false && numOfBullets > 0) 
-				{ 
-					b.turnOn(hero);
-					shoot.play();
-					numOfBullets--;
-					bulletsFired++;
-					return;
-				}
-			}
-
-		}
-
-		//SWING BAT
-		if(input.isKeyPressed(Input.KEY_SPACE))
-		{
-			bat.turnOn(hero);
-			batswing.play(1f, 0.2f);
-		}
-
-
-		if(bat.isSwingEnd())
-		{
-			bat.turnOff();
-		}
-
-
-		//RELOAD USING RIGHT MOUSE BUTTON
-		if(input.isMousePressed(1))
-		{
-			reloadGunTurnOn();
-		}
-
-
-		//MOVE BULLETS
-		for(Bullet b : bulletManager)
-		{
-			if(b.getAlive() == true)
-			{
-				//move the bullet along its 2D trajectory
-				b.moveBullet();
-
-
-				if(outOfBounds(b) == true)
+				if(b.getAlive() == true)
 				{
-					b.setBulletIsAlive(false);
-				}
-			}
-		}
+					//move the bullet along its 2D trajectory
+					b.moveBullet();
 
 
-
-
-		for(Zombie z : ghoulArmy)
-		{
-			if(z.getAlive() == true)
-			{
-				z.move(hero);
-				z.updateRect(isBossLevel());	
-				if(z.isDamaged())
-				{
-					z.updateDamageTick();
-				}
-				z.updateAngle();
-				if(z.canGrowl())
-				{
-					zombieGrowls.get(new Random().nextInt(10)).play(1f, z.getVolume());
-				}
-			}
-		}
-
-
-		//UPDATE
-		hero.updateRect();
-		if(hero.isDamaged())
-		{
-			hero.updateDamageTick();
-		}
-		cl.update();
-
-		for(Bullet b : bulletManager)
-		{
-			if(b.getAlive() == true)
-			{
-				b.updateRect();
-			}
-
-		}
-
-		bat.updateRect(hero);
-		sb.update(m, hero, fl, reloadTime);
-		levelWaveMessageCountdown -= 1;
-		if(checkWaveCleared() == false)
-		{
-			fl.update();
-		}
-		if(canShoot == false)
-		{
-			reloadGun();
-		}
-		
-		for(Coin c : coinManager)
-		{
-			if(c.isAlive())
-			{
-				c.update();
-			}
-		}
-
-		//COLLISION
-
-
-		for(Zombie z : ghoulArmy)
-		{
-			if(z.getAlive() == true)
-			{
-				if(hero.getRect().intersects(z.getRect()))
-				{
-					hero.setHealth(-1);
-					hero.turnOnDamaged();
-					if(!hero.grunt.playing())
+					if(outOfBounds(b) == true)
 					{
-						hero.grunt.play();
+						b.setBulletIsAlive(false);
 					}
-					
 				}
 			}
 
-		}
 
-		if(bat.isAlive)
-		{
+
+
 			for(Zombie z : ghoulArmy)
 			{
-				if(z.getAlive() == true && bat.getCircle().intersects(z.getRect()))
+				if(z.getAlive() == true)
 				{
-
-					z.setHealth(bat.getDamage());
-					z.turnOnDamaged(bat.getKnockback());
-					if(bat.hasPlayedSwingHit == false)
+					z.move(hero);
+					z.updateRect(isBossLevel());	
+					if(z.isDamaged())
 					{
-						//zombieDie.play(0.9f,0.2f);
-						batHit.play();
-						bat.hasPlayedSwingHit = true;
+						z.updateDamageTick();
 					}
-
-
-					if(z.getHealth() <= 0)
+					z.updateAngle();
+					if(z.canGrowl(growlRandom.nextInt(90)))
 					{
-						cl.turnOn();
-						z.setGhoulIsAlive(false);
-						zombiesKilled++;
-						totalCoinsEarned += ghoulArmy.get(1).moneyValue;
-						m.setCurrentCoin(m.currentCoin + ghoulArmy.get(1).moneyValue);
-						
-						for(Coin c : coinManager)
+						growlHolder = growlRandom.nextInt(10);
+						if(!zombieGrowls.get(growlHolder).playing())
 						{
-							if(!c.isAlive())
-							{
-								c.turnOn(z);
-								return;
-							}
+							zombieGrowls.get(growlHolder).play(1f, z.getVolume());
 						}
-						
 					}
-
 				}
 			}
 
 
-		}
-
-
-
-		//Bullet Collision
-		for(int j = 0; j < bulletManager.size(); j++)
-		{
-			for(int i = 0; i < ghoulArmy.size(); i++)
+			//UPDATE
+			hero.updateRect();
+			if(hero.isDamaged())
 			{
-				if(bulletManager.get(j).getRect().intersects(ghoulArmy.get(i).getRect())
-						&& ghoulArmy.get(i).getAlive() == true
-						&& bulletManager.get(j).getAlive() == true)
+				hero.updateDamageTick();
+			}
+			cl.update();
+
+			for(Bullet b : bulletManager)
+			{
+				if(b.getAlive() == true)
 				{
-					bulletManager.get(j).setBulletIsAlive(false);
-					ghoulArmy.get(i).setHealth(bulletManager.get(j).getDamage());
-					ghoulArmy.get(i).turnOnDamaged(5f);
-					bulletsHit++;
-					if(ghoulArmy.get(i).getHealth() <= 0)
-					{
-						ghoulArmy.get(i).setGhoulIsAlive(false);	
-						cl.turnOn();
-						m.setCurrentCoin(m.currentCoin + ghoulArmy.get(i).moneyValue);
-						totalCoinsEarned += ghoulArmy.get(i).moneyValue;
-						zombiesKilled++;
-						
-						for(Coin c : coinManager)
-						{
-							if(!c.isAlive())
-							{
-								c.turnOn(ghoulArmy.get(i));
-								return;
-							}
-						}
-						
-					}
-					zombieDie.play(0.9f,0.2f);
+					b.updateRect();
+				}
+
+			}
+
+			bat.updateRect(hero);
+			sb.update(m, hero, fl, reloadTime);
+			levelWaveMessageCountdown -= 1;
+			if(checkWaveCleared() == false)
+			{
+				fl.update();
+			}
+			if(canShoot == false)
+			{
+				reloadGun();
+			}
+
+			for(Coin c : coinManager)
+			{
+				if(c.isAlive())
+				{
+					c.update();
 				}
 			}
 
-		}
-		
-		for(Coin c : coinManager)
-		{
-			if(c.isAlive() && hero.getRect().intersects(c.getRect()))
+			//COLLISION
+
+
+			for(Zombie z : ghoulArmy)
 			{
-				c.turnOff();
-				m.setCurrentCoin(m.currentCoin + c.getCoinValue());
-				totalCoinsEarned += c.getCoinValue();
-				coin.play();
+				if(z.getAlive() == true)
+				{
+					if(hero.getRect().intersects(z.getRect()))
+					{
+						hero.setHealth(-1);
+						hero.turnOnDamaged();
+						if(!hero.grunt.playing())
+						{
+							hero.grunt.play();
+						}
+
+					}
+				}
+
 			}
-			
-			else if(c.isAlive() && c.getTick() <= 0)
+
+			if(bat.isAlive)
 			{
-				c.turnOff();
+				for(Zombie z : ghoulArmy)
+				{
+					if(z.getAlive() == true && bat.getCircle().intersects(z.getRect()))
+					{
+
+						z.setHealth(bat.getDamage());
+						z.turnOnDamaged(bat.getKnockback());
+						if(bat.hasPlayedSwingHit == false)
+						{
+							//zombieDie.play(0.9f,0.2f);
+							batHit.play();
+							bat.hasPlayedSwingHit = true;
+						}
+
+
+						if(z.getHealth() <= 0)
+						{
+							cl.turnOn();
+							z.setGhoulIsAlive(false);
+							zombiesKilled++;
+							totalCoinsEarned += ghoulArmy.get(1).moneyValue;
+							m.setCurrentCoin(m.currentCoin + ghoulArmy.get(1).moneyValue);
+
+							for(Coin c : coinManager)
+							{
+								if(!c.isAlive())
+								{
+									c.turnOn(z);
+									return;
+								}
+							}
+
+						}
+
+					}
+				}
+
+
 			}
-			
-		}
 
 
 
-		//Game Over Condition
-		if(hero.getHealth() <= 0)
-		{
-			gameBGM.stop();
-			bossBGM.stop();
-			playerDie.play();
-			gameOverBGM.loop();
-			sbg.enterState(4, new FadeOutTransition(Color.red, 1000), new FadeInTransition(Color.black, 1000));
-		}
+			//Bullet Collision
+			for(int j = 0; j < bulletManager.size(); j++)
+			{
+				for(int i = 0; i < ghoulArmy.size(); i++)
+				{
+					if(bulletManager.get(j).getRect().intersects(ghoulArmy.get(i).getRect())
+							&& ghoulArmy.get(i).getAlive() == true
+							&& bulletManager.get(j).getAlive() == true)
+					{
+						bulletManager.get(j).setBulletIsAlive(false);
+						ghoulArmy.get(i).setHealth(bulletManager.get(j).getDamage());
+						ghoulArmy.get(i).turnOnDamaged(5f);
+						bulletsHit++;
+						if(ghoulArmy.get(i).getHealth() <= 0)
+						{
+							ghoulArmy.get(i).setGhoulIsAlive(false);	
+							cl.turnOn();
+							m.setCurrentCoin(m.currentCoin + ghoulArmy.get(i).moneyValue);
+							totalCoinsEarned += ghoulArmy.get(i).moneyValue;
+							zombiesKilled++;
 
-		//Cleared Wave Condition
-		if(checkWaveCleared() == true)
-		{
-			if(hero.getRect().intersects(doorRect))
-			{				
-				//Enter the shopping state
+							for(Coin c : coinManager)
+							{
+								if(!c.isAlive())
+								{
+									c.turnOn(ghoulArmy.get(i));
+									return;
+								}
+							}
+
+						}
+						zombieDie.play(0.9f,0.2f);
+					}
+				}
+
+			}
+
+			for(Coin c : coinManager)
+			{
+				if(c.isAlive() && hero.getRect().intersects(c.getRect()))
+				{
+					c.turnOff();
+					m.setCurrentCoin(m.currentCoin + c.getCoinValue());
+					totalCoinsEarned += c.getCoinValue();
+					coin.play();
+				}
+
+				else if(c.isAlive() && c.getTick() <= 0)
+				{
+					c.turnOff();
+				}
+
+			}
+
+
+
+			//Game Over Condition
+			if(hero.getHealth() <= 0)
+			{
 				gameBGM.stop();
 				bossBGM.stop();
-				doorSound.play();
-				((Shop)sbg.getState(5)).levelUp.loop();
-				sbg.enterState(5, new FadeOutTransition(Color.white, 1000), new FadeInTransition(Color.white, 1000));
+				playerDie.play();
+				gameOverBGM.loop();
+				sbg.enterState(4, new FadeOutTransition(Color.red, 1000), new FadeInTransition(Color.black, 1000));
 			}
-		}
+
+			//Cleared Wave Condition
+			if(checkWaveCleared() == true)
+			{
+				if(hero.getRect().intersects(doorRect))
+				{				
+					//Enter the shopping state
+					gameBGM.stop();
+					bossBGM.stop();
+					doorSound.play();
+					((Shop)sbg.getState(5)).levelUp.loop();
+					sbg.enterState(5, new FadeOutTransition(Color.white, 1000), new FadeInTransition(Color.white, 1000));
+				}
+			}
 		}
 
 	}
@@ -666,15 +673,15 @@ public class Play extends BasicGameState
 			canShoot = true;
 			reloadTime = reloadTimeMax;
 		}
-		
+
 	}
 
 	private void reloadGunTurnOn() 
 	{
 		reload.play();
 		canShoot = false;
-		
-		
+
+
 	}
 
 	private void renderBackground(Graphics g) 
@@ -703,19 +710,19 @@ public class Play extends BasicGameState
 					g.drawImage(bush, offsetX, offsetY);
 					offsetX += tileWidth;
 				}
-				
+
 				else if(gridmap.get(i).get(j) == "g")
 				{
 					g.drawImage(grass, offsetX, offsetY);
 					offsetX += tileWidth;
 				}
-				
+
 				else if(gridmap.get(i).get(j) == "d")
 				{
 					g.drawImage(dune, offsetX, offsetY);
 					offsetX += tileWidth;
 				}
-				
+
 				else
 				{
 					System.out.println("Unknown tile");
@@ -761,7 +768,7 @@ public class Play extends BasicGameState
 				{
 					gridmap.get(i).add("d");
 				}
-				
+
 				//empty sand
 				else
 				{
@@ -772,8 +779,8 @@ public class Play extends BasicGameState
 
 			}
 		}
-		
-		
+
+
 
 	}
 
@@ -897,13 +904,13 @@ public class Play extends BasicGameState
 		hero.resetHealth();
 		hero.setX(gc.getWidth()/2);
 		hero.setY(gc.getHeight()/2);
-		
+
 		bulletsFired = 0;
 		bulletsHit = 0;
 		totalCoinsEarned = 0;
 		zombiesKilled = 0;
 		fl.resetPower();
-		
+
 
 		levelWaveMessageCountdown = 100;
 

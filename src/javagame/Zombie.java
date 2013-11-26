@@ -281,9 +281,9 @@ public class Zombie
 		
 	}
 
-	public boolean canGrowl() 
+	public boolean canGrowl(int chance) 
 	{
-		if(new Random().nextInt(100) < 1 && this.zombieLength < 700)
+		if(chance < 1 && this.zombieLength < 700)
 		{
 			return true;
 		}
