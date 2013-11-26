@@ -65,6 +65,7 @@ public class Play extends BasicGameState
 
 	ArrayList<Zombie> ghoulArmy = new ArrayList<Zombie>();
 	ArrayList<Point2D> ghoulSpawnPoints = new ArrayList<Point2D>();
+	ArrayList<Sound> zombieGrowls = new ArrayList<Sound>();
 	
 	//GameOver Statistics
 	double bulletsFired = 0;
@@ -162,7 +163,7 @@ public class Play extends BasicGameState
 
 			ghoul = new Zombie
 					(
-							new SpriteSheet("res/images/SGB_zombiesprite_01.png", 50, 62), 
+							new SpriteSheet("res/images/SGB_zombiesprite_02.png", 50, 58), 
 							ran.nextInt(gc.getWidth()), 
 							ran.nextInt(gc.getHeight())
 							);
@@ -171,6 +172,12 @@ public class Play extends BasicGameState
 			ghoul.setSpeed(ran.nextInt(2) + 1);
 			ghoul.setGhoulIsAlive(true);
 			ghoulArmy.add(ghoul);
+		}
+		
+		//initializing zombie Growls
+		for(int i = 1; i < 11; i++)
+		{
+			zombieGrowls.add(new Sound("res/sound/fx/Zombie Growls/ZG " + i + ".ogg"));
 		}
 
 
@@ -239,22 +246,22 @@ public class Play extends BasicGameState
 			if(z.getAlive() == true)
 			{
 
-				z.setAngle((float) (Math.atan2(z.getDY(), z.getDX()) * (180/Math.PI)) + 90f);
-
 				if(isBossLevel())
 				{
 					z.getAnimation().draw(z.getX() - 25, z.getY() - 25, z.bossSize, z.bossSize);
 					
 					z.getAnimation().getCurrentFrame().setCenterOfRotation(100,100);
 					
-					z.getAnimation().getCurrentFrame().setRotation(z.getAngle());
+					z.getAnimation().getCurrentFrame().setRotation(Math.round(z.getAngle()));
 				}
 				else
 				{
 					z.getAnimation().draw(z.getX(), z.getY());
 					z.getAnimation().getCurrentFrame().setCenterOfRotation(25, 25);
-					z.getAnimation().getCurrentFrame().setRotation(z.getAngle());
+					z.getAnimation().getCurrentFrame().setRotation(Math.round(z.getAngle()));
 				}
+				
+	
 
 				g.draw(z.healthBar);
 				g.setColor(Color.red);
@@ -336,19 +343,7 @@ public class Play extends BasicGameState
 		{
 			g.drawString(cl.getChains() + " Chains!", 10, 50);
 		}
-		
-//		int pierce = 20 ;
-//		for(Bullet b : bulletManager)
-//		{
-//			
-//			g.drawString("Pierce level: " + b.getPierceLevel(), 10, 20 + pierce);
-//			pierce += 10;
-//		}
-		
-		g.drawString("In damage mode?" + hero.isDamaged(), 10, 30);
-		
 
-		
 
 	}
 
@@ -415,7 +410,7 @@ public class Play extends BasicGameState
 		}
 
 		//SWING BAT
-		if(input.isKeyPressed(Input.KEY_LSHIFT))
+		if(input.isKeyPressed(Input.KEY_SPACE))
 		{
 			bat.turnOn(hero);
 			batswing.play(1f, 0.2f);
@@ -463,6 +458,11 @@ public class Play extends BasicGameState
 				if(z.isDamaged())
 				{
 					z.updateDamageTick();
+				}
+				z.updateAngle();
+				if(z.canGrowl())
+				{
+					zombieGrowls.get(new Random().nextInt(10)).play(1f, z.getVolume());
 				}
 			}
 		}
@@ -936,7 +936,7 @@ public class Play extends BasicGameState
 			{
 				ghoul = new Zombie
 						(
-								new SpriteSheet("res/images/SGB_zombiesprite_01.png", 50, 62), 
+								new SpriteSheet("res/images/SGB_zombiesprite_02.png", 50, 58), 
 								ran.nextInt(gc.getWidth()), 
 								ran.nextInt(gc.getHeight())
 								);
@@ -956,7 +956,7 @@ public class Play extends BasicGameState
 
 				ghoul = new Zombie
 						(
-								new SpriteSheet("res/images/SGB_zombiesprite_01.png", 50, 62), 
+								new SpriteSheet("res/images/SGB_zombiesprite_02.png", 50, 58), 
 								ran.nextInt(gc.getWidth()), 
 								ran.nextInt(gc.getHeight())
 								);

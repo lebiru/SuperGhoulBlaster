@@ -16,7 +16,7 @@ public class Zombie
 	private float zombieX = 300;
 	private float zombieY = 300;
 	private float zombieWidth = 50;
-	private float zombieHeight = 50;
+	private float zombieHeight = 58;
 	private float zombieSpeed = 3;
 	private float zombieAngle = 90f;
 	float zombiedx = 0;
@@ -29,6 +29,7 @@ public class Zombie
 	private boolean isAlive = false;
 
 	Animation zombieAnimation;
+	int zombieAnimationSpeed = 50;
 
 	Rectangle zombieRect;
 	Rectangle healthBar;
@@ -53,10 +54,10 @@ public class Zombie
 		Image holder;
 
 		zombieAnimation = new Animation();
-		for (int i=0;i<3;i++) 
+		for (int i = 0; i < 32;i++) 
 		{
 			holder = sp.getSprite(i, 0);
-			zombieAnimation.addFrame(holder, 500);
+			zombieAnimation.addFrame(holder, zombieAnimationSpeed);
 		}
 	}
 
@@ -73,6 +74,11 @@ public class Zombie
 	void setX(float x)
 	{
 		this.zombieX = x;
+	}
+	
+	float getLength()
+	{
+		return zombieLength;
 	}
 
 	void setY(float y)
@@ -99,6 +105,8 @@ public class Zombie
 			this.zombieRect.setSize(zombieAnimation.getCurrentFrame().getWidth(),
 									zombieAnimation.getCurrentFrame().getHeight());
 		}
+		
+		
 		
 	}
 
@@ -177,10 +185,10 @@ public class Zombie
 		Image holder;
 
 		zombieAnimation = new Animation();
-		for (int i=0;i<3;i++) 
+		for (int i = 0; i < 32;i++) 
 		{
 			holder = sp.getSprite(i, 0);
-			zombieAnimation.addFrame(holder, 500);
+			zombieAnimation.addFrame(holder, zombieAnimationSpeed);
 		}
 
 	}
@@ -261,6 +269,30 @@ public class Zombie
 			knockback = 0f;
 		}
 		
+	}
+
+	public void updateAngle() 
+	{
+		this.zombieAngle = (int) Math.round((Math.atan2(this.getDY(), this.getDX()) * (180/Math.PI)) + 90f);
+		for(int i = 0; i < this.zombieAnimation.getFrameCount(); i++)
+		{
+			this.zombieAnimation.getImage(i).setRotation(zombieAngle);
+		}
+		
+	}
+
+	public boolean canGrowl() 
+	{
+		if(new Random().nextInt(100) < 1 && this.zombieLength < 700)
+		{
+			return true;
+		}
+		return false;
+	}
+
+	public float getVolume() 
+	{
+		return (((this.zombieLength * 100) / 700) / 100); 
 	}
 
 }
