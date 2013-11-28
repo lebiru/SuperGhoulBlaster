@@ -14,10 +14,10 @@ import org.newdawn.slick.state.transition.FadeOutTransition;
 public class Shop extends BasicGameState implements ComponentListener{
 
 
-	int areasSize = 7;
+	int areasSize = 6;
 	private MouseOverArea[] areas = new MouseOverArea[areasSize];
 	Image playButton, upgradeGunPowerButton, refillLightButton, 
-	reloadButton, batKnockbackButton, batDamageButton, gunPierceButton;
+	reloadButton, batKnockbackButton, batDamageButton;
 	
 	Image gunDamageLevel;
 	Image lv0, lv1, lv2, lv3, lv4, lv5;
@@ -60,10 +60,9 @@ public class Shop extends BasicGameState implements ComponentListener{
 		reloadButton = new Image("res/images/ShopButtons/SGB_ShopButton_GunReloadSpeed_01.png");
 		batKnockbackButton = new Image("res/images/ShopButtons/SGB_ShopButton_BatKnockback_01.png");
 		batDamageButton = new Image("res/images/ShopButtons/SGB_ShopButton_BatDamage_01.png");
-		gunPierceButton = new Image("res/images/ShopButtons/SGB_ShopButton_GunArmorPiercing_01.png");
 		gunDamageLevel = new Image("res/images/ShopButtons/SGB_ShopButton_Level0.png");
 
-		for(int i = 0; i <= 5; i++)
+		for(int i = 0; i < areasSize; i++)
 		{
 			upgradeLevel.add(new Image("res/images/ShopButtons/SGB_ShopButton_Level" + i + ".png"));
 		}
@@ -117,12 +116,6 @@ public class Shop extends BasicGameState implements ComponentListener{
 		areas[5].setNormalColor(new Color(1,1,1,0.8f));
 		areas[5].setMouseOverColor(new Color(1,1,1,0.9f));
 
-		areas[6] = new MouseOverArea(gc, gunPierceButton, gunColumn, upgradeThreeRow, 
-				gunPierceButton.getWidth(), gunPierceButton.getHeight(), this);
-		areas[6].setNormalColor(new Color(1,1,1,0.8f));
-		areas[6].setMouseOverColor(new Color(1,1,1,0.9f));
-
-
 	}
 
 	//for drawing things on screen
@@ -134,7 +127,7 @@ public class Shop extends BasicGameState implements ComponentListener{
 		g.drawString(currentMessage, 10, 30);
 		g.drawString("Coins: " + currentCoin, 10, 50);
 
-		for (int i=0;i<areasSize;i++) 
+		for (int i = 0 ; i < areasSize ; i++) 
 		{
 			areas[i].render(gc, g);
 		}
@@ -304,31 +297,31 @@ public class Shop extends BasicGameState implements ComponentListener{
 		}
 
 		//Gun Pierce Upgrade
-		if (source == areas[6]) 
-		{
-			if(currentCoin >= 30)
-			{
-				System.out.println("Gun Pierce Upgrade");
-
-				for(Bullet b : ((Play)sbg.getState(1)).bulletManager)
-				{
-					b.setPierceLevel(b.getPierceLevel() + 1);
-				}
-				
-
-				//Decreasing Player Money
-				((Play)sbg.getState(1)).m.decreaseCurrentCoin(30);
-				currentMessage = "Nice doing business with ya.";
-				buy.play();
-
-			}
-			else
-			{
-				currentMessage = "That costs 30 coins. You don't have enough money.";
-				notEnoughMoney.play();
-			}
-
-		}
+//		if (source == areas[6]) 
+//		{
+//			if(currentCoin >= 30)
+//			{
+//				System.out.println("Gun Pierce Upgrade");
+//
+//				for(Bullet b : ((Play)sbg.getState(1)).bulletManager)
+//				{
+//					b.setPierceLevel(b.getPierceLevel() + 1);
+//				}
+//				
+//
+//				//Decreasing Player Money
+//				((Play)sbg.getState(1)).m.decreaseCurrentCoin(30);
+//				currentMessage = "Nice doing business with ya.";
+//				buy.play();
+//
+//			}
+//			else
+//			{
+//				currentMessage = "That costs 30 coins. You don't have enough money.";
+//				notEnoughMoney.play();
+//			}
+//
+//		}
 
 	}
 

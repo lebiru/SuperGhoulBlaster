@@ -38,7 +38,7 @@ public class Menu extends BasicGameState implements ComponentListener{
 		
 		this.sbg = sbg;
 
-		areas[0] = new MouseOverArea(gc, playMenu, 200, 400 + (0*100), 200, 90, this);
+		areas[0] = new MouseOverArea(gc, playMenu, gc.getWidth()/2 - 100, gc.getHeight() - 200, 200, 90, this);
 		areas[0].setNormalColor(new Color(1,1,1,0.8f));
 		areas[0].setMouseOverColor(new Color(1,1,1,0.9f));
 

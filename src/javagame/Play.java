@@ -167,10 +167,11 @@ public class Play extends BasicGameState
 			ghoul = new Zombie
 					(
 							new SpriteSheet("res/images/SGB_zombiesprite_02.png", 50, 58), 
+							new SpriteSheet("res/images/SGB_ZombieBoss_01.png", 200, 232),
 							ran.nextInt(gc.getWidth()), 
 							ran.nextInt(gc.getHeight())
 							);
-			ghoul.setImage(ghoul.getAnimation().getCurrentFrame());
+			ghoul.setImage(ghoul.getRegularAnimation().getCurrentFrame());
 			ghoul.setPosition(ghoulSpawnPoints.get((ran.nextInt(ghoulSpawnPoints.size()))));
 			ghoul.setSpeed(ran.nextInt(2) + 1);
 			ghoul.setGhoulIsAlive(true);
@@ -229,7 +230,7 @@ public class Play extends BasicGameState
 
 		makeBackground(gc.getGraphics());
 
-		sb = new StatusBar(gc, hero);
+		sb = new StatusBar(gc, hero, new Image("res/images/SGB_hud_01.png"));
 
 
 	}
@@ -251,17 +252,17 @@ public class Play extends BasicGameState
 
 				if(isBossLevel())
 				{
-					z.getAnimation().draw(z.getX() - 25, z.getY() - 25, z.bossSize, z.bossSize);
+					z.getBossAnimation().draw(z.getX() - 25, z.getY() - 25, z.bossSize, z.bossSize);
 
-					z.getAnimation().getCurrentFrame().setCenterOfRotation(100,100);
+					z.getBossAnimation().getCurrentFrame().setCenterOfRotation(100,115);
 
-					z.getAnimation().getCurrentFrame().setRotation(Math.round(z.getAngle()));
+					z.getBossAnimation().getCurrentFrame().setRotation(Math.round(z.getAngle()));
 				}
 				else
 				{
-					z.getAnimation().draw(z.getX(), z.getY());
-					z.getAnimation().getCurrentFrame().setCenterOfRotation(25, 25);
-					z.getAnimation().getCurrentFrame().setRotation(Math.round(z.getAngle()));
+					z.getRegularAnimation().draw(z.getX(), z.getY());
+					z.getRegularAnimation().getCurrentFrame().setCenterOfRotation(25, 25);
+					z.getRegularAnimation().getCurrentFrame().setRotation(Math.round(z.getAngle()));
 				}
 
 
@@ -286,6 +287,22 @@ public class Play extends BasicGameState
 
 		g.drawImage(hero.getImage(), hero.getX(), hero.getY());
 		hero.getImage().setRotation(hero.getAngle());
+		
+		for(Coin c : coinManager)
+		{
+			if(c.isAlive())
+			{
+				if(c.getTick() >= c.getTickMax()/2)
+				{
+					c.getAnimation().draw(c.getX(), c.getY());	
+				}
+				else if(c.getTick() < c.getTickMax()/2 && c.getTick()%2 == 0 || c.getTick()%3 == 0)
+				{
+					c.getAnimation().draw(c.getX(), c.getY());	
+				}	
+
+			}
+		}
 
 		if(checkWaveCleared() == true)
 		{
@@ -326,21 +343,7 @@ public class Play extends BasicGameState
 
 		}
 
-		for(Coin c : coinManager)
-		{
-			if(c.isAlive())
-			{
-				if(c.getTick() >= c.getTickMax()/2)
-				{
-					c.getAnimation().draw(c.getX(), c.getY());	
-				}
-				else if(c.getTick() < c.getTickMax()/2 && c.getTick()%2 == 0 || c.getTick()%3 == 0)
-				{
-					c.getAnimation().draw(c.getX(), c.getY());	
-				}	
-
-			}
-		}
+		
 
 		if(cl.getChains() >= 2)
 		{
@@ -944,10 +947,11 @@ public class Play extends BasicGameState
 				ghoul = new Zombie
 						(
 								new SpriteSheet("res/images/SGB_zombiesprite_02.png", 50, 58), 
+								new SpriteSheet("res/images/SGB_ZombieBoss_01.png", 200, 232),
 								ran.nextInt(gc.getWidth()), 
 								ran.nextInt(gc.getHeight())
 								);
-				ghoul.setImage(ghoul.getAnimation().getCurrentFrame());
+				ghoul.setImage(ghoul.getBossAnimation().getCurrentFrame());
 				ghoul.setPosition(ghoulSpawnPoints.get((ran.nextInt(ghoulSpawnPoints.size()))));
 				ghoul.setSpeed(ran.nextInt(2) + 1);
 				ghoul.setGhoulIsAlive(true);
@@ -963,11 +967,12 @@ public class Play extends BasicGameState
 
 				ghoul = new Zombie
 						(
-								new SpriteSheet("res/images/SGB_zombiesprite_02.png", 50, 58), 
+								new SpriteSheet("res/images/SGB_zombiesprite_02.png", 50, 58),
+								new SpriteSheet("res/images/SGB_ZombieBoss_01.png", 200, 232),
 								ran.nextInt(gc.getWidth()), 
 								ran.nextInt(gc.getHeight())
 								);
-				ghoul.setImage(ghoul.getAnimation().getCurrentFrame());
+				ghoul.setImage(ghoul.getRegularAnimation().getCurrentFrame());
 				ghoul.setPosition(ghoulSpawnPoints.get((ran.nextInt(ghoulSpawnPoints.size()))));
 				ghoul.setSpeed(ran.nextInt(2) + 1);
 				ghoul.setGhoulIsAlive(true);

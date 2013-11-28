@@ -3,6 +3,7 @@ package javagame;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
 import org.newdawn.slick.ShapeFill;
 import org.newdawn.slick.fills.GradientFill;
 import org.newdawn.slick.geom.Rectangle;
@@ -21,6 +22,7 @@ public class StatusBar
 	int HUDWidthOffset = 10; 
 
 	Rectangle statusBarHUD;
+	Image statusBarImage;
 
 	Rectangle heroHealthRect;
 	Rectangle heroHealthRectFull;
@@ -40,12 +42,15 @@ public class StatusBar
 	boolean isVisible = false;
 
 	int level;
+	
 
 
-	StatusBar(GameContainer gc, Player hero)
+	StatusBar(GameContainer gc, Player hero, Image i)
 	{
 		this.gc = gc;
 		statusBarHUD = new Rectangle(HUDWidthOffset, gc.getHeight() - HUDHeightOffset, gc.getWidth() - (HUDWidthOffset * 2), HUDHeightOffset - HUDWidthOffset);
+		statusBarImage = i;
+		
 
 		heroHealthRect = new Rectangle(gc.getWidth()/2, gc.getHeight() - 50, 200, 10);
 		heroHealthRectFull = new Rectangle(gc.getWidth()/2 + 1, gc.getHeight() - 51, heroHealthRect.getWidth(), 9);
@@ -115,7 +120,10 @@ public class StatusBar
 
 	public Graphics render(Graphics g)
 	{
-		g.draw(this.statusBarHUD);
+		//g.draw(this.statusBarHUD);
+		g.drawImage(statusBarImage, HUDWidthOffset, gc.getHeight() - HUDHeightOffset + 95, 
+				gc.getWidth() - (HUDWidthOffset * 1), HUDHeightOffset - HUDWidthOffset + 550, 
+				0,0,statusBarImage.getWidth(), statusBarImage.getHeight());
 		g.drawString("Coins: " + coins, columnOne, rowOne);
 		g.drawString("Health ", columnTwo, rowOne);
 		g.drawString("Flashlight Power: " + Math.round((100 - (flPower * 100))) + "%", columnThree, rowOne);
@@ -124,8 +132,6 @@ public class StatusBar
 		g.setColor(Color.red);
 		g.fillRect(heroHealthRect.getX(), heroHealthRect.getY(), (health * 2) - 1, heroHealthRectFull.getHeight());
 		g.setColor(Color.white);
-		
-		
 		
 		g.draw(reloadRect, reloadFill);
 		g.fillRect(reloadRect.getX(), reloadRect.getY(), reloadWidth, 10);

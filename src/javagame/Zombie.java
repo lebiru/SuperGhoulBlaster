@@ -29,12 +29,14 @@ public class Zombie
 	private boolean isAlive = false;
 
 	Animation zombieAnimation;
+	Animation bossAnimation;
 	int zombieAnimationSpeed = 50;
 
 	Rectangle zombieRect;
 	Rectangle healthBar;
 	
 	Image zombieImage;
+	Image bossImage;
 	
 	private float dmgTicker = 0f;
 	private float dmgTickerMax = 10f;
@@ -43,7 +45,7 @@ public class Zombie
 	
 	private float knockback = 0f; //this should be a weapon attribute
 
-	Zombie(SpriteSheet sp, float startX, float startY) throws SlickException
+	Zombie(SpriteSheet sp, SpriteSheet bsp, float startX, float startY) throws SlickException
 	{
 		this.zombieX = startX;
 		this.zombieY = startY;
@@ -54,10 +56,17 @@ public class Zombie
 		Image holder;
 
 		zombieAnimation = new Animation();
+		bossAnimation = new Animation();
 		for (int i = 0; i < 32;i++) 
 		{
 			holder = sp.getSprite(i, 0);
 			zombieAnimation.addFrame(holder, zombieAnimationSpeed);
+		}
+		
+		for (int i = 0; i < 32;i++) 
+		{
+			holder = bsp.getSprite(i, 0);
+			bossAnimation.addFrame(holder, zombieAnimationSpeed);
 		}
 	}
 
@@ -95,8 +104,8 @@ public class Zombie
 	{
 		if(isBossLevel)
 		{
-			this.zombieRect.setLocation(zombieX - (zombieAnimation.getCurrentFrame().getWidth()/2), 
-										zombieY - (zombieAnimation.getCurrentFrame().getHeight()/2));
+			this.zombieRect.setLocation(zombieX, 
+										zombieY);
 			this.zombieRect.setSize(bossSize, bossSize);
 		}
 		else
@@ -190,12 +199,26 @@ public class Zombie
 			holder = sp.getSprite(i, 0);
 			zombieAnimation.addFrame(holder, zombieAnimationSpeed);
 		}
+		
+		bossAnimation = new Animation();
+		for (int i = 0; i < 32;i++) 
+		{
+			holder = sp.getSprite(i, 0);
+			bossAnimation.addFrame(holder, zombieAnimationSpeed);
+		}
+		
+		
 
 	}
 
-	Animation getAnimation()
+	Animation getRegularAnimation()
 	{
 		return zombieAnimation;
+	}
+	
+	Animation getBossAnimation()
+	{
+		return bossAnimation;
 	}
 
 	public void setPosition(Point2D point2d) 
@@ -277,6 +300,12 @@ public class Zombie
 		for(int i = 0; i < this.zombieAnimation.getFrameCount(); i++)
 		{
 			this.zombieAnimation.getImage(i).setRotation(zombieAngle);
+			
+		}
+		for(int i = 0; i < this.bossAnimation.getFrameCount(); i++)
+		{
+			this.bossAnimation.getImage(i).setRotation(zombieAngle);
+			
 		}
 		
 	}
