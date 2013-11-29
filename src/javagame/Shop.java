@@ -19,11 +19,14 @@ public class Shop extends BasicGameState implements ComponentListener{
 	Image playButton, upgradeGunPowerButton, refillLightButton, 
 	reloadButton, batKnockbackButton, batDamageButton;
 	
-	Image gunDamageLevel;
+	Image gunDamageLevel, gunReloadLevelImage, batKnockLevelImage, batPowerLevelImage;
 	Image lv0, lv1, lv2, lv3, lv4, lv5;
 	ArrayList<Image> upgradeLevel = new ArrayList<Image>();
 	
 	int gunPowerLevel = 0;
+	int gunReloadLevel = 0;
+	int batKnockbackLevel = 0;
+	int batPowerLevel = 0;
 	
 	Image shopBackground;
 	Sound levelUp;
@@ -60,8 +63,12 @@ public class Shop extends BasicGameState implements ComponentListener{
 		reloadButton = new Image("res/images/ShopButtons/SGB_ShopButton_GunReloadSpeed_01.png");
 		batKnockbackButton = new Image("res/images/ShopButtons/SGB_ShopButton_BatKnockback_01.png");
 		batDamageButton = new Image("res/images/ShopButtons/SGB_ShopButton_BatDamage_01.png");
+		
 		gunDamageLevel = new Image("res/images/ShopButtons/SGB_ShopButton_Level0.png");
-
+		gunReloadLevelImage = new Image("res/images/ShopButtons/SGB_ShopButton_Level0.png");
+		batKnockLevelImage = new Image("res/images/ShopButtons/SGB_ShopButton_Level0.png");
+		batPowerLevelImage = new Image("res/images/ShopButtons/SGB_ShopButton_Level0.png");
+		
 		for(int i = 0; i < areasSize; i++)
 		{
 			upgradeLevel.add(new Image("res/images/ShopButtons/SGB_ShopButton_Level" + i + ".png"));
@@ -133,6 +140,9 @@ public class Shop extends BasicGameState implements ComponentListener{
 		}
 		
 		gunDamageLevel.draw(gunColumn + upgradeGunPowerButton.getWidth() + 10, upgradeOneRow);
+		gunReloadLevelImage.draw(gunColumn + reloadButton.getWidth() + 10, upgradeTwoRow);
+		batKnockLevelImage.draw(batColumn + batKnockbackButton.getWidth() + 10, upgradeOneRow);
+		batPowerLevelImage.draw(batColumn + batDamageButton.getWidth() + 10, upgradeTwoRow);
 	}
 
 	//for updating logics of the game
@@ -180,7 +190,7 @@ public class Shop extends BasicGameState implements ComponentListener{
 		//Gun Power Upgrade
 		if (source == areas[1]) 
 		{
-			if(currentCoin >= gunPowerCost)
+			if(currentCoin >= gunPowerCost && gunPowerLevel < 5)
 			{
 				System.out.println("Upgrading Gun Power");
 				for(Bullet b : ((Play)sbg.getState(1)).bulletManager)
@@ -195,6 +205,11 @@ public class Shop extends BasicGameState implements ComponentListener{
 				gunPowerLevel++;
 				gunDamageLevel = upgradeLevel.get(gunPowerLevel); 
 
+			}
+			else if(gunPowerLevel >= 5)
+			{
+				currentMessage = "Maxed level reached!";
+				notEnoughMoney.play();
 			}
 			else
 			{
@@ -231,7 +246,7 @@ public class Shop extends BasicGameState implements ComponentListener{
 		//Reload Upgrade
 		if (source == areas[3]) 
 		{
-			if(currentCoin >= 30)
+			if(currentCoin >= 30 && gunReloadLevel < 5)
 			{
 				System.out.println("Reload Upgrade");
 				((Play)sbg.getState(1)).reloadTick = ((Play)sbg.getState(1)).reloadTick + 0.5f;
@@ -240,7 +255,14 @@ public class Shop extends BasicGameState implements ComponentListener{
 				((Play)sbg.getState(1)).m.decreaseCurrentCoin(30);
 				currentMessage = "Nice doing business with ya.";
 				buy.play();
+				gunReloadLevel++;
+				gunReloadLevelImage = upgradeLevel.get(gunReloadLevel); 
 
+			}
+			else if(gunReloadLevel >= 5)
+			{
+				currentMessage = "Maxed level reached!";
+				notEnoughMoney.play();
 			}
 			else
 			{
@@ -253,7 +275,7 @@ public class Shop extends BasicGameState implements ComponentListener{
 		//Bat Knockback Upgrade
 		if (source == areas[4]) 
 		{
-			if(currentCoin >= 30)
+			if(currentCoin >= 30 && batKnockbackLevel < 5)
 			{
 				System.out.println("Bat Knockback Upgrade");
 
@@ -263,7 +285,15 @@ public class Shop extends BasicGameState implements ComponentListener{
 				((Play)sbg.getState(1)).m.decreaseCurrentCoin(30);
 				currentMessage = "Nice doing business with ya.";
 				buy.play();
+				batKnockbackLevel++;
+				batKnockLevelImage = upgradeLevel.get(batKnockbackLevel);
+				
 
+			}
+			else if(batKnockbackLevel >= 5)
+			{
+				currentMessage = "Maxed level reached!";
+				notEnoughMoney.play();
 			}
 			else
 			{
@@ -276,7 +306,7 @@ public class Shop extends BasicGameState implements ComponentListener{
 		//Bat Damage Upgrade
 		if (source == areas[5]) 
 		{
-			if(currentCoin >= 30)
+			if(currentCoin >= 30 && batPowerLevel < 5)
 			{
 				System.out.println("Bat Damage Upgrade");
 
@@ -286,7 +316,14 @@ public class Shop extends BasicGameState implements ComponentListener{
 				((Play)sbg.getState(1)).m.decreaseCurrentCoin(30);
 				currentMessage = "Nice doing business with ya.";
 				buy.play();
+				batPowerLevel++;
+				batPowerLevelImage = upgradeLevel.get(batPowerLevel);
 
+			}
+			else if(batPowerLevel >= 5)
+			{
+				currentMessage = "Maxed level reached!";
+				notEnoughMoney.play();
 			}
 			else
 			{
@@ -296,6 +333,7 @@ public class Shop extends BasicGameState implements ComponentListener{
 
 		}
 
+		//Not enough time to implement
 		//Gun Pierce Upgrade
 //		if (source == areas[6]) 
 //		{

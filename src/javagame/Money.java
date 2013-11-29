@@ -4,7 +4,7 @@ package javagame;
  * Is responsible for holding all the money information for the player.
  * @author Biru
  *totalCoin: The total number of coins the player has collected in the playthrough.
- *currentCoin: Thte total number of coins the player currently has.
+ *currentCoin: The total number of coins the player currently has.
  */
 
 public class Money 
@@ -15,7 +15,7 @@ public class Money
 	
 	Money()
 	{
-		totalCoin = 0;
+		totalCoin =  0;
 		currentCoin = 0;
 	}
 	
