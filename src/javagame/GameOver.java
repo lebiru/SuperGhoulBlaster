@@ -1,6 +1,11 @@
 package javagame;
 
+import java.awt.Font;
+import java.awt.FontFormatException;
+import java.io.IOException;
+
 import org.newdawn.slick.*;
+import org.newdawn.slick.font.effects.ColorEffect;
 import org.newdawn.slick.gui.AbstractComponent;
 import org.newdawn.slick.gui.ComponentListener;
 import org.newdawn.slick.gui.MouseOverArea;
@@ -15,6 +20,9 @@ public class GameOver extends BasicGameState implements ComponentListener{
 	Image aboutMenu;
 	Image gameOverBackground;
 	StateBasedGame sbg;
+
+	Font UIFont1;
+	org.newdawn.slick.UnicodeFont bombardFont;
 
 	public GameOver(int state)
 	{
@@ -39,18 +47,38 @@ public class GameOver extends BasicGameState implements ComponentListener{
 		areas[1].setNormalColor(new Color(1,1,1,0.8f));
 		areas[1].setMouseOverColor(new Color(1,1,1,0.9f));
 
+		//Setting Up the Font
+		try {
+			UIFont1 = java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT, 
+					org.newdawn.slick.util.ResourceLoader.getResourceAsStream("res/images/fonts/BOMBARD.ttf"));
+		} catch (FontFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		UIFont1 = UIFont1.deriveFont(java.awt.Font.PLAIN, 24.0f);
+		bombardFont = new org.newdawn.slick.UnicodeFont(UIFont1);
+		bombardFont.addAsciiGlyphs();
+		bombardFont.getEffects().add(new ColorEffect(java.awt.Color.GREEN));
+		bombardFont.loadGlyphs();
+		//End Setting up the Font
+
 
 	}
 
 	//for drawing things on screen
 	public void render(GameContainer gc, StateBasedGame sgb, Graphics g) throws SlickException
 	{
-		
-		gameOverBackground.draw(0, 0, gc.getWidth(), gc.getHeight());
 
-		g.drawString("Zombies Killed: " + ((Play)sgb.getState(1)).zombiesKilled, 10, 30);
-		g.drawString("Accuracy: " + Math.round((((Play)sgb.getState(1)).bulletsHit / ((Play)sgb.getState(1)).bulletsFired) * 100 )+ "%", 10, 50);
-		g.drawString("Total Coins Earned: " + ((Play)sgb.getState(1)).totalCoinsEarned, 10, 70);
+		gameOverBackground.draw(0, 0, gc.getWidth(), gc.getHeight());
+		g.setFont(bombardFont);
+		
+		g.drawString("Zombies Killed: " + ((Play)sgb.getState(1)).zombiesKilled, gc.getWidth()/2, gc.getHeight()/2);
+		g.drawString("Accuracy: " + Math.round((((Play)sgb.getState(1)).bulletsHit / ((Play)sgb.getState(1)).bulletsFired) * 100 )+ "%", gc.getWidth()/2, gc.getHeight()/2 + 100);
+		g.drawString("Total Coins Earned: " + ((Play)sgb.getState(1)).totalCoinsEarned, gc.getWidth()/2, gc.getHeight()/2 + 200);
 
 
 		for (int i=0;i<2;i++) {
@@ -61,7 +89,7 @@ public class GameOver extends BasicGameState implements ComponentListener{
 	//for updating logics of the game
 	public void update(GameContainer gc, StateBasedGame sbg, int delta) throws SlickException 
 	{
-		
+
 
 
 	}

@@ -141,8 +141,8 @@ public class Shop extends BasicGameState implements ComponentListener{
 		
 		gunDamageLevel.draw(gunColumn + upgradeGunPowerButton.getWidth() + 10, upgradeOneRow);
 		gunReloadLevelImage.draw(gunColumn + reloadButton.getWidth() + 10, upgradeTwoRow);
-		batKnockLevelImage.draw(batColumn + batKnockbackButton.getWidth() + 10, upgradeOneRow);
-		batPowerLevelImage.draw(batColumn + batDamageButton.getWidth() + 10, upgradeTwoRow);
+		batKnockLevelImage.draw(batColumn + batKnockbackButton.getWidth() - 90, upgradeOneRow);
+		batPowerLevelImage.draw(batColumn + batDamageButton.getWidth() - 90, upgradeTwoRow);
 	}
 
 	//for updating logics of the game

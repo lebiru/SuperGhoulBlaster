@@ -334,11 +334,12 @@ public class Play extends BasicGameState
 		{
 			if(isBossLevel())
 			{	
-				g.drawString("BOSS LEVEL!", gc.getWidth()/2, gc.getHeight()/6);
+				
+				g.drawString("BOSS LEVEL!", gc.getWidth()/2 - 100, gc.getHeight()/6);
 			}
 			else
 			{
-				g.drawString(levelWaveMessage + " " + waveNumber, gc.getWidth()/2, gc.getHeight()/6);
+				g.drawString(levelWaveMessage + " " + waveNumber, gc.getWidth()/2 - 100, gc.getHeight()/6);
 			}
 
 		}
@@ -962,7 +963,7 @@ public class Play extends BasicGameState
 		((Shop)sbg.getState(5)).gunDamageLevel = ((Shop)sbg.getState(5)).upgradeLevel.get(0);
 		((Shop)sbg.getState(5)).gunReloadLevelImage = ((Shop)sbg.getState(5)).upgradeLevel.get(0);
 		((Shop)sbg.getState(5)).batPowerLevelImage = ((Shop)sbg.getState(5)).upgradeLevel.get(0);
-		((Shop)sbg.getState(5)).batPowerLevelImage = ((Shop)sbg.getState(5)).upgradeLevel.get(0);
+		((Shop)sbg.getState(5)).batKnockLevelImage = ((Shop)sbg.getState(5)).upgradeLevel.get(0);
 
 		bulletsFired = 0;
 		bulletsHit = 0;

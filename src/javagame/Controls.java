@@ -31,7 +31,7 @@ public class Controls extends BasicGameState implements ComponentListener{
 
 		this.sbg = sbg;
 
-		areas[0] = new MouseOverArea(gc, startButton, gc.getWidth()/2, gc.getHeight() - 150, 200, 90, this);
+		areas[0] = new MouseOverArea(gc, startButton, gc.getWidth()/2 - 150, gc.getHeight() - 150, 200, 90, this);
 		areas[0].setNormalColor(new Color(1,1,1,0.8f));
 		areas[0].setMouseOverColor(new Color(1,1,1,0.9f));
 

@@ -54,7 +54,7 @@ public class Game extends StateBasedGame
 
 			appgc.setDisplayMode(Display.getDesktopDisplayMode().getWidth(), 
 								 Display.getDesktopDisplayMode().getHeight(), 
-								 false); //third argument is fullscreen
+								 true); //third argument is fullscreen
 			appgc.setIcon("res/images/icon.png");
 			appgc.start();
 			
