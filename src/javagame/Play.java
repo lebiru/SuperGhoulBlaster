@@ -558,8 +558,8 @@ public class Play extends BasicGameState
 							cl.turnOn();
 							z.setGhoulIsAlive(false);
 							zombiesKilled++;
-							totalCoinsEarned += ghoulArmy.get(1).moneyValue;
-							m.setCurrentCoin(m.currentCoin + ghoulArmy.get(1).moneyValue);
+							totalCoinsEarned += ghoulArmy.get(0).moneyValue;
+							m.setCurrentCoin(m.currentCoin + ghoulArmy.get(0).moneyValue);
 
 							for(Coin c : coinManager)
 							{
@@ -889,10 +889,36 @@ public class Play extends BasicGameState
 
 	}
 
-	public void gameOverCleanUpLevel()
+	public void gameOverCleanUpLevel(StateBasedGame sbg)
 	{
 		Random ran = new Random();
 
+		
+		System.out.println("Ghoul Army size: " + ghoulArmy.size());
+		System.out.println("Num of Zombies: " + numOfZombies);
+		ghoulArmy.removeAll(ghoulArmy);
+		
+		Zombie ghoul = new Zombie();
+		try {
+			ghoul = new Zombie
+					(
+							new SpriteSheet("res/images/SGB_zombiesprite_02.png", 50, 58), 
+							new SpriteSheet("res/images/SGB_ZombieBoss_01.png", 200, 232),
+							ran.nextInt(gc.getWidth()), 
+							ran.nextInt(gc.getHeight())
+							);
+		} catch (SlickException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		ghoul.setImage(ghoul.getRegularAnimation().getCurrentFrame());
+		ghoul.setPosition(ghoulSpawnPoints.get((ran.nextInt(ghoulSpawnPoints.size()))));
+		ghoul.setSpeed(ran.nextInt(2) + 1);
+		ghoul.setGhoulIsAlive(true);
+		ghoulArmy.add(ghoul);
+		
+		System.out.println("Ghoul Army size: " + ghoulArmy.size());
+		System.out.println("Num of Zombies: " + numOfZombies);
 		for(Zombie z : ghoulArmy)
 		{
 			z.setGhoulIsAlive(true);
@@ -900,13 +926,43 @@ public class Play extends BasicGameState
 			z.setPosition(ghoulSpawnPoints.get((ran.nextInt(ghoulSpawnPoints.size()))));
 		}
 
-		numOfZombies = 2;
+		System.out.println("Ghoul Army size: " + ghoulArmy.size());
+		System.out.println("Num of Zombies: " + numOfZombies);
+		
+		
+		
+		numOfZombies = 0;
+		numOfBosses = 0;
+		waveNumber = 1;
+		
+		System.out.println("Ghoul Army size: " + ghoulArmy.size());
+		System.out.println("Num of Zombies: " + numOfZombies);
 
 		m.reset();
 
 		hero.resetHealth();
 		hero.setX(gc.getWidth()/2);
 		hero.setY(gc.getHeight()/2);
+		
+		//reset Upgrades
+		reloadTick = 2f;
+		for(Bullet b : bulletManager)
+		{
+			b.resetDamage();
+		}
+		bat.resetDamage();
+		bat.resetKnockback();
+		
+		//Reset Shop
+		((Shop)sbg.getState(5)).gunPowerLevel = 0;
+		((Shop)sbg.getState(5)).gunReloadLevel = 0;
+		((Shop)sbg.getState(5)).batPowerLevel = 0;
+		((Shop)sbg.getState(5)).batKnockbackLevel = 0;
+		
+		((Shop)sbg.getState(5)).gunDamageLevel = ((Shop)sbg.getState(5)).upgradeLevel.get(0);
+		((Shop)sbg.getState(5)).gunReloadLevelImage = ((Shop)sbg.getState(5)).upgradeLevel.get(0);
+		((Shop)sbg.getState(5)).batPowerLevelImage = ((Shop)sbg.getState(5)).upgradeLevel.get(0);
+		((Shop)sbg.getState(5)).batPowerLevelImage = ((Shop)sbg.getState(5)).upgradeLevel.get(0);
 
 		bulletsFired = 0;
 		bulletsHit = 0;
@@ -916,6 +972,8 @@ public class Play extends BasicGameState
 
 
 		levelWaveMessageCountdown = 100;
+		
+		
 
 	}
 

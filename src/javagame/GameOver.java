@@ -80,7 +80,7 @@ public class GameOver extends BasicGameState implements ComponentListener{
 			System.out.println("Play Again pressed");
 			((Play)sbg.getState(1)).gameOverBGM.stop();
 			((Play)sbg.getState(1)).gameBGM.loop();
-			((Play)sbg.getState(1)).gameOverCleanUpLevel();
+			((Play)sbg.getState(1)).gameOverCleanUpLevel(sbg);
 			sbg.enterState(1);
 		}
 
@@ -89,7 +89,7 @@ public class GameOver extends BasicGameState implements ComponentListener{
 			System.out.println("Main Menu Pressed");
 			((Play)sbg.getState(1)).gameOverBGM.stop();
 			((Menu)sbg.getState(0)).titleBGM.loop();
-			((Play)sbg.getState(1)).gameOverCleanUpLevel();
+			((Play)sbg.getState(1)).gameOverCleanUpLevel(sbg);
 			sbg.enterState(0);
 		}
 	}

@@ -70,6 +70,11 @@ public class Zombie
 		}
 	}
 
+	public Zombie() 
+	{
+		
+	}
+
 	public void setImage(Image i)
 	{
 		this.zombieImage = i;

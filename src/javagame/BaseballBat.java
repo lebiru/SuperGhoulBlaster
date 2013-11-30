@@ -140,6 +140,11 @@ public class BaseballBat {
 	{
 		damage = f;
 	}
+	
+	public void resetDamage()
+	{
+		damage = 1f;
+	}
 
 	public float getX() 
 	{
@@ -148,6 +153,11 @@ public class BaseballBat {
 	public float getY()
 	{
 		return this.batY;
+	}
+
+	public void resetKnockback() 
+	{
+		this.knockback = 5f;
 	}
 	
 }

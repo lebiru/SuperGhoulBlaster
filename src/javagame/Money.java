@@ -15,8 +15,8 @@ public class Money
 	
 	Money()
 	{
-		totalCoin =  0;
-		currentCoin = 0;
+		totalCoin =  500;
+		currentCoin = 500;
 	}
 	
 	public void setTotalCoin(int newTotal)

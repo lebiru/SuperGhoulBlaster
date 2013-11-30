@@ -141,8 +141,13 @@ public class Bullet extends Image
 		this.setBulletY(hero.getY() + 23);
 		this.setBulletDx(30);
 		this.setBulletDy(30);
-		
 	}
+	
+	public void resetDamage()
+	{
+		this.bulletDamage = 2;
+	}
+	
 
 
 }

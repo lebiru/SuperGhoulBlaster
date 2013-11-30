@@ -40,10 +40,12 @@ public class Player
 		this.playerImage = i;
 		this.playerCenterX = playerWidth/2;
 		this.playerCenterY = playerHeight/2;
-		try {
+		try 
+		{
 			grunt = new Sound("res/sound/fx/Grunt.ogg");
-		} catch (SlickException e) {
-			// TODO Auto-generated catch block
+		} 
+		catch (SlickException e) 
+		{
 			e.printStackTrace();
 		}
 	}
@@ -160,7 +162,7 @@ public class Player
 			turnOffDamaged();
 			dmgTicker = 0f;
 		}
-		
+
 
 	}
 
