@@ -22,7 +22,7 @@ public class StatusBar
 	int HUDWidthOffset = 10; 
 
 	Rectangle statusBarHUD;
-	Image statusBarImage;
+	//Image statusBarImage;
 
 	Rectangle heroHealthRect;
 	Rectangle heroHealthRectFull;
@@ -49,21 +49,20 @@ public class StatusBar
 	{
 		this.gc = gc;
 		statusBarHUD = new Rectangle(HUDWidthOffset, gc.getHeight() - HUDHeightOffset, gc.getWidth() - (HUDWidthOffset * 2), HUDHeightOffset - HUDWidthOffset);
-		statusBarImage = i;
+		//statusBarImage = i;
 		
-
-		heroHealthRect = new Rectangle(gc.getWidth()/2, gc.getHeight() - 50, 200, 10);
-		heroHealthRectFull = new Rectangle(gc.getWidth()/2 + 1, gc.getHeight() - 51, heroHealthRect.getWidth(), 9);
-
-		health = hero.getHealth();
-
 		columnOne = gc.getWidth()/10; 
-		columnTwo = gc.getWidth()/2;
-		columnThree = (gc.getWidth()/4)*3; 
+		columnTwo = gc.getWidth()/3;
+		columnThree = (int) (gc.getWidth()/1.5); 
 
 		rowOne = gc.getHeight() - 100;
 		rowTwo = gc.getHeight() - 50;
 		
+		heroHealthRect = new Rectangle(columnTwo, gc.getHeight() - 50, 200, 10);
+		heroHealthRectFull = new Rectangle(columnTwo + 1, gc.getHeight() - 51, heroHealthRect.getWidth(), 9);
+
+		health = hero.getHealth();
+
 		reloadRect = new Rectangle(columnOne, rowTwo, 100, 10);
 		reloadFill = new GradientFill(reloadRect.getX(), reloadRect.getY(), Color.yellow, 
 				reloadRect.getX() + reloadRect.getWidth(), reloadRect.getY() + reloadRect.getHeight(), Color.orange);
@@ -121,9 +120,10 @@ public class StatusBar
 	public Graphics render(Graphics g)
 	{
 		//g.draw(this.statusBarHUD);
-		g.drawImage(statusBarImage, HUDWidthOffset, gc.getHeight() - HUDHeightOffset + 95, 
-				gc.getWidth() - (HUDWidthOffset * 1), HUDHeightOffset - HUDWidthOffset + 550, 
-				0,0,statusBarImage.getWidth(), statusBarImage.getHeight());
+//		g.drawImage(statusBarImage, HUDWidthOffset, gc.getHeight() - HUDHeightOffset + 95, 
+//				gc.getWidth() - (HUDWidthOffset * 1), HUDHeightOffset - HUDWidthOffset + 550, 
+//				0,0,statusBarImage.getWidth(), statusBarImage.getHeight());
+//		
 		g.drawString("Coins: " + coins, columnOne, rowOne);
 		g.drawString("Health ", columnTwo, rowOne);
 		g.drawString("Flashlight Power: " + Math.round((100 - (flPower * 100))) + "%", columnThree, rowOne);

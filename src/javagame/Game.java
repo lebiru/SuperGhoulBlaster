@@ -50,11 +50,16 @@ public class Game extends StateBasedGame
 			appgc = new AppGameContainer(new Game(gamename));
 			appgc.setTargetFrameRate(maxFPS);
 			appgc.setVSync(true);
+			appgc.setShowFPS(false);
 		
 
 			appgc.setDisplayMode(Display.getDesktopDisplayMode().getWidth(), 
 								 Display.getDesktopDisplayMode().getHeight(), 
 								 true); //third argument is fullscreen
+			
+			//appgc.setDisplayMode(800, 600, false); //third argument is fullscreen
+			
+			
 			appgc.setIcon("res/images/icon.png");
 			appgc.start();
 			

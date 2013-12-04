@@ -83,18 +83,18 @@ public class Shop extends BasicGameState implements ComponentListener{
 
 		currentMessage = "Welcome...";
 
-		gunColumn = gc.getWidth()/12;
-		batColumn = gc.getWidth()/7 * 5;
+		gunColumn = gc.getWidth()/12 - 50;
+		batColumn = (int) (gc.getWidth()/1.5) - 70;
 
-		upgradeOneRow = gc.getHeight()/10 * 6;
-		upgradeTwoRow = gc.getHeight()/10 * 7;
-		upgradeThreeRow = gc.getHeight()/10 * 8;
+		upgradeOneRow = (int) (gc.getHeight()/1.9);
+		upgradeTwoRow = (int) (gc.getHeight()/1.60);
+		upgradeThreeRow = (int) (gc.getHeight()/1.30);
 
 
 		this.gc = gc;
 		this.sbg = sbg;
 
-		areas[0] = new MouseOverArea(gc, playButton, gc.getWidth()/2 - 50, gc.getHeight() - 100, 200, 90, this);
+		areas[0] = new MouseOverArea(gc, playButton, gc.getWidth()/2 - 100, gc.getHeight() - 100, 200, 90, this);
 		areas[0].setNormalColor(new Color(1,1,1,0.8f));
 		areas[0].setMouseOverColor(new Color(1,1,1,0.9f));
 
@@ -103,7 +103,7 @@ public class Shop extends BasicGameState implements ComponentListener{
 		areas[1].setNormalColor(new Color(1,1,1,0.8f));
 		areas[1].setMouseOverColor(new Color(1,1,1,0.9f));
 
-		areas[2] = new MouseOverArea(gc, refillLightButton, gunColumn, 400 + (2*100), 
+		areas[2] = new MouseOverArea(gc, refillLightButton, gunColumn, upgradeThreeRow, 
 				refillLightButton.getWidth(), refillLightButton.getHeight(), this);
 		areas[2].setNormalColor(new Color(1,1,1,0.8f));
 		areas[2].setMouseOverColor(new Color(1,1,1,0.9f));

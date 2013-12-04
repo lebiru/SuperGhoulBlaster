@@ -26,6 +26,7 @@ public class Play extends BasicGameState
 	ChainLogic cl;
 
 	Image door;
+	Image statusBarImage;
 	float doorX;
 	float doorY;
 	Rectangle doorRect;
@@ -135,6 +136,7 @@ public class Play extends BasicGameState
 		bush = new Image("res/images/levelart/bush.png");
 		grass = new Image("res/images/levelart/grass.png");
 		dune = new Image("res/images/levelart/dune.png");
+		statusBarImage = new Image("res/images/SGB_hud_01.png");
 
 		doorAnimation = new Animation();
 		doorSpriteSheet = new SpriteSheet("res/images/SGB_DoorSprite_02.png", 135, 134);
@@ -240,10 +242,13 @@ public class Play extends BasicGameState
 	{
 
 		g.setBackground(Color.black);
+		
+		
 		renderBackground(g);
+		
 
 		g.setFont(bombardFont);
-
+		
 
 		for(Zombie z : ghoulArmy)
 		{
@@ -327,6 +332,7 @@ public class Play extends BasicGameState
 		}
 
 		//Draw HUD
+		statusBarImage.draw(10, gc.getHeight()/10 * 8, gc.getWidth(), gc.getHeight()/5);
 		sb.render(g);
 
 		//Display Level Message

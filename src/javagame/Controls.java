@@ -27,11 +27,11 @@ public class Controls extends BasicGameState implements ComponentListener{
 
 		//replace these with "Play" and "About"
 		startButton = new Image("res/images/buttons/SGB_buttonstart_01.png");
-		controlBackground = new Image("res/images/splashScreens/SGB_SplashScreenHowToPlay_01.jpg");
+		controlBackground = new Image("res/images/splashScreens/SGB_SplashScreenHowToPlay_02.png");
 
 		this.sbg = sbg;
 
-		areas[0] = new MouseOverArea(gc, startButton, gc.getWidth()/2 - 150, gc.getHeight() - 150, 200, 90, this);
+		areas[0] = new MouseOverArea(gc, startButton, gc.getWidth()/2 - 100, gc.getHeight() - 150, 200, 90, this);
 		areas[0].setNormalColor(new Color(1,1,1,0.8f));
 		areas[0].setMouseOverColor(new Color(1,1,1,0.9f));
 

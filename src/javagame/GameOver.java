@@ -39,11 +39,11 @@ public class GameOver extends BasicGameState implements ComponentListener{
 		gameOverBackground = new Image("res/images/splashScreens/SGB_SplashScreenGameOver_01.jpg");
 		this.sbg = sbg;
 
-		areas[0] = new MouseOverArea(gc, playMenu, 200, 400 + (0*100), 200, 90, this);
+		areas[0] = new MouseOverArea(gc, playMenu, gc.getWidth()/5, (int) (gc.getHeight()/1.95), 200, 90, this);
 		areas[0].setNormalColor(new Color(1,1,1,0.8f));
 		areas[0].setMouseOverColor(new Color(1,1,1,0.9f));
 
-		areas[1] = new MouseOverArea(gc, aboutMenu, 200, 400 + (1*100), 200, 90, this);
+		areas[1] = new MouseOverArea(gc, aboutMenu, gc.getWidth()/5, (int) ((int) gc.getHeight()/1.5), 200, 90, this);
 		areas[1].setNormalColor(new Color(1,1,1,0.8f));
 		areas[1].setMouseOverColor(new Color(1,1,1,0.9f));
 
@@ -76,9 +76,12 @@ public class GameOver extends BasicGameState implements ComponentListener{
 		gameOverBackground.draw(0, 0, gc.getWidth(), gc.getHeight());
 		g.setFont(bombardFont);
 		
-		g.drawString("Zombies Killed: " + ((Play)sgb.getState(1)).zombiesKilled, gc.getWidth()/2, gc.getHeight()/2);
-		g.drawString("Accuracy: " + Math.round((((Play)sgb.getState(1)).bulletsHit / ((Play)sgb.getState(1)).bulletsFired) * 100 )+ "%", gc.getWidth()/2, gc.getHeight()/2 + 100);
-		g.drawString("Total Coins Earned: " + ((Play)sgb.getState(1)).totalCoinsEarned, gc.getWidth()/2, gc.getHeight()/2 + 200);
+		g.drawString("Zombies Killed: " + ((Play)sgb.getState(1)).zombiesKilled, 
+				gc.getWidth()/1.80f, gc.getHeight()/1.9f);
+		g.drawString("Accuracy: " + Math.round((((Play)sgb.getState(1)).bulletsHit / ((Play)sgb.getState(1)).bulletsFired) * 100 )+ "%", 
+				gc.getWidth()/1.80f, gc.getHeight()/1.75f);
+		g.drawString("Total Coins Earned: " + ((Play)sgb.getState(1)).totalCoinsEarned, 
+				gc.getWidth()/1.80f, gc.getHeight()/1.60f);
 
 
 		for (int i=0;i<2;i++) {
