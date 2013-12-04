@@ -84,7 +84,7 @@ public class Shop extends BasicGameState implements ComponentListener{
 		currentMessage = "Welcome...";
 
 		gunColumn = gc.getWidth()/12 - 50;
-		batColumn = (int) (gc.getWidth()/1.5) - 70;
+		batColumn = (int) (gc.getWidth()/1.5) - 20;
 
 		upgradeOneRow = (int) (gc.getHeight()/1.9);
 		upgradeTwoRow = (int) (gc.getHeight()/1.60);
